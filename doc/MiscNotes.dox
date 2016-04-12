@@ -1,0 +1,666 @@
+<!-- Copyright (C) 2016 Verizon. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+
+/*! \page commandsinuse_AcUtils
+- [cat](@ref cats_)
+- [diff](@ref diffs_)
+- [getpref](@ref getprefs_)
+- [getproperty](@ref getproperties_)
+- [info](@ref infos_)
+- [ismember](@ref ismembers_)
+- [lock](@ref locks_)
+- [lsacl](@ref lsacls_)
+- [lsrules](@ref lsruless_)
+- [name](@ref names_)
+- [show](@ref shows_)
+- [unlock](@ref unlocks_)
+- [xml](@ref xmls_)
+*/
+
+/*! \page findOvrUnder Find deep overlap/underlap elements
+VB_DEV1 is a time-based child stream of VB_DEV3, with an (\e underlap) file in VB_DEV1 and (\e overlap) / (\e underlap) files in VB_DEV3.<br>
+Without \c -B, the \c -fo option does nothing. It should be viewed as a modifier of the \c -B option, as it causes the search to include 
+(\e overlap) and (\e underlap) elements above time-based streams. (\c -B without \c -fo stops when the first time-based stream is encountered 
+and does not include these elements.) The \c -fox option is required for the \e timeBasisStream attribute to appear in the XML. The \c -o option 
+is required in all cases. The XML emitted via \c -fx includes the element-ID, so there's no need to include 'e' as in \c -foex.
+\code
+C:\Workspace>accurev stat -s VB_DEV1 -o -B -fox
+<?xml version="1.0" encoding="utf-8"?>
+<AcResponse
+    Command="stat"
+    Directory="C:/Workspace"
+    TaskId="1749">
+  <progress
+      phase="Scanning for recently touched elements"/>
+  <element
+      location="\.\src\data\atlas.prop"
+      dir="no"
+      executable="no"
+      id="3219"
+      elemType="text"
+      size="394"
+      modTime="1401372199"
+      hierType="parallel"
+      Virtual="7\1"
+      namedVersion="VB_DEV1\1"
+      Real="303\1"
+      overlapStream="VB_DEV1"
+      overlapInWs="true"
+      status="(underlap)(member)"/>
+  <element
+      timeBasisStream="VB_DEV1"
+      location="\.\src\decrypt.c"
+      dir="no"
+      executable="no"
+      id="2646"
+      elemType="text"
+      size="14518"
+      modTime="1397138904"
+      hierType="parallel"
+      Virtual="9\5"
+      namedVersion="VB_DEV3\5"
+      Real="16\1"
+      overlapStream="VB_DEV3"
+      overlapInWs="true"
+      status="(underlap)(member)"/>
+  <element
+      timeBasisStream="VB_DEV1"
+      location="\.\src\tran_server.c"
+      dir="no"
+      executable="no"
+      id="3031"
+      elemType="text"
+      size="19613"
+      modTime="1397583942"
+      hierType="parallel"
+      Virtual="9\5"
+      namedVersion="VB_DEV3\5"
+      Real="514\1"
+      overlapStream="VB_DEV3"
+      overlapInWs="true"
+      status="(overlap)(member)"/>
+</AcResponse>
+\endcode
+*/
+
+/*! \page netDiagLog Network diagnostics logging
+This version of \c server_post_promote.exe.config was used to help troubleshoot a Cisco defect that impacted email sent from programs running without a local Message Transfer Agent installed, 
+e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The workaround was to temporarily change the SMTP server to one that experienced the problem less often until the hotfix was applied.
+\code
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="activeDir" type="AcEnviron.DomainsSection, AcEnviron"/>
+  </configSections>
+  <activeDir>
+    <domains>
+      <add name="OMITTED1" server="mock1.abccorp.com" />
+      <add name="OMITTED2" server="mock2.xyzcorp.com" />
+    </domains>
+  </activeDir>
+  <appSettings>
+    <add key="IncludeOvrAboveTimeBasis" value="false" />
+    <add key="SMTPServer" value="omitted.xyzcorp.com" />
+    <add key="SMTPPort" value="25" />
+    <add key="MailFrom" value="buildAccnt@YourCompany.com" />
+    <add key="CcOnOverlap" value="UAT@YourCompany.com;Support@YourCompany.com" />
+    <add key="ParamFileCopy" value="NoParamFileCopy" />
+  </appSettings>
+  <system.diagnostics>
+    <assert assertuienabled="false"/>
+    <sources>
+      <source name="server_post_promote">
+        <listeners>
+          <remove name="Default" />
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+        </listeners>
+      </source>
+      <source name="System.Net">
+        <listeners>
+          <add name="System.Net"/>
+        </listeners>
+      </source>
+      <source name="System.Net.Sockets">
+        <listeners>
+          <add name="System.Net"/>
+        </listeners>
+      </source>
+      <source name="System.Net.Cache">
+        <listeners>
+          <add name="System.Net"/>
+        </listeners>
+      </source>
+    </sources>
+    <switches>
+      <add name="System.Net" value="Verbose"/>
+      <add name="System.Net.Sockets" value="Verbose"/>
+      <add name="System.Net.Cache" value="Verbose"/>
+    </switches>
+    <sharedListeners>
+      <add name="System.Net" type="System.Diagnostics.TextWriterTraceListener" initializeData="network.log" traceOutputOptions="DateTime" />
+    </sharedListeners>
+    <trace autoflush="true"/>
+  </system.diagnostics>
+  <startup> 
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+  </startup>
+</configuration>
+\endcode
+
+\par server_post_promote weekly log file
+<small>
+\verbatim
+...
+7/17/2014 5:25:17 PM
+Exception caught and logged in Email.send
+Insufficient system storage. The server response was: #4.3.1 queue full
+...
+\endverbatim
+</small>
+
+\par network.log in same folder as executable
+The date format is in UTC time zone, so it will not change irrespective of user's or server's culture or time zone.
+<small>
+\verbatim
+...
+System.Net.Sockets Verbose: 0 : [5144] Socket#32854180::Send()
+    DateTime=2014-07-17T21:25:16.4623217Z
+System.Net.Sockets Verbose: 0 : [5144] Data from Socket#32854180::Send
+    DateTime=2014-07-17T21:25:16.4623217Z
+System.Net.Sockets Verbose: 0 : [5144] 00000000 : 4D 41 49 4C 20 46 52 4F-4D 3A 3C 73 2D 61 63 63 : MAIL FROM:<s-acc
+    DateTime=2014-07-17T21:25:16.4623217Z
+System.Net.Sockets Verbose: 0 : [5144] 00000010 : 75 62 72 69 64 67 65 40-56 65 72 69 7A 6F 6E 57 : ubridge@VerizonW
+    DateTime=2014-07-17T21:25:16.4623217Z
+System.Net.Sockets Verbose: 0 : [5144] 00000020 : 69 72 65 6C 65 73 73 2E-63 6F 6D 3E 0D 0A       : ireless.com>..
+    DateTime=2014-07-17T21:25:16.4623217Z
+System.Net.Sockets Verbose: 0 : [5144] Exiting Socket#32854180::Send()             -> 46#46
+    DateTime=2014-07-17T21:25:16.4623217Z
+System.Net.Sockets Verbose: 0 : [5144] Socket#32854180::Receive()
+    DateTime=2014-07-17T21:25:16.4623217Z
+System.Net.Sockets Verbose: 0 : [5144] Data from Socket#32854180::Receive
+    DateTime=2014-07-17T21:25:17.5716967Z
+System.Net.Sockets Verbose: 0 : [5144] 00000000 : 34 35 32 20 23 34 2E 33-2E 31 20 71 75 65 75 65 : 452 #4.3.1 queue
+    DateTime=2014-07-17T21:25:17.5716967Z
+System.Net.Sockets Verbose: 0 : [5144] 00000010 : 20 66 75 6C 6C 0D 0A                            :  full..
+    DateTime=2014-07-17T21:25:17.5716967Z
+System.Net.Sockets Verbose: 0 : [5144] Exiting Socket#32854180::Receive()        -> 23#23
+    DateTime=2014-07-17T21:25:17.5716967Z
+System.Net Error: 0 : [5144] Exception in the SmtpClient#12289376::Send - Insufficient system storage. The server response was: #4.3.1 queue full
+    DateTime=2014-07-17T21:25:17.6029467Z
+System.Net Error: 0 : [5144]    at System.Net.Mail.MailCommand.CheckResponse(SmtpStatusCode statusCode, String response)
+   at System.Net.Mail.SmtpTransport.SendMail(MailAddress sender, MailAddressCollection recipients, String deliveryNotify, SmtpFailedRecipientException& exception)
+   at System.Net.Mail.SmtpClient.Send(MailMessage message)
+    DateTime=2014-07-17T21:25:17.8841967Z
+System.Net.Sockets Verbose: 0 : [5144] Socket#32854180::Dispose()
+    DateTime=2014-07-17T21:25:17.8841967Z
+...
+\endverbatim
+</small>
+*/
+
+/*! \example ListDynStreams.cs
+List all dynamic streams in the repository.
+\sa [AcDepots constructor](@ref AcUtils#AcDepots#AcDepots)
+*/
+
+/*! \example PromotionRights.cs
+Show the groups that have promotion rights on \e streams. Shows supporting \c app.config file XML and code.
+\sa [AcLocks constructor](@ref AcUtils#AcLocks#AcLocks), <a href="_lock_streams_8cs-example.html">LockStreams.cs</a>,
+
+\code
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+  </configSections>
+  <Streams>
+    <streams>
+      <add stream="MARS_MAINT" />
+      <add stream="JUPITER_DEV4" />
+      <add stream="NEPTUNE_UAT" />
+    </streams>
+  </Streams>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+  </startup>
+</configuration>
+\endcode
+*/
+
+/*! \example ActiveWSpaces.cs
+For \e depots show workspaces that have a default group and "DEV3" in their name. Shows supporting \c app.config file XML and code.
+\code
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+  </configSections>
+  <Depots>
+    <depots>
+      <add depot="MARS" />
+      <add depot="SATURN" />
+      <add depot="NEPTUNE" />
+      <add depot="JUPITER" />
+    </depots>
+  </Depots>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+  </startup>
+</configuration>
+\endcode
+*/
+
+/*! \example LatestPromotions.cs
+List all promote transactions that occurred in a depot within the past number of hours. 
+Give the depot name followed by the number of hours to query as command line arguments. 
+Shows supporting \c app.config file XML and code.
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <system.diagnostics>
+    <assert assertuienabled="false"/>
+    <sources>
+      <source name="LatestPromotions">
+        <listeners>
+          <remove name="Default" />
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+        </listeners>
+      </source>
+    </sources>
+  </system.diagnostics>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+  </startup>
+</configuration>
+\endcode
+*/
+
+/*! \example UserChanges.cs
+Show the changes made by a user in all depots during a time period. 
+Demonstrates AcUtils (\c AcUtils.dll) object instantiation and enumeration, [LINQ to XML](https://msdn.microsoft.com/en-us/library/bb387098.aspx), 
+and how results from one AccuRev command (\c hist) can be used as parameters for the next (\c annotate) for in-depth analysis.
+*/
+
+/*! \example StreamWkspaceMismatch.cs
+Show all workspaces whose names do not match their cooresponding stream name. Aids in troubleshooting a scenario that exists where 
+\c chws can complete without its corresponding \c chstream completing successfully. AccuRev defects 22175 and 27372.
+*/
+
+/*! \example LockStreams.cs
+Lock promotions to select streams across multiple depots for all except those in the specified group. 
+Shows supporting \c app.config file XML and code.
+\warning Be careful with this one since it changes the repository!
+\sa [AcLocks constructor](@ref AcUtils#AcLocks#AcLocks), <a href="_promotion_rights_8cs-example.html">PromotionRights.cs</a>
+
+\code
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+  </configSections>
+  <Depots>
+    <depots>
+      <add depot="JUPITER" />
+      <add depot="MARS" />
+      <add depot="VENUS" />
+      <add depot="NEPTUNE" />
+    </depots>
+  </Depots>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+  </startup>
+</configuration>
+\endcode
+*/
+
+/*! \example ShowRules.cs
+Show the rules a user set on his workspaces in all depots.
+\sa [AcRules constructor](@ref AcUtils#AcRules#AcRules) */
+
+/*! \example ShowPermissions.cs
+For a select group of users, list the depots each has permission to access based on their group memberships and ACL's. 
+Built-in types \b anyuser and \b authuser are unsupported. Shows supporting \c app.config file XML and code.
+\sa [AcDepots.canViewAsync](@ref AcUtils#AcDepots#canViewAsync)
+
+\code
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+  </configSections>
+  <activeDir>
+    <domains>
+      <add host="xyzdc.mycorp.com" path="DC=XYZ,DC=xy,DC=zcorp,DC=com"/>
+      <add host="abcdc.mycorp.com" path="DC=ABC,DC=ab,DC=com"/>
+    </domains>
+    <properties>
+    </properties >
+  </activeDir>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+  </startup>
+</configuration>
+\endcode
+*/
+
+/*! \page perfdemo
+Demo that shows the difference in performance between the synchronous and asynchronous creation of two large lists. 
+Results will vary but in this run the asynchronous way **reduced execution time by 35%**.  [100-((11/17)*100)]
+
+<small>
+\verbatim
+C:\Test\Demo\bin\Release>demo
+Lists initialized successfully.
+00:00:11 to complete asynchronously.
+Lists initialized successfully.
+00:00:17 to complete synchronously.
+\endverbatim
+</small>
+
+\code
+static void Main(string[] args)
+{
+	// initialize domains/user properties class variables _dc and _pc for AcUsers
+	initAppConfigData();
+
+    AcStopWatch swAsync = new AcStopWatch(logAsync);
+    using (new AcStopWatchMarker(swAsync))
+    {
+        Task<bool[]> arr = fooAsync();
+        if (arr != null && arr.Result.All(n => n == true))
+            Console.WriteLine("Lists initialized successfully.");
+        else
+            Console.WriteLine("One or more lists failed to initialize.");
+    }
+
+    AcStopWatch swSync = new AcStopWatch(logSync);
+    using (new AcStopWatchMarker(swSync))
+    {
+        if (fooSync())
+            Console.WriteLine("Lists initialized successfully.");
+        else
+            Console.WriteLine("One or more lists failed to initialize.");
+    }
+}
+
+private static void logSync(string elapsedTime)
+{
+    string msg = String.Format("{0} to complete synchronously.", elapsedTime);
+    Console.WriteLine(msg);
+}
+
+private static void logAsync(string elapsedTime)
+{
+    string msg = String.Format("{0} to complete asynchronously.", elapsedTime);
+    Console.WriteLine(msg);
+}
+
+private static async Task<bool[]> fooAsync()
+{
+	// all active users, no group membership initialization
+	AcUsers users = new AcUsers(_dc, _pc);
+	Task<bool> uini = users.initAsync();
+
+	// include all streams in the depots
+	// defaults to only those depots the script user has permission to view
+	AcDepots depots = new AcDepots();
+	Task<bool> dini = depots.initAsync();
+
+	// asynchronously await multiple asynchronous operations!
+	return await Task.WhenAll(uini, dini);
+}
+
+private static bool fooSync()
+{
+	// all active users, no group membership initialization
+	AcUsers users = new AcUsers(_dc, _pc);
+	Task<bool> uini = users.initAsync();
+	if (!uini.Result) return false;
+
+	// include all streams in the depots
+	// defaults to only those depots the script user has permission to view
+	AcDepots depots = new AcDepots();
+	Task<bool> dini = depots.initAsync();
+	if (!dini.Result) return false;
+
+	return true;
+}
+\endcode
+*/
+
+/*! \page licensing License
+\verbatim
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+\endverbatim
+
+AcUtils requires .NET Framework 4.6 or higher.
+Microsoft.Experimental.Collections.dll is available under the license <a href="http://www.microsoft.com/net/dotnet_library_license.htm">here</a>.
+*/
+
+/*! \page requirements AcUtils Requirements
+- AcUtils requires <a href="https://www.microsoft.com/en-us/download/details.aspx?id=48130">.NET Framework 4.6</a> or higher.
+- The user or service\\build account must be logged into [AccuRev](http://www.borland.com/en-GB/Products/Change-Management/AccuRev) 
+and have <tt>\\AccuRev\\bin</tt> in their \e Path environment variable.
+- AccuRev 5.6 was used during the development of AcUtils but the library should function well with other versions too, 
+albeit without the support for some newer features in later versions. When using AccuRev command processing functions 
+[AcCommand.runAsync](@ref AcUtils#AcCommand#runAsync) and [AcCommand.run](@ref AcUtils#AcCommand#run), 
+ensure the correct logic is used to determine if an [AcUtilsException](@ref AcUtils#AcUtilsException) should be thrown 
+based on AccuRev's program return value for the command and the version of AccuRev in use. To do so, 
+implement [ICmdValidate](@ref AcUtils#ICmdValidate) or override [CmdValidate.isValid](@ref AcUtils#CmdValidate#isValid) and pass 
+a reference to the object as the [validator](@ref AcUtils#AcCommand) second function argument.
+- [Microsoft.Experimental.Collections.dll](https://www.nuget.org/packages/Microsoft.Experimental.Collections) is required in order to:
+  - Build the AcUtils library (\c AcUtils.dll), as its Visual Studio project references this file.
+  - Use methods [AcDepot.getChildrenAsync](@ref AcUtils#AcDepot#getChildrenAsync) or 
+    [AcDepot.forStreamAndAllChildrenAsync](@ref AcUtils#AcDepot#forStreamAndAllChildrenAsync). 
+	In this case \c Microsoft.Experimental.Collections.dll must be deployed with the application.
+*/
