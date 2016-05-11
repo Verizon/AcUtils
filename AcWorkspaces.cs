@@ -441,7 +441,7 @@ namespace AcUtils
         /// </summary>
         /// <param name="depots">AcDepots creation defaults to the list of depots the script user has access rights to view based on their ACL permissions.</param>
         /// <param name="allWSpaces">\e true to include all workspaces, not just those that belong to the principal.</param>
-        /// <param name="includeHidden">\e true to include deactivated (removed) workspaces.</param>
+        /// <param name="includeHidden">\e true to include deactivated (removed) workspaces/reference trees.</param>
         /// <param name="includeRefTrees">\e true to include reference trees.</param>
         /*! \code
             // defaults to the list of depots the script user can view based on ACL permissions
@@ -510,8 +510,8 @@ namespace AcUtils
         #endregion
 
         /// <summary>
-        /// Get the list of workspaces in XML for all or the current user 
-        /// and optionally include deactivated workspaces in the list.
+        /// Get the list of workspaces in XML for all or the current user and optionally include 
+        /// inactive workspaces as per [AcWorkspaces constructor](@ref AcUtils#AcWorkspaces#AcWorkspaces) \e includeHidden parameter.
         /// </summary>
         /// <returns>AcResult initialized with the \c show command results, otherwise \e null on error.</returns>
         /*! \show_ <tt>show \<-fvx | -fvix\> \<-a | \> wspaces</tt> */
@@ -559,7 +559,8 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Get the list of reference trees in XML and optionally include those that are deactivated in the list.
+        /// Get the list of reference trees in XML and optionally include those that are inactive 
+        /// as per [AcWorkspaces constructor](@ref AcUtils#AcWorkspaces#AcWorkspaces) \e includeHidden parameter.
         /// </summary>
         /// <returns>AcResult initialized with the \c show command results, or \e null on error.</returns>
         /*! \show_ <tt>show \<-fvx | -fvix\> refs</tt> */

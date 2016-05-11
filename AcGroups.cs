@@ -179,8 +179,12 @@ namespace AcUtils
                         members.Add(name);
                     }
 
-                    AcPrincipal prncpl = getPrincipal(group);
-                    prncpl.Members = members;
+                    lock (_locker)
+                    {
+                        AcPrincipal prncpl = getPrincipal(group);
+                        prncpl.Members = members;
+                    }
+
                     ret = true; // operation succeeded
                 }
             }

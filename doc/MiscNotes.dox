@@ -100,7 +100,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcEnviron.DomainsSection, AcEnviron"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -113,7 +113,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
     <add key="SMTPServer" value="omitted.xyzcorp.com" />
     <add key="SMTPPort" value="25" />
     <add key="MailFrom" value="buildAccnt@YourCompany.com" />
-    <add key="CcOnOverlap" value="UAT@YourCompany.com;Support@YourCompany.com" />
+    <add key="CcOnOverlap" value="UAT@YourCompany.com; Support@YourCompany.com" />
     <add key="ParamFileCopy" value="NoParamFileCopy" />
   </appSettings>
   <system.diagnostics>
@@ -122,7 +122,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
       <source name="server_post_promote">
         <listeners>
           <remove name="Default" />
-          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
         </listeners>
       </source>
       <source name="System.Net">
@@ -214,14 +214,14 @@ List all dynamic streams in the repository.
 */
 
 /*! \example PromotionRights.cs
-Show the groups that have promotion rights on \e streams. Shows supporting \c app.config file XML and code.
-\sa [AcLocks constructor](@ref AcUtils#AcLocks#AcLocks), <a href="_lock_streams_8cs-example.html">LockStreams.cs</a>,
+Show the groups that have promotion rights on \e streams.
+\sa [AcLocks constructor](@ref AcUtils#AcLocks#AcLocks), <a href="_lock_streams_8cs-example.html">LockStreams.cs</a>
 
 \code
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Streams>
     <streams>
@@ -238,12 +238,12 @@ Show the groups that have promotion rights on \e streams. Shows supporting \c ap
 */
 
 /*! \example ActiveWSpaces.cs
-For \e depots show workspaces that have a default group and "DEV3" in their name. Shows supporting \c app.config file XML and code.
+For \e depots show workspaces that have a default group and "DEV3" in their name.
 \code
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -261,19 +261,49 @@ For \e depots show workspaces that have a default group and "DEV3" in their name
 */
 
 /*! \example LatestPromotions.cs
-List all promote transactions that occurred in a depot within the past number of hours. 
-Give the depot name followed by the number of hours to query as command line arguments. 
-Shows supporting \c app.config file XML and code.
+Creates an HTML file with the promote transactions that occurred in specific streams in select depots within the past specified number of hours.
 \code
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
+  <configSections>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+  </configSections>
+  <activeDir>
+    <domains>
+      <add host="xyzdc.yourcorp.com" path="DC=OMIT1,DC=ad,DC=yourcorp,DC=com"/>
+      <add host="abcdc.yourcorp.com" path="DC=OMIT2,DC=yourcorp,DC=com"/>
+    </domains>
+    <properties>
+      <add field="mobile" title="Mobile"/>
+    </properties>
+  </activeDir>
+  <Depots>
+    <depots>
+      <add depot="MARS"/>
+      <add depot="JUPITER"/>
+      <add depot="NEPTUNE"/>
+    </depots>
+  </Depots>
+  <Streams>
+    <streams>
+      <add stream="MARS_DEV4"/>
+      <add stream="JUPITER_DEV4"/>
+      <add stream="NEPTUNE_DEV4"/>
+    </streams>
+  </Streams>
+  <appSettings>
+    <add key="FromHoursAgo" value="24"/>
+    <add key="OutputFile" value="C:\Temp\LatestPromotions.html"/>
+  </appSettings>
   <system.diagnostics>
     <assert assertuienabled="false"/>
     <sources>
       <source name="LatestPromotions">
         <listeners>
-          <remove name="Default" />
-          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+          <remove name="Default"/>
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
         </listeners>
       </source>
     </sources>
@@ -297,8 +327,7 @@ Show all workspaces whose names do not match their cooresponding stream name. Ai
 */
 
 /*! \example LockStreams.cs
-Lock promotions to select streams across multiple depots for all except those in the specified group. 
-Shows supporting \c app.config file XML and code.
+Lock promotions to select streams across multiple depots for all except those in the specified group.
 \warning Be careful with this one since it changes the repository!
 \sa [AcLocks constructor](@ref AcUtils#AcLocks#AcLocks), <a href="_promotion_rights_8cs-example.html">PromotionRights.cs</a>
 
@@ -306,7 +335,7 @@ Shows supporting \c app.config file XML and code.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -329,14 +358,14 @@ Show the rules a user set on his workspaces in all depots.
 
 /*! \example ShowPermissions.cs
 For a select group of users, list the depots each has permission to access based on their group memberships and ACL's. 
-Built-in types \b anyuser and \b authuser are unsupported. Shows supporting \c app.config file XML and code.
+Built-in types \b anyuser and \b authuser are unsupported.
 \sa [AcDepots.canViewAsync](@ref AcUtils#AcDepots#canViewAsync)
 
 \code
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <activeDir>
     <domains>

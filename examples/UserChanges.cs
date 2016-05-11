@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-// Required references: AcUtils.dll, System.configuration, System.XML, System.Xml.Linq
+// Required references: AcUtils.dll, System.configuration, System.Xml.Linq
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -528,7 +528,8 @@ namespace AcUtils
         /// </summary>
         /// <param name="query">The query to iterate.</param>
         /// <returns>\e true if no failure occurred and initialization was successful, \e false otherwise.</returns>
-        /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
+        /// <exception cref="Exception">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
+        /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
         /*! \note <tt>show -fx locks</tt> XML attributes for stream name and [LockKind](@ref AcUtils#LockKind) 
              always exist. Other attributes exist only if they have values. */
         private bool runCommand(IEnumerable<XElement> query)

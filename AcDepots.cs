@@ -412,8 +412,9 @@ namespace AcUtils
         /// Get the list of child streams that have \e stream as their immediate parent (basis) stream.
         /// </summary>
         /// <param name="stream">Stream to query for child streams.</param>
-        /// <returns>Tuple bool \e true if children found and stream list, \e false if no children found, or \e null on error.</returns>
-        /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
+        /// <returns>\e true if children found and the list of child streams, \e false if no children found, or \e null on error.</returns>
+        /// <exception cref="Exception">caught and logged in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> 
+        /// on failure to handle a range of exceptions.</exception>
         /*! \code
             AcDepot depot = new AcDepot("MARS");
             if (!(await depot.initAsync())) return false; // operation failed, check log file
