@@ -859,5 +859,49 @@ namespace AcUtils
         {
             return this.SingleOrDefault(n => n.ID == ID);
         }
+
+        /// <summary>
+        /// Get the AcDepot object for stream \e name.
+        /// </summary>
+        /// <param name="name">Stream name to query.</param>
+        /// <returns>AcDepot object for stream \e name, otherwise \e null if not found.</returns>
+        public AcDepot getDepotForStream(string name)
+        {
+            AcDepot depot = null;
+            foreach (AcDepot d in AsReadOnly())
+            {
+                IEnumerable<AcStream> e = d.Streams.Where(n => String.Equals(n.Name, name));
+                AcStream s = e.SingleOrDefault();
+                if (s != null) // if found
+                {
+                    depot = d;
+                    break;
+                }
+            }
+
+            return depot;
+        }
+
+        /// <summary>
+        /// Get the AcStream object for stream \e name.
+        /// </summary>
+        /// <param name="name">Stream name to query.</param>
+        /// <returns>AcStream object for stream \e name, otherwise \e null if not found.</returns>
+        public AcStream getStream(string name)
+        {
+            AcStream stream = null;
+            foreach (AcDepot d in AsReadOnly())
+            {
+                IEnumerable<AcStream> e = d.Streams.Where(n => String.Equals(n.Name, name));
+                AcStream s = e.SingleOrDefault();
+                if (s != null)
+                {
+                    stream = s;
+                    break;
+                }
+            }
+
+            return stream;
+        }
     }
 }

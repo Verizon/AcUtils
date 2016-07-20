@@ -59,62 +59,11 @@ namespace AcUtils
     };
 
     /// <summary>
-    /// Custom class to sort by element status and then location.
-    /// </summary>
-    /*! \code
-        try
-        {
-            AcResult result = await AcCommand.runAsync(@"stat -fx -B -d -s ""NEPTUNE_DEV1_barnyrd""");
-            if (result == null || result.RetVal != 0) return false; // error occurred, check log file
-            Stat.init(result.CmdResult); // populate list using XML from the stat command
-            Stat.Elements.Sort(new ElementComparer());
-            foreach (Element elem in Stat.Elements)
-                Console.WriteLine(elem.ToString("LV"));
-        }
-
-        catch (AcUtilsException ecx)
-        {
-            string msg = String.Format("AcUtilsException caught and logged in Program.show{0}{1}", Environment.NewLine, ecx.Message);
-            Console.WriteLine(msg);
-        }
-
-        catch (Exception ecx)
-        {
-            string msg = String.Format("Exception caught and logged in Program.show{0}{1}", Environment.NewLine, ecx.Message);
-            Console.WriteLine(msg);
-        }
-        \endcode */
-    public class ElementComparer : IComparer<Element>
-    {
-        public int Compare(Element x, Element y)
-        {
-            int result;
-            if (Element.ReferenceEquals(x, y))
-                result = 0;
-            else
-            {
-                if (x == null)
-                    result = 1;
-                else if (y == null)
-                    result = -1;
-                else
-                {
-                    result = x.Status.CompareTo(y.Status);
-                    if (result == 0)
-                        result = x.Location.CompareTo(y.Location);
-                }
-            }
-
-            return result;
-        }
-    }
-
-    /// <summary>
     /// Defines the attributes of an element from the \c stat command.
     /// </summary>
     [Serializable]
     [DebuggerDisplay("{EID} {Location} {Status} {NamedVersion}")]
-    public sealed class Element : IFormattable
+    public sealed class Element : IFormattable, IEquatable<Element>, IComparable<Element>, IComparable
     {
         #region class variables
         private string _location;
@@ -127,15 +76,94 @@ namespace AcUtils
         private string _hierType;
         private int _virStreamNumber;
         private int _virVersionNumber;
-        private string _namedVersion;
+        private string _namedVersion; // named stream\version number format, e.g. MARS_STAGE\7 or MARS_STAGE_barnyrd\24
         private int _realStreamNumber;
         private int _realVersionNumber;
         private string _lapStream;
         // AccuRev tech support, overlapInWs "was put in place for a feature that was started 
-        // and then shelved and maybe removed in a future release. Currently it is always true."
+        // and then shelved and may be removed in a future release. Currently it is always true."
         // private bool _overlapInWs;
         private string _timeBasedStream;
         private string _status;
+        #endregion
+
+        #region Equality comparison
+        /*! \name Equality comparison */
+        /**@{*/
+        /// <summary>IEquatable implementation to determine the equality of instances of type Element.</summary>
+        /// <remarks>Uses the element's EID, virtual stream/version numbers, real stream/version numbers, 
+        /// and named version to compare instances.</remarks>
+        /// <param name="other">The Element object being compared to \e this instance.</param>
+        /// <returns>\e true if Element \e other is the same, \e false otherwise.</returns>
+        public bool Equals(Element other)
+        {
+            if (ReferenceEquals(other, null)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var left = Tuple.Create(EID, VirStreamNumber, VirVersionNumber, RealStreamNumber, RealVersionNumber, NamedVersion);
+            var right = Tuple.Create(other.EID, other.VirStreamNumber, other.VirVersionNumber,
+                other.RealStreamNumber, other.RealVersionNumber, other.NamedVersion);
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Overridden to determine equality.
+        /// </summary>
+        /// <returns>Return value of generic [Equals(Element)](@ref AcUtils#Element#Equals) version.</returns>
+        public override bool Equals(object other)
+        {
+            if (ReferenceEquals(other, null)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            if (GetType() != other.GetType()) return false;
+            return Equals(other as Element);
+        }
+
+        /// <summary>
+        /// Override appropriate for type Element.
+        /// </summary>
+        /// <returns>Hash of element's EID, virtual stream/version numbers, real stream/version numbers, 
+        /// and named version.</returns>
+        public override int GetHashCode()
+        {
+            var hash = Tuple.Create(EID, VirStreamNumber, VirVersionNumber, RealStreamNumber, RealVersionNumber, NamedVersion);
+            return hash.GetHashCode();
+        }
+        /**@}*/
+        #endregion
+
+        #region Order comparison
+        /*! \name Order comparison */
+        /**@{*/
+        /// <summary>
+        /// Generic IComparable implementation (default) for comparing Element objects 
+        /// to sort by [element location](@ref AcUtils#Element#Location).
+        /// </summary>
+        /// <param name="other">An Element object to compare with this instance.</param>
+        /// <returns>Value indicating the relative order of the Element objects based on location.</returns>
+        public int CompareTo(Element other)
+        {
+            int result;
+            if (Element.ReferenceEquals(this, other))
+                result = 0;
+            else
+                result = Location.CompareTo(other.Location);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Pre-generic interface implementation for code using reflection.
+        /// </summary>
+        /// <param name="other">An Element object to compare with this instance.</param>
+        /// <returns>Return value of generic [CompareTo(Element)](@ref AcUtils#Element#CompareTo) version.</returns>
+        /// <exception cref="ArgumentException">thrown if argument is not an Element object.</exception>
+        int IComparable.CompareTo(object other)
+        {
+            if (!(other is Element))
+                throw new ArgumentException("Argument is not an Element", "other");
+            Element o = (Element)other;
+            return this.CompareTo(o);
+        }
+        /**@}*/
         #endregion
 
         /// <summary>
@@ -231,7 +259,7 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Named stream\\version number designation, e.g. \c MARS_STAGE\17
+        /// Named stream\\version number designation, e.g. \c MARS_MAINT3\17 or \c MARS_MAINT3_barnyrd\22
         /// </summary>
         public string NamedVersion
         {
@@ -258,8 +286,10 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Stream where the element is located when it has (\e underlap)(\e member) or (\e overlap)(\e member) status.
+        /// Stream where the element is located when it has (\e underlap)(\e member) or (\e overlap)(\e member) status. 
         /// </summary>
+        /// <remarks>Include the \c -B option in the \c stat command to initialize this field.</remarks>
+        /*! \sa [Example XML from stat command](@ref findOvrUnder) */
         public string LapStream
         {
             get { return _lapStream ?? String.Empty; }
@@ -277,7 +307,7 @@ namespace AcUtils
         /// The \c -fox option is required to initialize this property. The \c -o option is required in all cases. 
         /// The XML emitted via \c -fx includes the element-ID, so there's no need to include 'e' as in \c -foex to ensure 
         /// [Element.EID](@ref AcUtils#Element#EID) is initialized.</remarks>
-        /*! \sa [Example XML from stat](@ref findOvrUnder) */
+        /*! \sa [Example XML from stat command](@ref findOvrUnder) */
         public string TimeBasedStream
         {
             get { return _timeBasedStream ?? String.Empty; }
@@ -297,7 +327,7 @@ namespace AcUtils
         /// <summary>
         /// The ToString implementation.
         /// </summary>
-        /// <param name="format">The format specifier to use, e.g. <b>Console.WriteLine(user.ToString("fs"));</b></param>
+        /// <param name="format">The format specifier to use, e.g. <b>Console.WriteLine(elem.ToString("fs"));</b></param>
         /// <param name="provider">Allow clients to format output for their own types 
         /// using [ICustomFormatter](https://msdn.microsoft.com/en-us/library/system.icustomformatter.aspx).</param>
         /// <returns>The formatted string.</returns>
@@ -314,7 +344,7 @@ namespace AcUtils
         /// \arg \c H "Hierarchy type" of the element, one of two possible values: \e parallel or \e serial.
         /// \arg \c V Virtual stream\\version number format, e.g. \c 5\12
         /// \arg \c R Real stream\\version number format.
-        /// \arg \c N The named stream_name\\version_number designation, e.g. \c MARS_STAGE\\7
+        /// \arg \c N The named stream-name\\version-number designation, e.g. \c MARS_STAGE\7 or \c MARS_STAGE_barnyrd\24
         /// \arg \c L Stream where the element is located when it has (\e underlap)(\e member) or (\e overlap)(\e member) status.
         /// \arg \c TB Name of first time-based stream found when <tt>stat -s \<stream\> -o -B -fox</tt> is used to retrieve elements with (\e overlap) and/or (\e underlap) status.
         /// \arg \c S The version's status, e.g. (\e kept)(\e member)
@@ -370,7 +400,7 @@ namespace AcUtils
                     return String.Format("{0}\\{1}", VirStreamNumber, VirVersionNumber);
                 case "R": // real stream\\version number designation, e.g. 5\12
                     return String.Format("{0}\\{1}", RealStreamNumber, RealVersionNumber);
-                case "N": // named stream\version number format, e.g. MARS_STAGE\17
+                case "N": // named stream\version number format, e.g. MARS_STAGE\7 or MARS_STAGE_barnyrd\24
                     return NamedVersion;
                 case "L": // stream where element is located when it has (\e underlap)(\e member) or (\e overlap)(\e member) status
                     return LapStream;
@@ -411,17 +441,17 @@ namespace AcUtils
 
         catch (AcUtilsException ecx)
         {
-            string msg = String.Format("AcUtilsException caught and logged in Program.show{0}{1}", Environment.NewLine, ecx.Message);
+            string msg = String.Format("AcUtilsException caught in Program.show{0}{1}", Environment.NewLine, ecx.Message);
             Console.WriteLine(msg);
         }
 
         catch (Exception ecx)
         {
-            string msg = String.Format("Exception caught and logged in Program.show{0}{1}", Environment.NewLine, ecx.Message);
+            string msg = String.Format("Exception caught in Program.show{0}{1}", Environment.NewLine, ecx.Message);
             Console.WriteLine(msg);
         }
         \endcode */
-        [Serializable]
+    [Serializable]
     public static class Stat
     {
         #region class variables
@@ -511,6 +541,24 @@ namespace AcUtils
             }
 
             return ret;
+        }
+
+        /// <summary>
+        /// Get the Element object that corresponds to the \e version in a [transaction](@ref AcUtils#Transaction) from the \c hist command.
+        /// </summary>
+        /// <param name="version">The Version object to query.</param>
+        /// <returns>The Element object that corresponds to \e version if found, otherwise \e null.</returns>
+        public static Element getElement(Version version)
+        {
+            IEnumerable<Element> filter = from e in _elements
+                                 where e.EID == version.EID &&
+                                 e.VirStreamNumber == version.VirStreamNumber && e.VirVersionNumber == version.VirVersionNumber &&
+                                 e.RealStreamNumber == version.RealStreamNumber && e.RealVersionNumber == version.RealVersionNumber &&
+                                 (e.NamedVersion.StartsWith(version.Stream) || e.NamedVersion.StartsWith(version.Workspace))
+                                 select e;
+
+            Element element = filter.SingleOrDefault();
+            return element;
         }
     }
 }

@@ -100,7 +100,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.2.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -221,7 +221,7 @@ Show the groups that have promotion rights on \e streams.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.2.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Streams>
     <streams>
@@ -243,7 +243,7 @@ For \e depots show workspaces that have a default group and "DEV3" in their name
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.2.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -266,9 +266,9 @@ Creates an HTML file with the promote transactions that occurred in specific str
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.2.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.2.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.2.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -322,7 +322,7 @@ and how results from one AccuRev command (\c hist) can be used as parameters for
 */
 
 /*! \example StreamWkspaceMismatch.cs
-Show all workspaces whose names do not match their cooresponding stream name. Aids in troubleshooting a scenario that exists where 
+Show all workspaces whose names do not match their corresponding stream name. Aids in troubleshooting a scenario that exists where 
 \c chws can complete without its corresponding \c chstream completing successfully. AccuRev defects 22175 and 27372.
 */
 
@@ -335,7 +335,7 @@ Lock promotions to select streams across multiple depots for all except those in
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.2.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -356,6 +356,10 @@ Lock promotions to select streams across multiple depots for all except those in
 Show the rules a user set on his workspaces in all depots.
 \sa [AcRules constructor](@ref AcUtils#AcRules#AcRules) */
 
+/*! \example StreamsOverUnder.cs
+List all dynamic streams in the repository that have elements with (\e underlap)(\e member) or (\e overlap)(\e member) status.
+\sa [Stat](@ref AcUtils#Stat), [Example XML from stat command](@ref findOvrUnder) */
+
 /*! \example ShowPermissions.cs
 For a select group of users, list the depots each has permission to access based on their group memberships and ACL's. 
 Built-in types \b anyuser and \b authuser are unsupported.
@@ -365,7 +369,7 @@ Built-in types \b anyuser and \b authuser are unsupported.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.1.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.2.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <activeDir>
     <domains>

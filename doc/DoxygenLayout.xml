@@ -30,8 +30,8 @@ limitations under the License. -->
       <tab type="namespacemembers" visible="no" title="" intro=""/>
     </tab>
     <tab type="classes" visible="yes" title="Classes">
-      <tab type="classlist" visible="yes" title="Class List" intro="All classes in AcTools"/>
-      <tab type="classmembers" visible="yes" title="Class Members" intro="All members in AcTools"/>
+      <tab type="classlist" visible="yes" title="Class List" intro="All classes in AcUtils"/>
+      <tab type="classmembers" visible="yes" title="Class Members" intro="All members in AcUtils"/>
       <tab type="classindex" visible="$ALPHABETICAL_INDEX" title="Class Index"/> 
     </tab>
     <tab type="filelist" visible="yes" title="Files" intro="Documented files"/>

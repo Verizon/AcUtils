@@ -31,16 +31,16 @@ namespace AcUtils
     public sealed class Transaction : IFormattable, IEquatable<Transaction>, IComparable<Transaction>, IComparable
     {
         #region class variables
-        private int _id;
-        private string _type;
-        private DateTime _time;
-        private string _user;
-        private string _streamName; // promote only
-        private int _streamNumber; // ..
-        private string _fromStreamName; // ..
-        private int _fromStreamNumber; // ..
-        private string _comment;
-        private List<AcUtils.Version> _versions = new List<AcUtils.Version>();
+        private int _id; // transaction ID
+        private string _type; // transaction type, e.g. promote, keep, add, etc.
+        private DateTime _time; // transaction time
+        private string _user; // user's principal name who executed the transaction
+        private string _streamName; // stream name where the transaction occurred (promote only)
+        private int _streamNumber; // stream number for same
+        private string _fromStreamName; // name of the source stream (promote only)
+        private int _fromStreamNumber; // stream number for same
+        private string _comment; // comment for the transaction as given by the user
+        private List<AcUtils.Version> _versions = new List<AcUtils.Version>(); // list of versions for this transaction
         private List<Move> _moves = new List<Move>();
         private List<CompRule> _compRules = new List<CompRule>();
         private List<Tuple<AcStream, AcWorkspace>> _streams = new List<Tuple<AcStream, AcWorkspace>>();
@@ -331,58 +331,11 @@ namespace AcUtils
     }
 
     /// <summary>
-    /// Custom class to sort by element location.
-    /// </summary>
-    /*! \code
-        try {
-            AcResult result = await AcCommand.runAsync(@"hist -p ""NEPTUNE"" -t ""2013/10/25 14:01:40 - 2013/10/25 11:50:50"" -k promote -fevx");
-            if (result == null || result.RetVal != 0) return false; // error occurred, check log file
-            Hist.init(result.CmdResult); // populate list using XML from the hist command
-            List<Transaction> transactions = Hist.Transactions;
-            Transaction tran = transactions[0]; // get the first transaction from the list
-            List<AcUtils.Version> versions = tran.Versions; // get the versions in this transaction
-            versions.Sort(new VersionComparer()); // our custom sort
-            foreach (AcUtils.Version version in versions)
-                Console.WriteLine(version.ToString("LV"));
-        }
-
-        catch (AcUtilsException ecx) {
-            string msg = String.Format("AcUtilsException caught and logged in Program.show{0}{1}", Environment.NewLine, ecx.Message);
-            Console.WriteLine(msg);
-        }
-
-        catch (Exception ecx) {
-            string msg = String.Format("Exception caught and logged in Program.show{0}{1}", Environment.NewLine, ecx.Message);
-            Console.WriteLine(msg);
-        }
-    \endcode */
-    public class VersionComparer : IComparer<Version>
-    {
-        public int Compare(Version x, Version y)
-        {
-            int result;
-            if (Version.ReferenceEquals(x, y))
-                result = 0;
-            else
-            {
-                if (x == null)
-                    result = 1;
-                else if (y == null)
-                    result = -1;
-                else
-                    result = x.Location.CompareTo(y.Location);
-            }
-
-            return result;
-        }
-    }
-
-    /// <summary>
     /// Defines the attributes of a single version object in a transaction.
     /// </summary>
     [Serializable]
     [DebuggerDisplay("{EID} {ElementType} {Location}")]
-    public sealed class Version : IFormattable
+    public sealed class Version : IFormattable, IEquatable<Version>, IComparable<Version>, IComparable
     {
         #region class variables
         private string _location;
@@ -410,6 +363,84 @@ namespace AcUtils
         /// Default constructor. It is called internally and not by user code.
         /// </summary>
         internal Version() { }
+
+        #region Equality comparison
+        /*! \name Equality comparison */
+        /**@{*/
+        /// <summary>IEquatable implementation to determine the equality of instances of type Version.</summary>
+        /// <remarks>Uses the version's EID, virtual stream/version numbers, workspace name 
+        /// and real version number to compare instances.</remarks>
+        /// <param name="other">The Version object being compared to \e this instance.</param>
+        /// <returns>\e true if Version \e other is the same, \e false otherwise.</returns>
+        public bool Equals(Version other)
+        {
+            if (ReferenceEquals(other, null)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var left = Tuple.Create(EID, VirStreamNumber, VirVersionNumber, Workspace, RealVersionNumber);
+            var right = Tuple.Create(other.EID, other.VirStreamNumber, other.VirVersionNumber, other.Workspace, other.RealVersionNumber);
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Overridden to determine equality.
+        /// </summary>
+        /// <returns>Return value of generic [Equals(Version)](@ref Version#Equals) version.</returns>
+        public override bool Equals(object other)
+        {
+            if (ReferenceEquals(other, null)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            if (GetType() != other.GetType()) return false;
+            return Equals(other as Version);
+        }
+
+        /// <summary>
+        /// Override appropriate for type Version.
+        /// </summary>
+        /// <returns>Hash of version's EID, virtual stream/version numbers, workspace name 
+        /// and real version number.</returns>
+        public override int GetHashCode()
+        {
+            var hash = Tuple.Create(EID, VirStreamNumber, VirVersionNumber, Workspace, RealVersionNumber);
+            return hash.GetHashCode();
+        }
+        /**@}*/
+        #endregion
+
+        #region Order comparison
+        /*! \name Order comparison */
+        /**@{*/
+        /// <summary>
+        /// Generic IComparable implementation (default) for comparing Version objects 
+        /// to sort by [element location](@ref AcUtils#Version#Location).
+        /// </summary>
+        /// <param name="other">A Version object to compare with this instance.</param>
+        /// <returns>Value indicating the relative order of the Version objects based on location.</returns>
+        public int CompareTo(Version other)
+        {
+            int result;
+            if (Version.ReferenceEquals(this, other))
+                result = 0;
+            else
+                result = Location.CompareTo(other.Location);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Pre-generic interface implementation for code using reflection.
+        /// </summary>
+        /// <param name="other">A Version object to compare with this instance.</param>
+        /// <returns>Return value of generic [CompareTo(Version)](@ref AcUtils#Version#CompareTo) version.</returns>
+        /// <exception cref="ArgumentException">thrown if argument is not a Version object.</exception>
+        int IComparable.CompareTo(object other)
+        {
+            if (!(other is Version))
+                throw new ArgumentException("Argument is not a Version", "other");
+            Version o = (Version)other;
+            return this.CompareTo(o);
+        }
+        /**@}*/
+        #endregion
 
         /// <summary>
         /// Depot-relative path of the element.
@@ -587,7 +618,7 @@ namespace AcUtils
         /// <summary>
         /// The ToString implementation.
         /// </summary>
-        /// <param name="format">The format specifier to use, e.g. <b>Console.WriteLine(user.ToString("r"));</b></param>
+        /// <param name="format">The format specifier to use, e.g. <b>Console.WriteLine(ver.ToString("r"));</b></param>
         /// <param name="provider">Allow clients to format output for their own types 
         /// using [ICustomFormatter](https://msdn.microsoft.com/en-us/library/system.icustomformatter.aspx).</param>
         /// <returns>The formatted string.</returns>
@@ -843,20 +874,19 @@ namespace AcUtils
             {
                 Console.WriteLine(tran.ToString("LV"));
                 List<AcUtils.Version> versions = tran.Versions; // get the versions in this transaction
-                versions.Sort(new VersionComparer()); // order by element location
-                foreach (AcUtils.Version ver in versions)
+                foreach (AcUtils.Version ver in versions.OrderBy(n => n))
                     Console.WriteLine(ver.ToString("LV"));
                 Console.WriteLine();
             }
         }
 
         catch (AcUtilsException ecx) {
-            string msg = String.Format("AcUtilsException caught and logged in Program.show{0}{1}", Environment.NewLine, ecx.Message);
+            string msg = String.Format("AcUtilsException caught in Program.show{0}{1}", Environment.NewLine, ecx.Message);
             Console.WriteLine(msg);
         }
 
         catch (Exception ecx) {
-            string msg = String.Format("Exception caught and logged in Program.show{0}{1}", Environment.NewLine, ecx.Message);
+            string msg = String.Format("Exception caught in Program.show{0}{1}", Environment.NewLine, ecx.Message);
             Console.WriteLine(msg);
         }
     \endcode */
