@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -56,7 +57,9 @@ namespace AcUtils
         private bool _dynamicOnly; // true if request is for dynamic streams only
         private bool _includeHidden; // true if removed streams should be included in the list
         internal AcStreams _streams; // list of streams in this depot as per constructor parameters
-        [NonSerialized] private MultiValueDictionary<int, int> _hierarchy; // [parent,children]
+        [NonSerialized] private Task<MultiValueDictionary<int, int>> _hierarchy; // [parent,children]
+        [NonSerialized] private object _hierSync = null;
+        [NonSerialized] private bool _hierInit;
         #endregion
 
         #region object construction:
@@ -381,29 +384,32 @@ namespace AcUtils
         /// </summary>
         /// <param name="stream">Top-level stream to begin the operation with.</param>
         /// <param name="cb">Delegate to invoke for each stream.</param>
+        /// <param name="includeWSpaces">\e true to include workspaces in the list that have \e stream as their backing stream.</param>
         /// <returns>\e true if operation succeeded with no errors, \e false on error.</returns>
+        /*! \pre Using \e includeWSpaces to include workspaces requires that all stream types be specified at AcDepot 
+             object creation as per the \e dynamicOnly=false (default) constructor parameter. */
         /*! \code
-            AcDepot depot = new AcDepot("NEPTUNE");
+            AcDepot depot = new AcDepot("NEPTUNE", true); // true for dynamic streams only
             if (!(await depot.initAsync()))
-                return false;
+                return false; // error occurred, check log file
 
-            // list stream names beginning with NEPTUNE_DEV2 and all child streams in its hierarchy
+            // list streams beginning with NEPTUNE_DEV2 and its hierarchy
             AcStream stream = depot.getStream("NEPTUNE_DEV2");
             if (!(await depot.forStreamAndAllChildrenAsync(stream, n => Console.WriteLine(n))))
-                return false;
+                return false; // ..
             \endcode */
         /*! \sa [AcDepot.getChildrenAsync](@ref AcUtils#AcDepot#getChildrenAsync) */
         /*! \attention To use \e forStreamAndAllChildrenAsync you must deploy 
             <a href="https://www.nuget.org/packages/Microsoft.Experimental.Collections">Microsoft.Experimental.Collections.dll</a> with your application. */
-        public async Task<bool> forStreamAndAllChildrenAsync(AcStream stream, Action<AcStream> cb)
+        public async Task<bool> forStreamAndAllChildrenAsync(AcStream stream, Action<AcStream> cb, bool includeWSpaces = false)
         {
             cb(stream);
-            var children = await getChildrenAsync(stream);
+            var children = await getChildrenAsync(stream, includeWSpaces);
             if (children == null) return false; //  operation failed, check log file
             if (children.Item1 == null) return false; // ..
             if (children.Item1 == true) // if children exist
                 foreach (AcStream child in children.Item2)
-                    await forStreamAndAllChildrenAsync(child, cb);
+                    await forStreamAndAllChildrenAsync(child, cb, includeWSpaces);
 
             return true;
         }
@@ -412,15 +418,17 @@ namespace AcUtils
         /// Get the list of child streams that have \e stream as their immediate parent (basis) stream.
         /// </summary>
         /// <param name="stream">Stream to query for child streams.</param>
+        /// <param name="includeWSpaces">\e true to include workspaces in the list that have \e stream as their backing stream.</param>
         /// <returns>\e true if children found and the list of child streams, \e false if no children found, or \e null on error.</returns>
-        /// <exception cref="Exception">caught and logged in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> 
-        /// on failure to handle a range of exceptions.</exception>
+        /*! \pre Using \e includeWSpaces to include workspaces in the list requires that all stream types be specified at AcDepot 
+             object creation as per the \e dynamicOnly=false (default) constructor parameter. */
         /*! \code
-            AcDepot depot = new AcDepot("MARS");
-            if (!(await depot.initAsync())) return false; // operation failed, check log file
+            AcDepot depot = new AcDepot("MARS"); // includes workspace streams
+            if (!(await depot.initAsync()))
+                return false; // operation failed, check log file
 
             AcStream stage = depot.getStream("MARS_STAGE");
-            var children = await depot.getChildrenAsync(stage);
+            var children = await depot.getChildrenAsync(stage, true); // true to include workspaces off MARS_STAGE
             bool? res = children.Item1;
             if (res == null) return false; // operation failed, check log file
 
@@ -432,35 +440,26 @@ namespace AcUtils
                 foreach (AcStream child in list)
                     Console.WriteLine(child);
             }
-            ...
-            MARS_MAINT
-            MARS_UAT
             \endcode */
         /*! \sa [AcDepot.forStreamAndAllChildrenAsync](@ref AcUtils#AcDepot#forStreamAndAllChildrenAsync) */
         /*! \attention To use \e getChildrenAsync you must deploy 
             <a href="https://www.nuget.org/packages/Microsoft.Experimental.Collections">Microsoft.Experimental.Collections.dll</a> with your application. */
-        public async Task<Tuple<bool?, IList<AcStream>>> getChildrenAsync(AcStream stream)
+        public async Task<Tuple<bool?, IList<AcStream>>> getChildrenAsync(AcStream stream, bool includeWSpaces = false)
         {
-            bool? ret = null;
             IList<AcStream> children = null;
+            if (stream.Type == StreamType.workspace)
+                return Tuple.Create((bool?)false, children); // workspaces don't have children
+
+            bool? ret = null;
+            // thread safe one-time stream hierarchy initialization
+            // see "C# Lazy Initialization && Race-to-initialize" http://stackoverflow.com/questions/11555755/c-sharp-lazy-initialization-race-to-initialize
+            await LazyInitializer.EnsureInitialized(ref _hierarchy, ref _hierInit, ref _hierSync, 
+                async () => await getHierarchyAsync(includeWSpaces));
+            if (_hierarchy == null)
+                return Tuple.Create(ret, children); // initialization failed, check log file
+
             IReadOnlyCollection<int> list = null;
-            try
-            {
-                // one-time stream hierarchy initialization (thread safe)
-                Lazy<Task<bool>> hini = new Lazy<Task<bool>>(initHierarchyAsync, true);
-                if (!(await hini.Value)) // referencing Value runs initHierarchyAsync()
-                    return Tuple.Create(ret, children); // initialization failed, check log file
-
-                ret = _hierarchy.TryGetValue(stream.ID, out list);
-            }
-
-            catch (Exception ecx)
-            {
-                string msg = String.Format("Exception caught and logged in AcDepot.getChildrenAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
-            }
-
+            ret = _hierarchy.Result.TryGetValue(stream.ID, out list);
             if (ret == true)
             {
                 children = new List<AcStream>(list.Count);
@@ -475,56 +474,70 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Called to initialize and store the depot's stream and workspace hierarchy information.
+        /// Get the depot's stream and workspace (optional) hierarchy relationship data from AccuRev. 
+        /// This method is called internally and not by user code.
         /// </summary>
-        /// <returns>\e true if no exception was thrown and operation succeeded, \e false otherwise.</returns>
+        /// <param name="includeWSpaces">\e true to include workspaces in the list.</param>
+        /// <returns>Fully initialized [MultiValueDictionary](https://www.nuget.org/packages/Microsoft.Experimental.Collections) 
+        /// object for the depot with [parent(key),children(values)] basis/stream ID's if no exception was thrown 
+        /// and the operation succeeded, otherwise \e null on error.</returns>
         /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c show command failure.</exception>
         /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
-        /*! \show_ <tt>show -p \<depot\> -fx -s 1 -r streams</tt> */
-        private async Task<bool> initHierarchyAsync()
+        /*! \pre Using \e includeWSpaces to include workspaces in the list requires that all stream types be specified at AcDepot 
+             object creation as per the \e dynamicOnly=false (default) constructor parameter. */
+        /*! \show_ <tt>show -p \<depot\> [-fix | -fx] -s 1 -r streams</tt> */
+        /*! \attention This method requires that you deploy 
+            <a href="https://www.nuget.org/packages/Microsoft.Experimental.Collections">Microsoft.Experimental.Collections.dll</a> with your application. */
+        private async Task<MultiValueDictionary<int, int>> getHierarchyAsync(bool includeWSpaces = false)
         {
-            bool ret = false; // assume failure
+            MultiValueDictionary<int, int> hierarchy = null;
             try
             {
-                string cmd = String.Format(@"show -p ""{0}"" -fx -s 1 -r streams", this);
+                string option = _includeHidden ? "-fix" : "-fx";
+                string cmd = String.Format(@"show -p ""{0}"" {1} -s 1 -r streams", this, option);
                 AcResult r = await AcCommand.runAsync(cmd);
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> filter =
-                        from s in xml.Descendants("stream")
-                        where String.Equals((string)s.Attribute("type"), "normal")
-                        select s;
+                    IEnumerable<XElement> filter;
+                    if (includeWSpaces)
+                        filter = from s in xml.Descendants("stream")
+                                 select s;
+                    else
+                        filter = from s in xml.Descendants("stream")
+                                 where !String.Equals((string)s.Attribute("type"), "workspace") // all except workspaces
+                                 select s;
 
-                    _hierarchy = new MultiValueDictionary<int, int>();
+                    int capacity = filter.Count();
+                    hierarchy = new MultiValueDictionary<int, int>(capacity);
                     foreach (XElement e in filter)
                     {
-                        //  XML attribute basisStreamNumber does not exist in the case of root streams
+                        // XML attribute basisStreamNumber does not exist in the case of root streams
                         int parent = (int?)e.Attribute("basisStreamNumber") ?? -1;
                         int child = (int)e.Attribute("streamNumber");
-                        _hierarchy.Add(parent, child);
+                        hierarchy.Add(parent, child);
                     }
-
-                    ret = true; // operation succeeded
                 }
             }
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcDepot.initHierarchyAsync{0}{1}",
+                string msg = String.Format("AcUtilsException caught and logged in AcDepot.getHierarchyAsync{0}{1}",
                     Environment.NewLine, ecx.Message);
                 AcDebug.Log(msg);
+                hierarchy = null;
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcDepot.initHierarchyAsync{0}{1}",
+                string msg = String.Format("Exception caught and logged in AcDepot.getHierarchyAsync{0}{1}",
                     Environment.NewLine, ecx.Message);
                 AcDebug.Log(msg);
+                hierarchy = null;
             }
 
-            return ret;
+            return hierarchy;
         }
 
         /// <summary>
@@ -536,6 +549,8 @@ namespace AcUtils
         /// <returns>Full path of the list file <tt>\%APPDATA\%\\AcTools\\<prog_name\>\\<depot_name\>.streams</tt> if found, otherwise \e null.<br>
         /// Example: <tt>"C:\Users\barnyrd\AppData\Roaming\AcTools\FooApp\NEPTUNE.streams"</tt>.</param>
         /// </returns>
+        /// <exception cref="Exception">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
+        /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
         internal string listFile()
         {
             string listfile = null;
@@ -639,6 +654,9 @@ namespace AcUtils
     {
         #region class variables
         private AcPermissions _permissions;
+        [NonSerialized] private Task<bool> _depotPermObj;
+        [NonSerialized] private object _permSync = null;
+        [NonSerialized] private bool _permInit;
         private bool _dynamicOnly; // true if request is for dynamic streams only
         private bool _includeHidden; // true if removed streams should be included in the list
         [NonSerialized] private readonly object _locker = new object();
@@ -736,7 +754,6 @@ namespace AcUtils
         //@}
         #endregion
 
-
         #pragma warning disable 0642
         /// <summary>
         /// Get the list of depots \e user has permission to view based on their principal name and group membership 
@@ -750,16 +767,16 @@ namespace AcUtils
         public async Task<string> canViewAsync(AcUser user)
         {
             // create permissions object as a singleton (thread safe)
-            Func<Task<bool>> permissions = 
-                delegate()
+            // see "C# Lazy Initialization && Race-to-initialize" http://stackoverflow.com/questions/11555755/c-sharp-lazy-initialization-race-to-initialize
+            await LazyInitializer.EnsureInitialized(ref _depotPermObj, ref _permInit, ref _permSync,
+                async () =>
                 {
                     _permissions = new AcPermissions(PermKind.depot);
-                    return (_permissions.initAsync());
-                };
+                    return await _permissions.initAsync();
+                });
 
-            Lazy<Task<bool>> pini = new Lazy<Task<bool>>(permissions, true);
-            if (!(await pini.Value)) // referencing Value invokes our delegate
-                return null; // initialization failed, check log file
+            if (_depotPermObj.Result == false)
+                return null; // initialization failure, check log file
 
             // get the membership list for the user (includes explicit and implicit membership)
             SortedSet<string> members = user.Principal.Members;
