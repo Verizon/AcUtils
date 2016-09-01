@@ -384,7 +384,7 @@ namespace AcUtils
         /// </summary>
         /// <param name="stream">Top-level stream to begin the operation with.</param>
         /// <param name="cb">Delegate to invoke for each stream.</param>
-        /// <param name="includeWSpaces">\e true to include workspaces in the list that have \e stream as their backing stream.</param>
+        /// <param name="includeWSpaces">\e true to include workspaces in the list.</param>
         /// <returns>\e true if operation succeeded with no errors, \e false on error.</returns>
         /*! \pre Using \e includeWSpaces to include workspaces requires that all stream types be specified at AcDepot 
              object creation as per the \e dynamicOnly=false (default) constructor parameter. */
