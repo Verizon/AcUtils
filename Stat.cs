@@ -187,7 +187,7 @@ namespace AcUtils
         /// <summary>
         /// UNIX/Linux systems only: \e true if the executable bit is set, \e false if cleared.
         /// </summary>
-        /*! \sa [AccuRev chmode command](http://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/5.6/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_chmod.html) */
+        /*! \sa [AccuRev chmode command](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_chmod.html) */
         public bool Executable
         {
             get { return _executable; }
@@ -478,7 +478,7 @@ namespace AcUtils
 
         /// <summary>
         /// Populate this list with elements from the XML emitted by the 
-        /// [stat](http://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/5.6/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_stat.html#1283989) command.
+        /// [stat](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_stat.html#1283989) command.
         /// </summary>
         /// <param name="xml">XML from the AccuRev \c stat command.</param>
         /// <returns>\e true if parsing was successful, \e false otherwise.</returns>

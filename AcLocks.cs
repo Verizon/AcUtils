@@ -420,6 +420,9 @@ namespace AcUtils
         /*! \show_ <tt>show -fx locks</tt> */
         public async Task<bool> initAsync(DepotsCollection depots)
         {
+            AcDepots dlist = new AcDepots();
+            if (!(await dlist.initAsync(depots))) return false;
+
             bool ret = false; // assume failure
             try
             {
@@ -427,24 +430,11 @@ namespace AcUtils
                 AcResult r = await AcCommand.runAsync(cmd);
                 if (r != null && r.RetVal == 0)
                 {
-                    List<AcDepot> list = new List<AcDepot>(depots.Count);
-                    List<Task<bool>> tasks = new List<Task<bool>>(depots.Count);
-                    foreach (DepotElement de in depots)
-                    {
-                        AcDepot depot = new AcDepot(de.Depot);
-                        list.Add(depot);
-                        tasks.Add(depot.initAsync());
-                    }
-
-                    bool[] arr = await Task.WhenAll(tasks);
-                    if (arr == null || arr.Any(n => n == false)) // if any failed
-                        return false;
-
                     bool result = true;
                     XElement xml = XElement.Parse(r.CmdResult);
-                    for (int ii = 0; ii < list.Count && result; ii++)
+                    for (int ii = 0; ii < dlist.Count && result; ii++)
                     {
-                        AcDepot depot = list[ii];
+                        AcDepot depot = dlist[ii];
                         IEnumerable<XElement> query = from e in xml.Descendants("Element")
                                                       join AcStream s in depot.Streams on (string)e.Attribute("Name") equals s.Name
                                                       select e;
@@ -494,11 +484,7 @@ namespace AcUtils
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
                     IEnumerable<XElement> query = from e in xml.Descendants("Element")
-                                                  where streams.OfType<StreamElement>().Any(
-                                                    delegate(StreamElement se)
-                                                    {
-                                                        return String.Equals(se.Stream, (string)e.Attribute("Name"));
-                                                    })
+                                                  where streams.OfType<StreamElement>().Any(se => String.Equals(se.Stream, (string)e.Attribute("Name")))
                                                   select e;
                     ret = runCommand(query);
                 }

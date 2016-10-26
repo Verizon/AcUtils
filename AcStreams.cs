@@ -268,6 +268,16 @@ namespace AcUtils
             internal set { _hasDefaultGroup = value; }
         }
 
+        /// <summary>
+        /// Get this stream's basis (parent) stream.
+        /// </summary>
+        /// <returns>Basis AcStream object for this stream or \e null if not found.</returns>
+        public AcStream getBasis()
+        {
+            AcStream basis = _depot.getBasis(_id);
+            return basis;
+        }
+
         #region ToString
         /// <summary>
         /// The actual implementation of the \e ToString method.
@@ -400,7 +410,7 @@ namespace AcUtils
         /// </summary>
         /// <param name="depot">The depot for which streams will be created.</param>
         /// <param name="listfile">List file <tt>\%APPDATA\%\\AcTools\\<prog_name\>\\<depot_name\>.streams</tt> for the 
-        /// <a href="http://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/5.6/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a> 
+        /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a> 
         /// command if found, otherwise \e null.<br>
         /// Example: <tt>"C:\Users\barnyrd\AppData\Roaming\AcTools\FooApp\NEPTUNE.streams"</tt>.</param>
         /// <returns>\e true if initialization succeeded, \e false otherwise.</returns>

@@ -166,7 +166,7 @@ namespace AcUtils
         /// The caller is responsible for deleting the file.</returns>
         /*! \getpref_  \c getpref */
         /*! \accunote_ When using the AccuRev GUI client, changes in <em>User Preferences</em> do not always persist. 
-            As a workaround, use [setpref](http://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/5.6/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setpref.html#1295084):
+            As a workaround, use [setpref](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setpref.html#1295084):
  -# Exit the AccuRev client.
  -# Put the setting\(s\) needed in a file named <tt>set_pref.xml</tt>
  -# Open a command window and cd to the folder where the file is located.

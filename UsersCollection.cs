@@ -19,43 +19,41 @@ using System.Configuration;
 namespace AcUtils
 {
     /// <summary>
-    /// The list of AccuRev streams from <tt>\<prog_name\>.exe.config</tt>.
+    /// The list of AccuRev users from <tt>\<prog_name\>.exe.config</tt>.
     /// </summary>
     /*! \code
         <?xml version="1.0" encoding="utf-8"?>
         <configuration>
           <configSections>
-            <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+            <section name="Users" type="AcUtils.UsersSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
             ...
           </configSections>
-          <Streams>
-            <streams>
-              <add stream="JUPITER_DEV1" />
-              <add stream="JUPITER_DEV2" />
-              <add stream="NEPTUNE_MAINT" />
-              <add stream="NEPTUNE_MAINT1" />
-              <add stream="NEPTUNE_MAINT2" />
+          <Users>
+            <users>
+              <add user="mugcot" name="Mugwort, Cottar" />
+              <add user="sanpim" name="Sandyman, Pimpernel" />
+              <add user="haymer" name="Hayward, Meriadoc" />
+              <add user="gruela" name="Grubb, Elanor" />
               ...
-            </streams>
-          </Streams>
+            </users>
+          </Users>
           <appSettings>
             ...
-        StreamsSection streamsSection = ConfigurationManager.GetSection("Streams") as StreamsSection;
-        StreamsCollection streamsCol = streamsSection.Streams;
+        UsersSection usersSection = ConfigurationManager.GetSection("Users") as UsersSection;
+        UsersCollection usersCol = usersSection.Users;
         \endcode */
-    /*! \sa <a href="_promotion_rights_8cs-example.html">PromotionRights.cs</a>, DepotsCollection */
-    [ConfigurationCollection(typeof(StreamElement),
+    [ConfigurationCollection(typeof(UserElement),
         CollectionType=ConfigurationElementCollectionType.AddRemoveClearMap)]
     [Serializable]
-    public sealed class StreamsCollection : ConfigurationElementCollection
+    public sealed class UsersCollection : ConfigurationElementCollection
     {
         private static ConfigurationPropertyCollection _properties;
-        static StreamsCollection()
+        static UsersCollection()
         {
             _properties = new ConfigurationPropertyCollection();
         }
 
-        public StreamsCollection() { }
+        public UsersCollection() { }
 
         protected override ConfigurationPropertyCollection Properties
         {
@@ -67,9 +65,9 @@ namespace AcUtils
             get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
         }
 
-        public StreamElement this[int index]
+        public UserElement this[int index]
         {
-            get { return (StreamElement)base.BaseGet(index); }
+            get { return (UserElement)base.BaseGet(index); }
             set
             {
                 if (base.BaseGet(index) != null)
@@ -80,19 +78,19 @@ namespace AcUtils
             }
         }
 
-        new public StreamElement this[string key]
+        new public UserElement this[string key]
         {
-            get { return (StreamElement)BaseGet(key); }
+            get { return (UserElement)BaseGet(key); }
         }
 
         protected override ConfigurationElement CreateNewElement()
         {
-            return new StreamElement();
+            return new UserElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return (element as StreamElement).Stream;
+            return (element as UserElement).User;
         }
     }
 }

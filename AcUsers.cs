@@ -526,7 +526,6 @@ namespace AcUtils
         private PropCollection _pc; // user properties from Active Directory beyond the default set
         private bool _includeGroupsList;
         private bool _includeDeactivated;
-        [NonSerialized] private static int _counter; // used to report progress back to the user during list construction
         [NonSerialized] private readonly object _locker = new object();
         #endregion
 
@@ -618,6 +617,7 @@ namespace AcUtils
                             tasks[1].Add(user.initGroupsListAsync());
                     }
 
+                    int counter = 0; // used to report progress back to the user during list construction
                     if (_dc != null && tasks[0].Count > 0)
                     {
                         while (tasks[0].Count > 0)
@@ -627,13 +627,13 @@ namespace AcUtils
                             if (!(await n1)) return false; //  // a failure occurred, see log file
                             tasks[0].Remove(n1); // remove completed task from the list
                             if (progress != null)
-                                progress.Report(++_counter);
+                                progress.Report(++counter);
                         }
                     }
 
                     if (_includeGroupsList && tasks[1].Count > 0)
                     {
-                        _counter = 0; // reset for group membership initialization
+                        counter = 0; // reset for group membership initialization
                         while (tasks[1].Count > 0)
                         {
                             // run all user's group initialization in parallel and report sequentially as they complete
@@ -641,7 +641,7 @@ namespace AcUtils
                             if (!(await n2)) return false; //  // a failure occurred, see log file
                             tasks[1].Remove(n2);
                             if (progress != null)
-                                progress.Report(++_counter);
+                                progress.Report(++counter);
                         }
                     }
 

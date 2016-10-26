@@ -328,6 +328,16 @@ namespace AcUtils
             internal set { _principal = value; }
         }
 
+        /// <summary>
+        /// Get the basis (parent) stream for this workspace.
+        /// </summary>
+        /// <returns>Basis AcStream object for this workspace or \e null if not found.</returns>
+        public AcStream getBasis()
+        {
+            AcStream basis = _depot.getBasis(_id);
+            return basis;
+        }
+
         #region ToString
         /// <summary>
         /// The ToString implementation.

@@ -408,14 +408,14 @@ namespace AcUtils
         /*! \lsrules_ <tt>lsrules -s \<stream\> [-d] -fx</tt>  */
         public async Task<bool> initAsync(DepotsCollection depots)
         {
+            AcDepots dlist = new AcDepots();
+            if (!(await dlist.initAsync(depots))) return false;
+
             string cmd = String.Empty;
             List<Task<bool>> tasks = new List<Task<bool>>();
-            foreach (DepotElement de in depots)
+            foreach (AcDepot d in dlist)
             {
-                AcDepot depot = new AcDepot(de.Depot);
-                if (!(await depot.initAsync())) return false;
-
-                foreach(AcStream stream in depot.Streams)
+                foreach (AcStream stream in d.Streams)
                 {
                     if (_explicitOnly)
                         // Include only rules that were explicitly set for the workspace or stream,

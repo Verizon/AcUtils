@@ -72,7 +72,7 @@ namespace AcUtils
 
     /// <summary>
     /// A permission object that defines the attributes of an AccuRev 
-    /// <a href="http://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/5.6/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entry</a>.
+    /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entry</a>.
     /// </summary>
     [Serializable]
     public sealed class AcPermission : IFormattable, IEquatable<AcPermission>, IComparable<AcPermission>, IComparable
@@ -326,7 +326,7 @@ namespace AcUtils
 
     /// <summary>
     /// A container of AcPermission objects that define AccuRev 
-    /// <a href="http://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/5.6/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entries</a>.
+    /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entries</a>.
     /// </summary>
     [Serializable]
     public sealed class AcPermissions : List<AcPermission>
@@ -350,7 +350,7 @@ namespace AcUtils
         //@{
         /// <summary>
         /// A container of AcPermission objects that define AccuRev 
-        /// <a href="http://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/5.6/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entries</a>.
+        /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entries</a>.
         /// </summary>
         /*! \code
             // get the list of permissions for all depots

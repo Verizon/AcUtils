@@ -337,7 +337,7 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Get the basis stream for stream \e name.
+        /// Get the basis (parent) stream for stream \e name.
         /// </summary>
         /// <param name="name">Stream name to query.</param>
         /// <returns>Basis AcStream object for stream \e name or \e null if not found.</returns>
@@ -357,7 +357,7 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Get the basis stream for stream \e ID number.
+        /// Get the basis (parent) stream for stream \e ID number.
         /// </summary>
         /// <param name="ID">Stream ID number to query.</param>
         /// <returns>Basis AcStream object for stream \e ID number, otherwise \e null if not found.</returns>
@@ -544,7 +544,7 @@ namespace AcUtils
         /// When this file exists (created manually), it is used as the \e list-file to populate the depot with select streams. 
         /// This function is called internally and not by user code.
         /// </summary>
-        /// <remarks>Implemented with <a href="http://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/5.6/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a>.
+        /// <remarks>Implemented with <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a>.
         /// </remarks>
         /// <returns>Full path of the list file <tt>\%APPDATA\%\\AcTools\\<prog_name\>\\<depot_name\>.streams</tt> if found, otherwise \e null.<br>
         /// Example: <tt>"C:\Users\barnyrd\AppData\Roaming\AcTools\FooApp\NEPTUNE.streams"</tt>.</param>
@@ -757,7 +757,7 @@ namespace AcUtils
         #pragma warning disable 0642
         /// <summary>
         /// Get the list of depots \e user has permission to view based on their principal name and group membership 
-        /// <a href="http://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/5.6/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entries</a>.
+        /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entries</a>.
         /// </summary>
         /// <remarks>A plus sign (+) appended to the depot name denotes the Inheritable attribute.</remarks>
         /// <param name="user">User for which to query.</param>

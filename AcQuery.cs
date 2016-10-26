@@ -14,6 +14,7 @@ limitations under the License.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.XPath;
 using System.Xml.Linq;
@@ -694,6 +695,41 @@ namespace AcUtils
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Get the list of depot names in sorted order.
+        /// </summary>
+        /// <returns>The list of depot names on success, otherwise \e null on error.</returns>
+        /*! \show_ <tt>show -fx depots</tt> */
+        /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
+        /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c show command failure.</exception>
+        public static async Task<List<string>> getDepotNameListAsync()
+        {
+            List<string> depots = null;
+            AcResult result = null;
+            try { result = await AcCommand.runAsync("show -fx depots"); }
+
+            catch (AcUtilsException ecx)
+            {
+                string err = String.Format("AcUtilsException in AcQuery.getDepotNameListAsync{0}{1}",
+                    Environment.NewLine, ecx.Message);
+                AcDebug.Log(err);
+            }
+
+            if (result != null && result.RetVal == 0) // if command succeeded
+            {
+                XElement xml = XElement.Parse(result.CmdResult);
+                IEnumerable<XElement> query = from e in xml.Descendants("Element")
+                                              select e;
+                depots = new List<string>(query.Count());
+                foreach (XElement n in query)
+                    depots.Add((string)n.Attribute("Name"));
+
+                depots.Sort();
+            }
+
+            return depots;
         }
     }
 }

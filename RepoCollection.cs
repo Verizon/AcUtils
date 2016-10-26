@@ -25,7 +25,7 @@ namespace AcUtils
         <?xml version="1.0" encoding="utf-8"?>
         <configuration>
           <configSections>
-            <section name="repositories" type="AcUtils.RepoSection, AcUtils, Version=1.2.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+            <section name="repositories" type="AcUtils.RepoSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
             ...
           </configSections>
           <repositories>

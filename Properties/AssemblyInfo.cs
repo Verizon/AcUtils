@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AcUtils")]
-[assembly: AssemblyDescription(".NET Framework abstraction layer for AccuRev")]
+[assembly: AssemblyDescription("A high performance abstraction layer for AccuRev")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Verizon")]
 [assembly: AssemblyProduct("AcUtils")]
@@ -44,7 +44,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.1.0")]
-[assembly: AssemblyFileVersion("1.2.1.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
 
 [assembly: System.CLSCompliant(true)]

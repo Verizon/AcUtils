@@ -90,6 +90,9 @@
     <Compile Include="StreamsCollection.cs" />
     <Compile Include="StreamsSection.cs" />
     <Compile Include="SubPropertyDescriptor.cs" />
+    <Compile Include="UserElement.cs" />
+    <Compile Include="UsersCollection.cs" />
+    <Compile Include="UsersSection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
