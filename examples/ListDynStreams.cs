@@ -27,7 +27,7 @@ namespace ListDynStreams
             return (init.Result) ? 0 : 1;
         }
 
-        public async static Task<bool> listDynStreamsAsync()
+        public static async Task<bool> listDynStreamsAsync()
         {
             // true for dynamic streams only
             AcDepots depots = new AcDepots(true); // two-part object construction

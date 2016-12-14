@@ -26,6 +26,9 @@ namespace AcUtils
     /// <summary>
     /// An object that defines the attributes of an AccuRev transaction.
     /// </summary>
+    /*! \deprecated
+        Prefer using LINQ to XML and custom query operators from the Extensions class.
+    */
     [Serializable]
     [DebuggerDisplay("{ID} {Type} {User} {Time}")]
     public sealed class Transaction : IFormattable, IEquatable<Transaction>, IComparable<Transaction>, IComparable
@@ -53,17 +56,17 @@ namespace AcUtils
 
         #region Equality comparison
         /*! \name Equality comparison */
-        /**@{*/
-        /// <summary>
-        /// IEquatable implementation to determine the equality of instances of type Transaction. 
-        /// Compares transactions for equality based on transaction ID, type, time, and principal.
-        /// </summary>
-        /// <remarks>Although transaction ID's are unique within a depot, our Hist container class 
-        /// can hold transactions from multiple depots, thus the potential for duplicate ID's. 
-        /// So instead of a simple transaction ID comparison, we use the approach defined here.</remarks>
-        /// <param name="other">The Transaction object being compared to \e this instance.</param>
-        /// <returns>\e true if Transaction \e rhs is the same, \e false otherwise.</returns>
-        public bool Equals(Transaction other)
+    /**@{*/
+    /// <summary>
+    /// IEquatable implementation to determine the equality of instances of type Transaction. 
+    /// Compares transactions for equality based on transaction ID, type, time, and principal.
+    /// </summary>
+    /// <remarks>Although transaction ID's are unique within a depot, our Hist container class 
+    /// can hold transactions from multiple depots, thus the potential for duplicate ID's. 
+    /// So instead of a simple transaction ID comparison, we use the approach defined here.</remarks>
+    /// <param name="other">The Transaction object being compared to \e this instance.</param>
+    /// <returns>\e true if Transaction \e rhs is the same, \e false otherwise.</returns>
+    public bool Equals(Transaction other)
         {
             if (ReferenceEquals(other, null)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -333,6 +336,9 @@ namespace AcUtils
     /// <summary>
     /// Defines the attributes of a single version object in a transaction.
     /// </summary>
+    /*! \deprecated
+        Prefer using LINQ to XML and custom query operators from the Extensions class.
+    */
     [Serializable]
     [DebuggerDisplay("{EID} {ElementType} {Location}")]
     public sealed class Version : IFormattable, IEquatable<Version>, IComparable<Version>, IComparable
@@ -748,6 +754,9 @@ namespace AcUtils
     /// <summary>
     /// The destination and source paths for a \c move operation in a transaction.
     /// </summary>
+    /*! \deprecated
+        Prefer using LINQ to XML and custom query operators from the Extensions class.
+    */
     [Serializable]
     public sealed class Move
     {
@@ -787,6 +796,9 @@ namespace AcUtils
     /// <summary>
     /// The attributes of a rule element in a  \c hist command transaction.
     /// </summary>
+    /*! \deprecated
+        Prefer using LINQ to XML and custom query operators from the Extensions class.
+    */
     [Serializable]
     public sealed class CompRule
     {
@@ -890,6 +902,9 @@ namespace AcUtils
             Console.WriteLine(msg);
         }
     \endcode */
+    /*! \deprecated
+        Prefer using LINQ to XML and custom query operators from the Extensions class.
+    */
     [Serializable]
     public static class Hist
     {
@@ -933,7 +948,7 @@ namespace AcUtils
 
         /// <summary>
         /// Populate this list with transactions from the XML emitted by the 
-        /// [hist](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_hist.html#1092710) command.
+        /// [hist](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_hist.html) command.
         /// </summary>
         /// <param name="xml">XML from the AccuRev \c hist command.</param>
         /// <param name="EID">\e true if the \c hist command that generated \e xml included 
@@ -1104,7 +1119,7 @@ namespace AcUtils
                     version.ElementType = (ElementType)Enum.Parse(typeof(ElementType), temp);
                 temp = nav.GetAttribute("dir", String.Empty);
                 version.Folder = String.Equals(temp, "yes");
-                temp = nav.GetAttribute("mtime", null);
+                temp = nav.GetAttribute("mtime", String.Empty);
                 version.MergeTime = AcDateTime.AcDate2DateTime(temp);
                 long lval;
                 temp = nav.GetAttribute("cksum", String.Empty);

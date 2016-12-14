@@ -100,7 +100,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -221,7 +221,7 @@ Show the groups that have promotion rights on \e streams.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Streams>
     <streams>
@@ -243,7 +243,7 @@ For \e depots show workspaces that have a default group and "DEV3" in their name
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -266,9 +266,9 @@ Creates an HTML file with the promote transactions that occurred in specific str
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -335,7 +335,7 @@ Lock promotions to select streams across multiple depots for all except those in
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -369,7 +369,7 @@ Built-in types \b anyuser and \b authuser are unsupported.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.3.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <activeDir>
     <domains>
@@ -696,4 +696,151 @@ a reference to the object as the [validator](@ref AcUtils#AcCommand) second func
   - Use methods [AcDepot.getChildrenAsync](@ref AcUtils#AcDepot#getChildrenAsync) or 
     [AcDepot.forStreamAndAllChildrenAsync](@ref AcUtils#AcDepot#forStreamAndAllChildrenAsync). 
 	In this case \c Microsoft.Experimental.Collections.dll must be deployed with the application.
+*/
+
+/*! \example FileHist.cs
+One of the difficulties working with XML emitted by AccuRev's \c hist command via the \c -fx option (display results in XML format) is that the result is not always what you'd expect. 
+For example, the data shown here for the EID's version element is correct. (Start/end times reversed as workaround for AccuRev issue 15780.)
+
+\code
+accurev hist -p MARS -t "2016/11/01 14:30:00 - 2016/11/01 11:30:00" -fx
+
+<?xml version="1.0" encoding="utf-8"?>
+<AcResponse
+    Command="hist"
+    TaskId="33057">
+  <transaction
+      id="83126"
+      type="promote"
+      time="1478023744"  Tue Nov-1 14:09:04 2016
+      user="barnyrd">
+    <comment>Promote refresh button.</comment>
+    <version
+        path="\.\src\foo.java"
+        eid="594"
+        virtual="8/1"
+        real="58/1"
+        virtualNamedVersion="MARS_DEV2/1"
+        realNamedVersion="MARS_DEV2_barnyrd/1"
+        elem_type="text"
+        dir="no"/>
+  </transaction>
+...
+\endcode
+
+However, if you add the \c -e: (\e "expanded") option to display more detail for \c promote transactions, instead of adding the additional attributes to the version element, 
+AccuRev adds a second version element that is a duplicate (well, almost) of the first, but with the added information. Unfortunately, the second version element is missing 
+the \e path and \e eid attributes from the first, so you must reference the first version element to get those values (or add the \c -v (\e "verbose") option shown next).
+
+But that's not the only problem; the data is wrong! The \e virtual and \e virtualNamedVersion attribute values are the same as the \e real and \e realNamedVersion attributes. 
+This falls under AccuRev defect 18636, RPI # 1107275.
+
+\code
+accurev hist -p MARS -t "2016/11/01 14:30:00 - 2016/11/01 11:30:00" -fex
+
+<?xml version="1.0" encoding="utf-8"?>
+<AcResponse
+    Command="hist"
+    TaskId="12964">
+  <transaction
+      id="83126"
+      type="promote"
+      time="1478023744"  Tue Nov-1 14:09:04 2016
+      user="barnyrd"
+	next four attributes added by the -e ("expanded") option 
+      streamName="MARS_DEV2"
+      streamNumber="8"
+      fromStreamName="MARS_DEV2_barnyrd"
+      fromStreamNumber="58">
+    <comment>Promote refresh button.</comment>
+    <version
+        path="\.\src\foo.java"
+        eid="594"
+        virtual="8/1"
+        real="58/1"
+        virtualNamedVersion="MARS_DEV2/1"
+        realNamedVersion="MARS_DEV2_barnyrd/1"
+        elem_type="text"
+        dir="no"/>
+    <comment>Add refresh button.</comment>
+    <version
+	missing path and eid attributes; get them from above 
+	or add the -v ("verbose") option as shown below
+        virtual="58/1" incorrect value
+        real="58/1"
+        virtualNamedVersion="MARS_DEV2_barnyrd/1" incorrect value
+        realNamedVersion="MARS_DEV2_barnyrd/1"
+        ancestor="27/2"
+        ancestorNamedVersion="MARS_MAINT1_barnyrd/2"
+        elem_type="text"
+        dir="no"/>
+  </transaction>
+...
+\endcode
+
+If you then add the \c -v: (\e "verbose") option to the command, instead of a third version element being added, the second version element is modified to include the requested information. 
+The \e path and \e eid attributes are now back, but unfortunately the virtual attribute data is still wrong.
+
+\code
+accurev hist -p MARS -t "2016/11/01 14:30:00 - 2016/11/01 11:30:00" -fevx
+
+<?xml version="1.0" encoding="utf-8"?>
+<AcResponse
+    Command="hist"
+    TaskId="10498">
+  <transaction
+      id="83126"
+      type="promote"
+      time="1478023744"  Tue Nov-1 14:09:04 2016
+      user="barnyrd"
+	next four attributes added by the -e ("expanded") option 
+      streamName="MARS_DEV2"
+      streamNumber="8"
+      fromStreamName="MARS_DEV2_barnyrd"
+      fromStreamNumber="58">
+    <comment>Promote refresh button.</comment>
+    <version
+        path="\.\src\foo.java"
+        eid="594"
+        virtual="8/1"
+        real="58/1"
+        virtualNamedVersion="MARS_DEV2/1"
+        realNamedVersion="MARS_DEV2_barnyrd/1"
+        elem_type="text"
+        dir="no"/>
+    <comment>Add refresh button.</comment>
+    <version
+	path and eid attributes are now back
+        path="\.\src\foo.java"
+        eid="594"
+        virtual="58/1" still incorrect
+        real="58/1"
+        virtualNamedVersion="MARS_DEV2_barnyrd/1" still incorrect
+        realNamedVersion="MARS_DEV2_barnyrd/1"
+        ancestor="27/2"
+        ancestorNamedVersion="MARS_MAINT1_barnyrd/2"
+        elem_type="text"
+        dir="no"
+	next three added by the -v (verbose) option 
+        mtime="1477941921"  Mon Oct-31 15:25:21 2016
+        cksum="2657386538"
+        sz="6863"/>
+  </transaction>
+...
+\endcode
+
+Version comments, if they exist, are \e comment sibling elements directly above their respective \e version element, except in the case of \c promote transactions where the \e comment element 
+above the first \e version element listed in the parent \e transaction is the comment for the transaction itself. (Sure, feel free to read that again.) There could also be additional \e version elements 
+listed whose changes were included in the main version during development. They would include the \e merged_against and \e mergedAgainstNamedVersion attributes.
+
+So if you want to consume the XML programmatically, what can you do? You can imagine the code to handle all of this would become awfully messy very quickly, right? And just think of the poor maintenance programmer! 
+(They might come looking for you.)
+
+Considering the plethora of \c hist command line options available and their differing results, the way in which multiple \e version elements exist with redundant data, missing attributes and/or incorrect values, 
+different meanings for the same element based on document order, and the potential for differences based on the version of AccuRev in use, solving the problem is best handled in user code. Trying to solve it in the AcUtils library 
+would be too fragile for all of these reasons. Fortunately, after examining the XML generated by the command you want to use, the solution is to use [LINQ to XML](https://msdn.microsoft.com/en-us/library/bb397897.aspx), 
+some [custom LINQ query operators](@ref AcUtils.Extensions) from AcUtils designed to address these (ahem) incongruities, and some conditional statements in your code.
+
+For example, let's say you'd like a report similar to the one given for the history of a file over a specified time period that is displayed when the command result is not in XML format (no \c -fx option used). 
+There are aspects to this report you feel could be improved upon and you'd like a different format. Here's a program that will generate such a report.
 */

@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-// Required references: AcUtils.dll, System.configuration, System.Xml.Linq
+// Required references: System, System.Xml.Linq, AcUtils.dll
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,67 +25,66 @@ namespace UserChanges
     {
         static int Main()
         {
-            Task<bool> init = userChangesAsync();
-            return (init.Result) ? 0 : 1;
+            string user = "barnyrd";
+            string startTime = "2016/11/29 00:00:00";
+            string endTime = "2016/11/30 23:59:59";
+
+            Task<bool> r = userChangesAsync(user, startTime, endTime);
+            return (r.Result) ? 0 : 1;
         }
 
-        public async static Task<bool> userChangesAsync()
+        public static async Task<bool> userChangesAsync(string user, string startTime, string endTime)
         {
-            AcDepots depots = new AcDepots();
-            if (!(await depots.initAsync())) return false;
-
-            // show changes made by barnyrd in all depots over a two day period
-            foreach (AcDepot depot in depots.OrderBy(n => n)) // default order comparer sorts by depot name
+            Console.WriteLine(@"User: {0}, ""{1} - {2}""{3}", user, startTime, endTime, Environment.NewLine);
+            List<string> depots = await AcQuery.getDepotNameListAsync();
+            if (depots == null) return false; // operation failed, check log file
+            foreach (string depot in depots)
             {
                 // start-end times reversed as workaround for AccuRev issue 15780
-                string hist = String.Format(@"hist -p ""{0}"" -t ""2016/01/11 23:59:59 - 2016/01/10 00:00:00"" -u barnyrd -k keep -fx", depot);
-                AcResult r1 = AcCommand.run(hist);
-                if (r1.RetVal == 0) // if successful
-                {
-                    Hist.clear(); // empty old results
-                    if (!Hist.init(r1.CmdResult)) // convert hist command XML into .NET objects
-                        continue; // parsing failed
+                string time = String.Format("{0} - {1}", endTime, startTime);
+                string hist = String.Format(@"hist -p ""{0}"" -t ""{1}"" -u ""{2}"" -k keep -fx", depot, time, user);
+                AcResult r1 = await AcCommand.runAsync(hist);
+                if (r1 == null || r1.RetVal != 0) return false; // operation failed, check log file
 
-                    // Transaction and Version fully qualified to avoid ambiguity with .NET framework classes
-                    foreach (AcUtils.Transaction tran in Hist.Transactions.OrderBy(n => n.Time)) // sort by transaction time
+                XElement x1 = XElement.Parse(r1.CmdResult);
+                foreach (XElement t in x1.Elements("transaction"))
+                {
+                    int transID = (int)t.Attribute("id");
+                    string tcomment = t.acxComment();
+                    Console.WriteLine("Depot: {0}, {{{1}}} {2}{3}", depot, transID, (DateTime)t.acxTime("time"),
+                        String.IsNullOrEmpty(tcomment) ? String.Empty : ", " + tcomment);
+
+                    foreach (XElement v in t.Elements("version"))
                     {
-                        List<AcUtils.Version> versions = tran.Versions;
-                        foreach (AcUtils.Version ver in versions)
+                        string path = (string)v.Attribute("path");
+                        Console.WriteLine("\tEID: {0} {1} ({2})", (int)v.Attribute("eid"), path, (string)v.Attribute("real"));
+                        string mergedAgainstNamed = v.acxMergedAgainstNamed();
+                        Console.WriteLine("\tReal: {0}, Ancestor: {1}{2}", v.acxRealNamed(), v.acxAncestorNamed(),
+                            String.IsNullOrEmpty(mergedAgainstNamed) ? String.Empty : ", Merged against: " + mergedAgainstNamed);
+
+                        string realNamed = (string)v.Attribute("realNamedVersion");
+                        string anno = String.Format(@"annotate -v ""{0}"" -fxtu ""{1}""", realNamed, path);
+                        AcResult r2 = await AcCommand.runAsync(anno);
+                        if (r2 == null || r2.RetVal != 0) return false; // operation failed, check log file
+
+                        // get this transaction from the annotate results
+                        XElement x2 = XElement.Parse(r2.CmdResult);
+                        XElement trans = (from a in x2.Descendants("trans")
+                                          where (int)a.Attribute("number") == transID && // comparing transaction ID's
+                                          (string)a.Attribute("principal_name") == user &&
+                                          (string)a.Attribute("version_name") == realNamed
+                                          select a).SingleOrDefault();
+                        if (trans != null)
                         {
-                            string verspec = String.Format(@"{0}/{1}", ver.Workspace, ver.RealVersionNumber);
-                            string anno = String.Format(@"annotate -v ""{0}"" -fxtu ""{1}""", verspec, ver.Location);
-                            AcResult r2 = AcCommand.run(anno);
-                            if (r2.RetVal == 0) // if successful
+                            XElement diff = trans.Parent; // get diff element for this transaction from annotate results
+                            foreach (XElement ln in diff.Elements("line")) // line elements are transaction element siblings
                             {
-                                XElement e = XElement.Parse(r2.CmdResult);
-                                IEnumerable<XElement> q1 = from pn in e.Descendants("diff").Elements("trans")
-                                                           where (string)pn.Attribute("principal_name") == "barnyrd" && (int)pn.Attribute("number") == tran.ID
-                                                           select pn;
-                                foreach (XElement tr in q1)
-                                {
-                                    /* <trans number="59688" time="1424989734" principal_name="barnyrd" version_name="MARS_DEV2_barnyrd/1">
-                                        <comment>merged</comment>
-                                        </trans> */
-                                    XElement diff = tr.Parent; // go up one level to get the diff where the line elements are, the siblings to trans element
-                                    /*  <diff>
-                                            <trans number="59688" time="1424989734" principal_name="barnyrd" version_name="MARS_DEV2_barnyrd/1">
-                                                <comment>merged</comment>
-                                            </trans>
-                                            <line number="17" type="rem" trans="59676">pos.module.version.suffix=MAINT</line>
-                                            <line number="17" type="add" trans="59688">pos.module.version.suffix=INT</line>
-                                        </diff> */
-                                    IEnumerable<XElement> q2 = from ln in diff.Descendants("line") where (int)ln.Attribute("trans") == tran.ID select ln;
-                                    foreach (XElement line in q2)
-                                    {
-                                        // <line number="17" type="add" trans="59688">pos.module.version.suffix=INT</line>
-                                        string chng = String.Format(@"{0} {{{1}}} {2}, line {3} {4}: ""{5}"", eid {6}, ""{7}""",
-                                            verspec, tran.ID, tran.Time, (int)line.Attribute("number"), (string)line.Attribute("type"),
-                                            line.Value, ver.EID, ver.Location);
-                                        Console.WriteLine(chng);
-                                    }
-                                }
+                                Console.WriteLine("\tLine number: {0} \"{1}\" {{{2}}}, {3}", (int)ln.Attribute("number"),
+                                    (string)ln.Attribute("type"), (int)ln.Attribute("trans"), (string)ln);
                             }
                         }
+
+                        Console.WriteLine();
                     }
                 }
             }

@@ -61,7 +61,7 @@ namespace StreamsOverUnder
         }
 
         // Initialize Stat with all versions in the repository with overlap or underlap status.
-        private async static Task<bool> initStatAsync()
+        private static async Task<bool> initStatAsync()
         {
             AcDepots depots = new AcDepots(true); // true for dynamic streams only
             if (!(await depots.initAsync())) return false;
@@ -83,7 +83,7 @@ namespace StreamsOverUnder
         }
 
         // Helper function that runs our stat commands.
-        private async static Task<bool> runStatCommandAsync(string cmd)
+        private static async Task<bool> runStatCommandAsync(string cmd)
         {
             bool ret = false; // assume failure
             AcResult result = null;

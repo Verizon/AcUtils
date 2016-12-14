@@ -73,6 +73,7 @@
     <Compile Include="DepotsSection.cs" />
     <Compile Include="DomainCollection.cs" />
     <Compile Include="DomainElement.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="GroupElement.cs" />
     <Compile Include="GroupsCollection.cs" />
     <Compile Include="GroupsSection.cs" />

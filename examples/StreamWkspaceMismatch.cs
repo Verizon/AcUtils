@@ -27,7 +27,7 @@ namespace StreamWkspaceMismatch
             return (init.Result) ? 0 : 1;
         }
 
-        public async static Task<bool> streamWkspaceMismatchAsync()
+        public static async Task<bool> streamWkspaceMismatchAsync()
         {
             bool ret = false; // assume failure
             try

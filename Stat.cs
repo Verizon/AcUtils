@@ -33,7 +33,7 @@ namespace AcUtils
         added to the depot. Defect 1101826. */
     public enum ElementType {
         /*! \var unknown
-        This should never occur. */
+        Should not occur normally except for noted defect. */
         unknown = 0,
         /*! \var dir
         1: The element is a folder. */
@@ -478,7 +478,7 @@ namespace AcUtils
 
         /// <summary>
         /// Populate this list with elements from the XML emitted by the 
-        /// [stat](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_stat.html#1283989) command.
+        /// [stat](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_stat.html) command.
         /// </summary>
         /// <param name="xml">XML from the AccuRev \c stat command.</param>
         /// <returns>\e true if parsing was successful, \e false otherwise.</returns>
@@ -544,21 +544,35 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Get the Element object that corresponds to the \e version in a [transaction](@ref AcUtils#Transaction) from the \c hist command.
+        /// Get the list of elements that correspond to the \e version in a [transaction](@ref AcUtils#Transaction) from the \c hist command.
         /// </summary>
+        /// <remarks>A Version and Element object match when their respective virtual-real stream/version numbers match and the 
+        /// Element.NamedVersion stream name portion (minus numbers) match the Version.Stream or Version.Workspace.</remarks>
         /// <param name="version">The Version object to query.</param>
-        /// <returns>The Element object that corresponds to \e version if found, otherwise \e null.</returns>
-        public static Element getElement(Version version)
+        /// <returns>The list of elements that match the \e version if found, otherwise \e null.</returns>
+        /*! \code
+        public bool initRows(AcUtils.Version version)
+        {
+            bool ret = false; // assume failure
+            try
+            {
+                IList<Element> list = Stat.getElement(version);
+                IEnumerable<Element> filter = list.Where(e => e.NamedVersion.StartsWith(version.Stream));
+                Element element = filter.SingleOrDefault();
+                ...
+            \endcode */
+        /*! \deprecated
+            Prefer using LINQ to XML and custom query operators from the Extensions class.
+        */
+        public static IList<Element> getElement(Version version)
         {
             IEnumerable<Element> filter = from e in _elements
-                                 where e.EID == version.EID &&
-                                 e.VirStreamNumber == version.VirStreamNumber && e.VirVersionNumber == version.VirVersionNumber &&
-                                 e.RealStreamNumber == version.RealStreamNumber && e.RealVersionNumber == version.RealVersionNumber &&
-                                 (e.NamedVersion.StartsWith(version.Stream) || e.NamedVersion.StartsWith(version.Workspace))
-                                 select e;
-
-            Element element = filter.SingleOrDefault();
-            return element;
+                                          where e.EID == version.EID &&
+                                          e.VirStreamNumber == version.VirStreamNumber && e.VirVersionNumber == version.VirVersionNumber &&
+                                          e.RealStreamNumber == version.RealStreamNumber && e.RealVersionNumber == version.RealVersionNumber &&
+                                          (e.NamedVersion.StartsWith(version.Stream) || e.NamedVersion.StartsWith(version.Workspace))
+                                          select e;
+            return filter.ToList();
         }
     }
 }
