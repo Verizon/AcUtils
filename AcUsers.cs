@@ -386,7 +386,7 @@ namespace AcUtils
                     PrincipalContext ad = null;
                     try
                     {
-                        ad = new PrincipalContext(ContextType.Domain, de.Host, de.Path);
+                        ad = new PrincipalContext(ContextType.Domain, de.Host.Trim(), de.Path.Trim());
                         UserPrincipal up = new UserPrincipal(ad);
                         up.SamAccountName = Principal.Name;
                         using (PrincipalSearcher ps = new PrincipalSearcher(up))
@@ -410,7 +410,7 @@ namespace AcUtils
                                     {
                                         PropertyValueCollection pvc = lowerLdap.Properties[pe.Field];
                                         if (pvc != null)
-                                            _other.Add(pe.Title, pvc.Value);
+                                            _other.Add(pe.Title.Trim(), pvc.Value);
                                     }
                                 }
 

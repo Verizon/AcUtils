@@ -670,12 +670,13 @@ namespace AcUtils
         public static bool getServerFromAcClientCnf(out string server)
         {
             server = null;
+            FileStream fs = null;
             try
             {
                 string cnfFile;
                 if (getAcClientCnfPath(out cnfFile))
                 {
-                    FileStream fs = new FileStream(cnfFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    fs = new FileStream(cnfFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                     using (StreamReader sr = new StreamReader(fs))
                     {
                         string line = sr.ReadLine();
@@ -692,6 +693,11 @@ namespace AcUtils
                 string err = String.Format("Exception in AcQuery.getServerFromAcClientCnf.{0}{1}",
                     Environment.NewLine, ecx.Message);
                 AcDebug.Log(err);
+            }
+
+            finally // avoids CA2202: Do not dispose objects multiple times
+            {
+                if (fs != null) fs.Dispose();
             }
 
             return false;

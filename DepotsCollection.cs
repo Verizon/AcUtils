@@ -25,7 +25,7 @@ namespace AcUtils
         <?xml version="1.0" encoding="utf-8"?>
         <configuration>
           <configSections>
-            <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+            <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
             ...
           </configSections>
           <Depots>

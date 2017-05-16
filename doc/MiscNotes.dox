@@ -100,7 +100,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -221,7 +221,7 @@ Show the groups that have promotion rights on \e streams.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Streams>
     <streams>
@@ -243,7 +243,7 @@ For \e depots show workspaces that have a default group and "DEV3" in their name
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -260,15 +260,97 @@ For \e depots show workspaces that have a default group and "DEV3" in their name
 \endcode
 */
 
+/*! \example Stranded.cs
+Generates a report of all streams in the repository that have stranded elements with the list of status types found and their count. 
+Results are written to the daily log file \c StrandedFound-YYYY-MM-DD.log created (or updated) in the same folder where \c Stranded.exe resides.
+
+<small>
+\verbatim
+JUPITER_DEV3
+(member)(stranded) {10}
+
+NEPTUNE_DEV1
+(defunct)(member)(stranded)(twin) {1}
+
+NEPTUNE_DEV2
+(defunct)(member)(stranded) {2}
+(defunct)(overlap)(member)(stranded) {1}
+
+PLUTO_DEV3
+(defunct)(member)(stranded) {1}
+(member)(stranded) {15}
+
+SATURN_DEV1
+(defunct)(member)(stranded) {9}
+(defunct)(member)(stranded)(twin) {2}
+(member)(stranded) {7}
+(member)(stranded)(twin) {1}
+...
+\endverbatim
+</small>
+
+Stranded elements are members of the default group yet they are not returned with the <tt>stat -d</tt> option used to select only 
+active elements of the workspace or stream; you must use the <tt>-i</tt> option instead. They are purposely left out of the list retrieved 
+with the <tt>-d</tt> option to ensure they are not accidentally promoted. Salesforce 00042864, 00035837, RFE 13692.
+
+\sa [Handling Stranded Elements in AccuRev Technical Notes](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/handling_stranded.html)
+
+Our testing showed a dramatic performance gain between this program and another where the \c stat command ran synchronously. This program 
+(async version) completed in 1 minute 18 seconds versus 7 minutes 3 seconds for the other. (During execution you'll hear the fan in your computer 
+run to cool down the CPU's.)
+
+Optionally include a list of depot names in \c Stranded.exe.config that should be ignored, i.e. PlayGround depots, obsolete depots, etc.
+
+\warning
+Make changes in <tt>\<progname\>.exe.config</tt> files only where indicated. Changing other text will cause the program to malfunction.
+
+\par Stranded.exe.config
+The .Net framework automatically loads an executable's associated <em>config file</em> when the program is launched. This replaces 
+the need to put configuration data in the Windows registry, a database, in <tt>.ini</tt> files, or hardcoded in the source code. Each program has 
+its own <tt>\<program\>.exe.config</tt> file located in the same folder as the executable. Changes take effect immediately upon saving 
+the file without the need to recompile the program, however it must be relaunched.
+
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+  </configSections>
+  <Depots>
+    <depots>
+      <!-- include depots here that should be ignored, i.e. PlayGround depots, obsolete depots, etc. -->
+      <add depot="PlayGround"/>
+      <add depot="PlayGround2"/>
+    </depots>
+  </Depots>
+  <system.diagnostics>
+    <assert assertuienabled="false"/>
+    <sources>
+      <source name="Stranded">
+        <listeners>
+          <remove name="Default"/>
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+          <add name="StrandedFound" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+        </listeners>
+      </source>
+    </sources>
+  </system.diagnostics>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+  </startup>
+</configuration>
+\endcode
+*/
+
 /*! \example LatestPromotions.cs
 Creates an HTML file with the promote transactions that occurred in specific streams in select depots within the past specified number of hours.
 \code
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -335,7 +417,7 @@ Lock promotions to select streams across multiple depots for all except those in
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -369,7 +451,7 @@ Built-in types \b anyuser and \b authuser are unsupported.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <activeDir>
     <domains>

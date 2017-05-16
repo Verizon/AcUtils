@@ -243,31 +243,39 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Helper function that creates the [XML param data](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_Admin/trig_param_file.html) copy.
+        /// Helper function that creates the 
+        /// [XML param data](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_Admin/trig_param_file.html) 
+        /// copy.
         /// </summary>
         /// <param name="fileName">Name of file to create.</param>
-        /// <param name="contents">String containing the XML param data.</param>
+        /// <param name="content">String containing the XML param data.</param>
         /// <exception cref="Exception">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<trig_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
-        private static void createParamFile(string fileName, string contents)
+        private static void createParamFile(string fileName, string content)
         {
+            FileStream fs = null;
             try
             {
                 if (File.Exists(fileName)) // highly unlikely it would exist but check anyway
                     File.Delete(fileName);
 
-                FileStream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-                using (StreamWriter streamWriter = new StreamWriter(fileStream))
+                fs = new FileStream(fileName, FileMode.Create);
+                using (StreamWriter sw = new StreamWriter(fs))
                 {
-                    streamWriter.Write(contents);
+                    sw.Write(content);
                 }
             }
 
             catch (Exception exc)
             {
                 String msg = String.Format("Exception in AcDebug.createParamFile caught and logged.{0}{1}{0}Filename: {2}{0}{3}",
-                    Environment.NewLine, exc.Message, fileName, contents);
+                    Environment.NewLine, exc.Message, fileName, content);
                 Log(msg);
+            }
+
+            finally // avoids CA2202: Do not dispose objects multiple times
+            {
+                if (fs != null) fs.Dispose();
             }
         }
 
