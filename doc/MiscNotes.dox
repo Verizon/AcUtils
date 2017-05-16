@@ -295,9 +295,9 @@ with the <tt>-d</tt> option to ensure they are not accidentally promoted. Salesf
 
 \sa [Handling Stranded Elements in AccuRev Technical Notes](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/handling_stranded.html)
 
-Our testing showed a dramatic performance gain between this program and another where the \c stat command ran synchronously. This program 
-(async version) completed in 1 minute 18 seconds versus 7 minutes 3 seconds for the other. (During execution you'll hear the fan in your computer 
-run to cool down the CPU's.)
+Our testing showed a dramatic performance gain between this program and another where the \c stat command ran synchronously. For 730 dynamic streams, 
+this program (async version) completed in 1 minute 18 seconds versus 7 minutes 3 seconds for the other. (During execution you'll hear the fan in your 
+computer run to cool down the CPU's.)
 
 Optionally include a list of depot names in \c Stranded.exe.config that should be ignored, i.e. PlayGround depots, obsolete depots, etc.
 
