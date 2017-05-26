@@ -342,6 +342,123 @@ the file without the need to recompile the program, however it must be relaunche
 \endcode
 */
 
+/*! \example EvilTwins.cs
+When promoting elements to a stream, the error message <b><em>"...name already exists in backing stream..."</em></b> appears. What does this mean?
+
+An element ID (EID) is an immutable unique identifier (number) assigned to the element when it is added to AccuRev. It allows AccuRev to keep track of the entire 
+history of the element from the time it was first added to the depot should it undergo a name or location change, or made defunct. When two elements with the same 
+name and location are added to the depot in disparate streams, when promoted up the stream hierarchy they will eventually collide. This situation is referred to as 
+<em>"evil twins"</em>. The error message indicates there are two elements with the same name and location but with different EID's. To fix evil twins:
+
+-# Since you must clear the namespace in one of the streams so the <em>"good twin"</em> prevails, you must decide which twin you want to keep. Use AccuRev's 
+<a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/online_help_F08_1.html">Version Browser</a> 
+to view the history of each twin as this could impact your decision. For example, if one of the elements has gone to production and the other has not, you would want to make 
+the production version the good twin and the other the evil twin.
+-# If the element is a file, do a \c diff on the twins to make sure the good twin (the one that will prevail) has the correct content. Edit as needed.
+-# Rename (\c move) the evil element and then \c defunct it. Note that as a best practice, renaming should always be done before making an element defunct, even in cases
+that are not evil twins (see Note below). In the case of evil twins, rename the evil twin with the ".EVIL" extension. Otherwise add a descriptive extension to the element, for 
+example ".OBSOLETE".
+-# \c Promote the renamed-defunct evil twin. Then do one of the following steps, based on \e a or \e b:
+ -# If the good twin exists higher up in the stream's hierarchy:
+  -# When the bad twin was renamed, the good twin was inherited immediately and appeared in your workspace as <tt>(missing)</tt>. Right-click on the missing element, 
+select \c Populate and select \e Ok to bring it into your workspace.
+ -# If the good twin does not exist higher up in the stream hierarchy:
+  -# Use the <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/Change_Palette.html">Change Palette</a> 
+to cross promote the good twin to your workspace.
+
+\note You CAN \c promote an element into a stream with the same name as another element as long as the element in the stream has <tt>(defunct)(member)</tt> status. 
+In this case, the twin that is <tt>(defunct)(member)</tt> is made <tt>(stranded)</tt> thus allowing the promoted element with the same name to become the new active 
+member in the stream. However, this can cause promotion problems later if a twin with the <tt>(stranded)</tt> element's EID exists higher up in the stream hierarchy. 
+This would require promoting the <tt>(stranded)</tt> version before its twin can be promoted. The practice of renaming (\c move) elements before their 
+<tt>defunct-promote</tt> operation helps alleviate this problem and is the reason for the recommendation in step 3 above.
+
+<em>Diff Against... File on Disk</em> is the only way to diff files that are evil twins. For example <tt>diff -v Stream1\\1 -V Stream2\\1 \\\.\\Dir\\foo.java</tt> fails 
+since internally it's implemented using the <tt>name -e</tt> option and does not rely on depot-relative pathnames. This allows \c diff to operate on files that have undergone 
+namespace changes but (sadly) fails in the case of evil twins. AccuRev defect 26192, RFE 26215, Salesforce 00044449.
+
+\par To locate:
+\c EvilTwins.exe scans for the presence of evil twins in \e depots listed in \c EvilTwins.exe.config. Add \e depot entries (case-sensitive) as needed but 
+not so many that it stresses the AccuRev server. For performance reasons, \c stat commands are issued concurrently by the program and too many can make the 
+server temporarily unresponsive. Try it with a test server first. Program output is sent to \c EvilTwinsFound-YYYY-MM-DD.log, a daily log file created/updated 
+in the same folder where \c EvilTwins.exe resides. The program's return value is <em>zero (0)</em> if it ran successfully or <em>one (1)</em> in the event of an 
+exception or initialization failure.<br>Optional: To handle erroneously reported evil twins (false positives) or to disregard those that will eventually resolve 
+on their own, put them in the \e TwinsExcludeFile specified in \c EvilTwins.exe.config to keep them from being reported in the future. Empty lines are allowed 
+in the exclude file and comments can be added by using the # sign as the first character of each comment line. The full path to the exclude file should be given 
+as the value for key \e TwinsExcludeFile in \c EvilTwins.exe.config. (Do not change the key name \e TwinsExcludeFile to some other name, otherwise the program 
+will malfunction.) Program errors are sent to STDOUT and [logged](@ref AcUtils#AcDebug#initAcLogging) in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\EvilTwins-YYYY-MM-DD.log</tt>.
+
+\par EvilTwinsFound log file
+<small>
+\verbatim
+\.\Mobile\LogManager.h
+	EID: 4872 on Wed May 24 9:28 AM
+		NEPTUNE_DEV2 (backed)
+			Size: 411, ModTime: 8/3/2016 6:29:57 PM {text}
+			Real: NEPTUNE_DEV2_thomas\5, Virtual: NEPTUNE_MAINT2\5
+		NEPTUNE_MAINT1 (backed)
+			Size: 407, ModTime: 7/5/2016 10:32:41 AM {text}
+			Real: NEPTUNE_MAINT1_barnyrd\3, Virtual: NEPTUNE_MAINT\4
+		NEPTUNE_MAINT2 (member)
+			Size: 411, ModTime: 8/3/2016 6:29:57 PM {text}
+			Real: NEPTUNE_DEV2_thomas\5, Virtual: NEPTUNE_MAINT2\5
+
+	EID: 4989 on Wed May 24 9:28 AM
+		NEPTUNE (member)
+			Size: 412, ModTime: 8/3/2016 5:41:36 PM {text}
+			Real: NEPTUNE_UAT_robert\1, Virtual: NEPTUNE\3
+		NEPTUNE_CC (backed)
+			Size: 412, ModTime: 8/3/2016 5:41:36 PM {text}
+			Real: NEPTUNE_UAT_robert\1, Virtual: NEPTUNE\3
+...
+\endverbatim
+</small>
+
+\par EvilTwins.exe.config
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+  </configSections>
+  <Depots>
+    <depots>
+      <add depot="MARS" />
+      <add depot="JUPITER" />
+      <add depot="NEPTUNE" />
+    </depots>
+  </Depots>
+  <appSettings>
+    <add key="TwinsExcludeFile" value="C:\Bin\TwinsToIgnore.txt"/>
+  </appSettings>
+  <system.diagnostics>
+    <assert assertuienabled="false"/>
+    <sources>
+      <source name="EvilTwins">
+        <listeners>
+          <remove name="Default"/>
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+          <add name="EvilTwinsFound" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+        </listeners>
+      </source>
+    </sources>
+  </system.diagnostics>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+  </startup>
+</configuration>
+\endcode
+
+<small>
+\verbatim
+# TwinsExcludeFile TwinsToIgnore.txt
+# These evil twins will resolve when promoted to the root stream.
+\.\src\com\foo.java
+\.\src\bar.c
+...
+\endverbatim
+</small>
+*/
+
 /*! \example LatestPromotions.cs
 Creates an HTML file with the promote transactions that occurred in specific streams in select depots within the past specified number of hours.
 \code
