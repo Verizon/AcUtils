@@ -381,11 +381,12 @@ namespace changes but (sadly) fails in the case of evil twins. AccuRev defect 26
 not so many that it stresses the AccuRev server. For performance reasons, \c stat commands are issued concurrently by the program and too many can make the 
 server temporarily unresponsive. Try it with a test server first. Program output is sent to \c EvilTwinsFound-YYYY-MM-DD.log, a daily log file created/updated 
 in the same folder where \c EvilTwins.exe resides. The program's return value is <em>zero (0)</em> if it ran successfully or <em>one (1)</em> in the event of an 
-exception or initialization failure.<br>Optional: To handle erroneously reported evil twins (false positives) or to disregard those that will eventually resolve 
-on their own, put them in the \e TwinsExcludeFile specified in \c EvilTwins.exe.config to keep them from being reported in the future. Empty lines are allowed 
-in the exclude file and comments can be added by using the # sign as the first character of each comment line. The full path to the exclude file should be given 
-as the value for key \e TwinsExcludeFile in \c EvilTwins.exe.config. (Do not change the key name \e TwinsExcludeFile to some other name, otherwise the program 
-will malfunction.) Program errors are sent to STDOUT and [logged](@ref AcUtils#AcDebug#initAcLogging) in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\EvilTwins-YYYY-MM-DD.log</tt>.
+exception or initialization failure. Program errors are sent to STDOUT and [logged](@ref AcUtils#AcDebug#initAcLogging) in 
+<tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\EvilTwins-YYYY-MM-DD.log</tt>.<br>Optional: To handle erroneously reported evil twins (false positives) or to disregard those 
+that will eventually resolve on their own, put them in the \e TwinsExcludeFile specified in \c EvilTwins.exe.config to keep them from being reported in the future. 
+Empty lines are allowed in the exclude file and comments can be added by using the # sign as the first character of each comment line. The full path to the exclude 
+file should be given as the value for key \e TwinsExcludeFile in \c EvilTwins.exe.config. (Do not change the key name \e TwinsExcludeFile to some other name, 
+otherwise the program will malfunction.)
 
 \par EvilTwinsFound log file
 <small>

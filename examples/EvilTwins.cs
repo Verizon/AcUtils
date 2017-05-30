@@ -59,6 +59,8 @@ namespace EvilTwins
         private static readonly object _locker = new object(); // token for lock keyword scope
         #endregion
 
+        // Returns zero (0) if program ran successfully, otherwise 
+        // one (1) in the event of an exception or program initialization failure.
         static int Main()
         {
             // general program startup initialization
@@ -93,11 +95,13 @@ namespace EvilTwins
             Task<bool[]> arr = Task.WhenAll(tasks); // finish running stat commands and initialization in parallel
             if (arr == null || arr.Result.Any(n => n == false)) return 1; // check log file
 
-            Task<bool> b = reportAsync();
-            return (b.Result) ? 0 : 1;
+            Task<bool> r = reportAsync();
+            return (r.Result) ? 0 : 1;
         }
 
-        // Initialize our dictionary class variable with [element, EID] for all elements in all dynamic streams in depot param.
+        // Initialize our dictionary class variable with [element, EID] for all elements in all dynamic streams in depot param. 
+        // AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on stat command failure. 
+        // Exception caught and logged in same for a range of exceptions.
         private static async Task<bool> initMapAsync(AcDepot depot)
         {
             bool ret = false; // assume failure
@@ -134,7 +138,7 @@ namespace EvilTwins
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException in Program.initMapAsync caught and logged.{0}{1}",
+                string msg = String.Format("AcUtilsException caught and logged in Program.initMapAsync{0}{1}",
                     Environment.NewLine, ecx.Message);
                 AcDebug.Log(msg);
             }
@@ -149,7 +153,8 @@ namespace EvilTwins
             return ret;
         }
 
-        // Report evil twins if found. Assumes the initMapAsync method has been called.
+        // Report evil twins if found. Assumes the initMapAsync method has been called. Exception caught 
+        // and logged in %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on operation failure.
         private static async Task<bool> reportAsync()
         {
             bool ret = false; // assume failure
@@ -170,7 +175,7 @@ namespace EvilTwins
 
                         log(element);
                         List<Task<XElement>> tasks = new List<Task<XElement>>();
-                        foreach (AcStream stream in depot.Streams.Where(n => n.IsDynamic && !n.Hidden).OrderBy(n => n))
+                        foreach (AcStream stream in depot.Streams.Where(n => n.IsDynamic && !n.Hidden))
                             tasks.Add(getElementInfoAsync(stream, element));
 
                         XElement[] arr = await Task.WhenAll(tasks); // finish running stat commands in parallel
@@ -184,7 +189,7 @@ namespace EvilTwins
                                 // C# language short-circuit: the id value test isn't evaluated if "no such elem" is true, 
                                 // otherwise an exception would be thrown since the id attribute doesn't exist in this case
                                 foreach (XElement e in arr.Where(n => (string)n.Attribute("status") != "(no such elem)" &&
-                                    (int)n.Attribute("id") == eid))
+                                    (int)n.Attribute("id") == eid).OrderBy(n => n.Annotation<AcStream>()))
                                 {
                                     string stream = String.Format("\t\t{0} {1}", e.Annotation<AcStream>(), (string)e.Attribute("status"));
                                     log(stream);
@@ -192,12 +197,13 @@ namespace EvilTwins
                                     string temp = (string)e.Attribute("Real");
                                     string[] real = temp.Split('\\'); // workspace stream and version numbers
                                     AcStream wkspace = depot.getStream(int.Parse(real[0])); // workspace stream
+                                    ElementType elemType = e.acxType("elemType");
                                     string twin;
                                     if ((long?)e.Attribute("size") != null)
                                         twin = String.Format("\t\t\tSize: {1}, ModTime: {2} {{{3}}}{0}\t\t\tReal: {4}\\{5}, Virtual: {6}", Environment.NewLine,
-                                            (long)e.Attribute("size"), e.acxTime("modTime"), (string)e.Attribute("elemType"), wkspace, real[1], namedVersion);
-                                    else // a folder
-                                        twin = String.Format("\t\t\tReal: {0}\\{1}, Virtual: {2}", wkspace, real[1], namedVersion);
+                                            (long)e.Attribute("size"), e.acxTime("modTime"), elemType, wkspace, real[1], namedVersion);
+                                    else // a folder or link
+                                        twin = String.Format("\t\t\tReal: {0}\\{1}, Virtual: {2} {{{3}}}", wkspace, real[1], namedVersion, elemType);
 
                                     log(twin);
                                 }
@@ -221,7 +227,8 @@ namespace EvilTwins
             return ret;
         }
 
-        // Returns the attributes for the element param in stream param if the query succeeded, otherwise null.
+        // Returns the attributes for the element param in stream param if the query succeeded, otherwise null. 
+        // AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on stat command failure.
         private static async Task<XElement> getElementInfoAsync(AcStream stream, string element)
         {
             XElement e = null;
@@ -239,7 +246,7 @@ namespace EvilTwins
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException in Program.getElementInfoAsync caught and logged.{0}{1}",
+                string msg = String.Format("AcUtilsException caught and logged in Program.getElementInfoAsync{0}{1}",
                     Environment.NewLine, ecx.Message);
                 AcDebug.Log(msg);
             }
@@ -247,8 +254,9 @@ namespace EvilTwins
             return e;
         }
 
-        // Returns the list of elements in TwinsExcludeFile from EvilTwins.exe.config with elements that can be ignored.
-        // Assumes caller has determined that the TwinsExcludeFile specified in EvilTwins.exe.config exists.
+        // Returns the list of elements in TwinsExcludeFile from EvilTwins.exe.config with elements that can be ignored. 
+        // Assumes caller has determined that the TwinsExcludeFile specified in EvilTwins.exe.config exists. 
+        // Exception caught and logged in %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on operation failure.
         private static List<String> getTwinsExcludeList()
         {
             List<String> exclude = new List<String>();
@@ -272,7 +280,7 @@ namespace EvilTwins
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception in Program.getTwinsExcludeList caught and logged.{0}{1}",
+                string msg = String.Format("Exception caught and logged in Program.getTwinsExcludeList{0}{1}",
                     Environment.NewLine, ecx.Message);
                 AcDebug.Log(msg);
             }
@@ -319,9 +327,11 @@ namespace EvilTwins
 
         // Initialize our class variables from EvilTwins.exe.config.
         // Returns true if variables were successfully initialized, false otherwise.
+        // ConfigurationErrorsException caught and logged in 
+        // %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on initialization failure.
         private static bool initAppConfigData()
         {
-            bool ret = false; // assume failure
+            bool ret = true; // assume success
             try
             {
                 _twinsExcludeFile = AcQuery.getAppConfigSetting<string>("TwinsExcludeFile").Trim();
@@ -333,8 +343,6 @@ namespace EvilTwins
                 }
                 else
                     _selDepots = depotsConfigSection.Depots;
-
-                ret = true;
             }
 
             catch (ConfigurationErrorsException exc)
@@ -345,6 +353,7 @@ namespace EvilTwins
                 string msg = String.Format("Invalid data in {1}.config{0}{2}",
                     Environment.NewLine, exeFile, exc.Message);
                 AcDebug.Log(msg);
+                ret = false;
             }
 
             return ret;
@@ -352,7 +361,8 @@ namespace EvilTwins
 
         // Initialize our logging support for evil twins found. Output is sent to the daily log file 
         // EvilTwinsFound-YYYY-MM-DD.log created (or updated) in the same folder where EvilTwins.exe resides.
-        // Returns true if logging was successfully initialized, false otherwise.
+        // Returns true if logging was successfully initialized, false otherwise. Exception caught and logged in 
+        // %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on initialization failure.
         private static bool initEvilTwinsLogging()
         {
             bool ret = false; // assume failure
@@ -373,7 +383,7 @@ namespace EvilTwins
 
             catch (Exception exc)
             {
-                string msg = String.Format("Exception in Program.initEvilTwinsLogging caught and logged.{0}{1}",
+                string msg = String.Format("Exception caught and logged in Program.initEvilTwinsLogging{0}{1}",
                     Environment.NewLine, exc.Message);
                 AcDebug.Log(msg);
             }

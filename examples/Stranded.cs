@@ -30,11 +30,13 @@ namespace Stranded
         private static DepotsCollection _excludeList; // list of depots from Stranded.exe.config that should be ignored
         // map each stream found to have stranded elements with its list of status types and the count of each type
         private static SortedList<AcStream, SortedList<string, int>> _map = new SortedList<AcStream, SortedList<string, int>>();
-        private static readonly object _locker = new object();
-        private static int _totalStranded;
-        private static FileLogTraceListener _tl; // logging support for stranded files found
+        private static readonly object _locker = new object(); // token for lock keyword scope
+        private static int _totalStranded; // grand total of stranded elements found
+        private static FileLogTraceListener _tl; // logging support for stranded elements found
         #endregion
 
+        // Returns zero (0) if program ran successfully, otherwise 
+        // one (1) in the event of an exception or program initialization failure.
         static int Main()
         {
             // general program startup initialization
@@ -61,9 +63,8 @@ namespace Stranded
         }
 
         // Get the stranded elements along with the list of status types found and the total count for each type. 
-        // Returns true if the operation completed successfully, false otherwise. 
-        // Exception caught and logged in %LOCALAPPDATA%\AcTools\Logs\Stranded-YYYY-MM-DD.log on failure to 
-        // handle a range of exceptions.
+        // Returns true if the operation completed successfully, false otherwise. Exception caught and logged 
+        // in %LOCALAPPDATA%\AcTools\Logs\Stranded-YYYY-MM-DD.log on failure to handle a range of exceptions.
         private static async Task<bool> getStrandedAsync()
         {
             bool ret = false; // assume failure
@@ -207,7 +208,7 @@ namespace Stranded
         // %LOCALAPPDATA%\AcTools\Logs\Stranded-YYYY-MM-DD.log on initialization failure.
         private static bool initAppConfigData()
         {
-            bool ret = false; // assume failure
+            bool ret = true; // assume success
             try
             {
                 DepotsSection depotsConfigSection = ConfigurationManager.GetSection("Depots") as DepotsSection;
@@ -218,8 +219,6 @@ namespace Stranded
                 }
                 else
                     _excludeList = depotsConfigSection.Depots;
-
-                ret = true;
             }
 
             catch (ConfigurationErrorsException exc)
@@ -230,13 +229,14 @@ namespace Stranded
                 string msg = String.Format("Invalid data in {1}.config{0}{2}",
                     Environment.NewLine, exeFile, exc.Message);
                 AcDebug.Log(msg);
+                ret = false;
             }
 
             return ret;
         }
 
         // Initialize our logging support for stranded elements found. Output is sent to the daily log file 
-        // StrandedFound-YYYY-MM-DD.log created (or updated) in the same folder where \c Stranded.exe resides. 
+        // StrandedFound-YYYY-MM-DD.log created (or updated) in the same folder where Stranded.exe resides. 
         // Returns true if logging was successfully initialized, false otherwise. Exception caught and logged in 
         // %LOCALAPPDATA%\AcTools\Logs\Stranded-YYYY-MM-DD.log on initialization failure.
         private static bool initStrandedFoundLogging()
@@ -259,7 +259,7 @@ namespace Stranded
 
             catch (Exception exc)
             {
-                string msg = String.Format("Exception in Program.initStrandedFoundLogging caught and logged.{0}{1}",
+                string msg = String.Format("Exception caught and logged in Program.initStrandedFoundLogging{0}{1}",
                     Environment.NewLine, exc.Message);
                 AcDebug.Log(msg);
             }
@@ -267,7 +267,7 @@ namespace Stranded
             return ret;
         }
 
-        // Write text to the StrandedFound-YYYY-MM-DD.log daily log file located in the same folder as the executable.
+        // Write text to the StrandedFound-YYYY-MM-DD.log daily log file located in the same folder where Stranded.exe resides.
         private static void log(string text)
         {
             if (_tl != null)
