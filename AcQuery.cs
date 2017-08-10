@@ -52,7 +52,7 @@ namespace AcUtils
             string prncpl = null;
             try
             {
-                AcResult r = await AcCommand.runAsync("info");
+                AcResult r = await AcCommand.runAsync("info").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     using (StringReader reader = new StringReader(r.CmdResult))
@@ -122,7 +122,7 @@ namespace AcUtils
             try
             {
                 string cmd = String.Format(@"cat -v ""{0}"" -p ""{1}"" -e {2}", ver_spec, depot, eid);
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     tmpFile = Path.GetTempFileName();
@@ -174,7 +174,7 @@ namespace AcUtils
             {
                 // -i switch reports the EID's of the two versions and does not do the comparison.
                 string cmd = String.Format(@"diff -i -b -fx -v ""{0}"" -p ""{1}"" ""{2}""", realverspec, depot, depotrelpath);
-                result = await AcCommand.runAsync(cmd);
+                result = await AcCommand.runAsync(cmd).ConfigureAwait(false);
             }
 
             catch (AcUtilsException ecx)
@@ -249,7 +249,7 @@ namespace AcUtils
             try
             {
                 string cmd = String.Format(@"name -v ""{0}"" -fx -e {1}", stream, EID);
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     using (StringReader reader = new StringReader(r.CmdResult))
@@ -330,7 +330,7 @@ namespace AcUtils
                 }
 
                 string cmd = String.Format(@"xml -l ""{0}""", tempFile);
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     using (StringReader reader = new StringReader(r.CmdResult))
@@ -383,7 +383,7 @@ namespace AcUtils
             try
             {
                 string cmd = includeDeactivated ? "show -fix users" : "show -fx users";
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement t = XElement.Parse(r.CmdResult);
@@ -421,7 +421,7 @@ namespace AcUtils
             int count = -1; // assume failure
             try
             {
-                AcResult r = await AcCommand.runAsync("show -fx depots");
+                AcResult r = await AcCommand.runAsync("show -fx depots").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement t = XElement.Parse(r.CmdResult);
@@ -459,7 +459,7 @@ namespace AcUtils
             int count = -1; // assume failure
             try
             {
-                AcResult r = await AcCommand.runAsync("show -fx -d streams");
+                AcResult r = await AcCommand.runAsync("show -fx -d streams").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement s = XElement.Parse(r.CmdResult);
@@ -497,7 +497,7 @@ namespace AcUtils
             int count = -1; // assume failure
             try
             {
-                AcResult r = await AcCommand.runAsync("show -fix streams");
+                AcResult r = await AcCommand.runAsync("show -fix streams").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement t = XElement.Parse(r.CmdResult);
@@ -535,7 +535,7 @@ namespace AcUtils
             int count = -1; // assume failure
             try
             {
-                AcResult r = await AcCommand.runAsync("show -fx -d streams");
+                AcResult r = await AcCommand.runAsync("show -fx -d streams").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement t = XElement.Parse(r.CmdResult);
@@ -573,7 +573,7 @@ namespace AcUtils
             int count = -1; // assume failure
             try
             {
-                AcResult r = await AcCommand.runAsync("show -fix -a wspaces");
+                AcResult r = await AcCommand.runAsync("show -fix -a wspaces").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement t = XElement.Parse(r.CmdResult);
@@ -714,7 +714,7 @@ namespace AcUtils
         {
             List<string> depots = null;
             AcResult result = null;
-            try { result = await AcCommand.runAsync("show -fx depots"); }
+            try { result = await AcCommand.runAsync("show -fx depots").ConfigureAwait(false); }
 
             catch (AcUtilsException ecx)
             {

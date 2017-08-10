@@ -410,7 +410,7 @@ namespace AcUtils
         /// </summary>
         /// <param name="depot">The depot for which streams will be created.</param>
         /// <param name="listfile">List file <tt>\%APPDATA\%\\AcTools\\<prog_name\>\\<depot_name\>.streams</tt> for the 
-        /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a> 
+        /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a> 
         /// command if found, otherwise \e null.<br>
         /// Example: <tt>"C:\Users\barnyrd\AppData\Roaming\AcTools\FooApp\NEPTUNE.streams"</tt>.</param>
         /// <returns>\e true if initialization succeeded, \e false otherwise.</returns>
@@ -433,7 +433,7 @@ namespace AcUtils
                 else
                     cmd = String.Format(@"show {0} -p ""{1}"" -l ""{2}"" streams", option, depot, listfile);
 
-                AcResult result = await AcCommand.runAsync(cmd);
+                AcResult result = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (result != null && result.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(result.CmdResult);

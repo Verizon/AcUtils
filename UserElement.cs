@@ -19,45 +19,31 @@ using System.Configuration;
 namespace AcUtils
 {
     /// <summary>
-    /// An AccuRev user from the [Users section](@ref AcUtils#UsersCollection) in <tt>\<prog_name\>.exe.config</tt>.
+    /// A user's domain (login) ID or email address from the [Users section](@ref AcUtils#UsersCollection) in <tt>\<prog_name\>.exe.config</tt>.
     /// </summary>
     [Serializable]
     public sealed class UserElement : ConfigurationElement
     {
-        private static ConfigurationProperty _user; // AccuRev principal name
-        private static ConfigurationProperty _name; // AcUser default name (display name from LDAP otherwise principal name)
+        private static ConfigurationProperty _user; // domain (login) ID or email address
         private static ConfigurationPropertyCollection _properties;
 
         static UserElement()
         {
             _user = new ConfigurationProperty("user", typeof(string),
                 null, ConfigurationPropertyOptions.IsKey);
-            _name = new ConfigurationProperty("name", typeof(string),
-                null, ConfigurationPropertyOptions.None);
 
             _properties = new ConfigurationPropertyCollection();
             _properties.Add(_user);
-            _properties.Add(_name);
         }
 
         /// <summary>
         /// The \e user from the [Users section](@ref AcUtils#UsersCollection) in <tt>\<prog_name\>.exe.config</tt>.
         /// </summary>
-        /// <remarks>The user's AccuRev principal name.</remarks>
+        /// <remarks>The user's domain (login) ID or email address.</remarks>
         [ConfigurationProperty("user", DefaultValue = "", IsKey = true, IsRequired = true)]
         public string User
         {
             get { return (string)base[_user]; }
-        }
-
-        /// <summary>
-        /// The \e name from the [Users section](@ref AcUtils#UsersCollection) in <tt>\<prog_name\>.exe.config</tt>.
-        /// </summary>
-        /// <remarks>AcUser object default name: AcUser.DisplayName if it exists, otherwise the user's AccuRev principal name.</remarks>
-        [ConfigurationProperty("name", DefaultValue = "", IsKey = false, IsRequired = false)]
-        public string Name
-        {
-            get { return (string)base[_name]; }
         }
 
         protected override ConfigurationPropertyCollection Properties

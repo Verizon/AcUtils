@@ -262,7 +262,7 @@ namespace AcUtils
             try
             {
                 string cmd = "show -fx sessions";
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);

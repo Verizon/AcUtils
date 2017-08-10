@@ -340,7 +340,7 @@ namespace AcUtils
                 // Include rules that are inherited from higher level streams.
                 cmd = String.Format(@"lsrules -s ""{0}"" -fx", stream);
 
-            return await runCmdAsync(cmd);
+            return await runCmdAsync(cmd).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -367,7 +367,7 @@ namespace AcUtils
                 tasks.Add(runCmdAsync(cmd));
             }
 
-            bool[] arr = await Task.WhenAll(tasks);
+            bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
             return (arr != null && arr.All(n => n == true)); // true if all succeeded
         }
 
@@ -395,7 +395,7 @@ namespace AcUtils
                 tasks.Add(runCmdAsync(cmd));
             }
 
-            bool[] arr = await Task.WhenAll(tasks);
+            bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
             return (arr != null && arr.All(n => n == true)); // true if all succeeded
         }
 
@@ -409,7 +409,7 @@ namespace AcUtils
         public async Task<bool> initAsync(DepotsCollection depots)
         {
             AcDepots dlist = new AcDepots();
-            if (!(await dlist.initAsync(depots))) return false;
+            if (!(await dlist.initAsync(depots).ConfigureAwait(false))) return false;
 
             string cmd = String.Empty;
             List<Task<bool>> tasks = new List<Task<bool>>();
@@ -429,7 +429,7 @@ namespace AcUtils
                 }
             }
 
-            bool[] arr = await Task.WhenAll(tasks);
+            bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
             return (arr != null && arr.All(n => n == true)); // true if all succeeded
         }
         //@}
@@ -470,7 +470,7 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);

@@ -95,7 +95,7 @@ namespace AcUtils
             try
             {
                 string cmd = _includeDeactivated ? "show -fix groups" : "show -fx groups";
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     List<Task<bool>> tasks = new List<Task<bool>>();
@@ -118,7 +118,7 @@ namespace AcUtils
 
                     if (_includeMembersList && tasks.Count > 0)
                     {
-                        bool[] arr = await Task.WhenAll(tasks); // run all group's membership initialization in parallel
+                        bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false); // run all group's membership initialization in parallel
                         if (arr == null || arr.Any(n => n == false))
                             return false; // failure in initMembersListAsync, see log file
                     }
@@ -167,7 +167,7 @@ namespace AcUtils
             try
             {
                 string cmd = String.Format(@"show -fx -g ""{0}"" members", group);
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
                     SortedSet<string> members = new SortedSet<string>();

@@ -344,7 +344,7 @@ namespace AcUtils
                 else  // request is for all streams except those that are hidden
                     cmd = String.Format(@"getproperty -fx -ks -p ""{0}""", depot);
 
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -410,7 +410,7 @@ namespace AcUtils
                 else // request is for all principals except those that are hidden
                     cmd = "getproperty -fx -ku";
 
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);

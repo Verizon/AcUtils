@@ -100,7 +100,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -221,7 +221,7 @@ Show the groups that have promotion rights on \e streams.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Streams>
     <streams>
@@ -243,7 +243,7 @@ For \e depots show workspaces that have a default group and "DEV3" in their name
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -293,11 +293,7 @@ Stranded elements are members of the default group yet they are not returned wit
 active elements of the workspace or stream; you must use the <tt>-i</tt> option instead. They are purposely left out of the list retrieved 
 with the <tt>-d</tt> option to ensure they are not accidentally promoted. Salesforce 00042864, 00035837, RFE 13692.
 
-\sa [Handling Stranded Elements in AccuRev Technical Notes](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/handling_stranded.html)
-
-Our testing showed a dramatic performance gain between this program and another where the \c stat command ran synchronously. For 730 dynamic streams, 
-this program (async version) completed in 1 minute 18 seconds versus 7 minutes 3 seconds for the other. (During execution you'll hear the fan in your 
-computer run to cool down the CPU's.)
+\sa [Handling Stranded Elements in AccuRev Technical Notes](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/handling_stranded.html)
 
 Optionally include a list of depot names in \c Stranded.exe.config that should be ignored, i.e. PlayGround depots, obsolete depots, etc.
 
@@ -314,7 +310,7 @@ the file without the need to recompile the program, however it must be relaunche
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <Depots>
     <depots>
@@ -351,7 +347,7 @@ name and location are added to the depot in disparate streams, when promoted up 
 <em>"evil twins"</em>. The error message indicates there are two elements with the same name and location but with different EID's. To fix evil twins:
 
 -# Since you must clear the namespace in one of the streams so the <em>"good twin"</em> prevails, you must decide which twin you want to keep. Use AccuRev's 
-<a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/online_help_F08_1.html">Version Browser</a> 
+<a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/online_help_F08_1.html">Version Browser</a> 
 to view the history of each twin as this could impact your decision. For example, if one of the elements has gone to production and the other has not, you would want to make 
 the production version the good twin and the other the evil twin.
 -# If the element is a file, do a \c diff on the twins to make sure the good twin (the one that will prevail) has the correct content. Edit as needed.
@@ -363,7 +359,7 @@ example ".OBSOLETE".
   -# When the bad twin was renamed, the good twin was inherited immediately and appeared in your workspace as <tt>(missing)</tt>. Right-click on the missing element, 
 select \c Populate and select \e Ok to bring it into your workspace.
  -# If the good twin does not exist higher up in the stream hierarchy:
-  -# Use the <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/Change_Palette.html">Change Palette</a> 
+  -# Use the <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/Change_Palette.html">Change Palette</a> 
 to cross promote the good twin to your workspace.
 
 \note You CAN \c promote an element into a stream with the same name as another element as long as the element in the stream has <tt>(defunct)(member)</tt> status. 
@@ -377,16 +373,14 @@ since internally it's implemented using the <tt>name -e</tt> option and does not
 namespace changes but (sadly) fails in the case of evil twins. AccuRev defect 26192, RFE 26215, Salesforce 00044449.
 
 \par To locate:
-\c EvilTwins.exe scans for the presence of evil twins in \e depots listed in \c EvilTwins.exe.config. Add \e depot entries (case-sensitive) as needed but 
-not so many that it stresses the AccuRev server. For performance reasons, \c stat commands are issued concurrently by the program and too many can make the 
-server temporarily unresponsive. Try it with a test server first. Program output is sent to \c EvilTwinsFound-YYYY-MM-DD.log, a daily log file created/updated 
-in the same folder where \c EvilTwins.exe resides. The program's return value is <em>zero (0)</em> if it ran successfully or <em>one (1)</em> in the event of an 
-exception or initialization failure. Program errors are sent to STDOUT and [logged](@ref AcUtils#AcDebug#initAcLogging) in 
-<tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\EvilTwins-YYYY-MM-DD.log</tt>.<br>Optional: To handle erroneously reported evil twins (false positives) or to disregard those 
-that will eventually resolve on their own, put them in the \e TwinsExcludeFile specified in \c EvilTwins.exe.config to keep them from being reported in the future. 
-Empty lines are allowed in the exclude file and comments can be added by using the # sign as the first character of each comment line. The full path to the exclude 
-file should be given as the value for key \e TwinsExcludeFile in \c EvilTwins.exe.config. (Do not change the key name \e TwinsExcludeFile to some other name, 
-otherwise the program will malfunction.)
+\c EvilTwins.exe scans for the presence of evil twins in \e depots listed in \c EvilTwins.exe.config. Add \e depot entries (case-sensitive) as needed. Program output 
+is sent to \c EvilTwinsFound-YYYY-MM-DD.log, a daily log file created/updated in the same folder where \c EvilTwins.exe resides. The program's return value is 
+<em>zero (0)</em> if it ran successfully or <em>one (1)</em> in the event of an exception or initialization failure. Program errors are sent to STDOUT and 
+[logged](@ref AcUtils#AcDebug#initAcLogging) in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\EvilTwins-YYYY-MM-DD.log</tt>.<br>Optional: To handle erroneously reported evil twins 
+(false positives) or to disregard those that will eventually resolve on their own, put them in the \e TwinsExcludeFile specified in \c EvilTwins.exe.config to keep them 
+from being reported in the future. Empty lines are allowed in the exclude file and comments can be added by using the # sign as the first character of each comment line. 
+The full path to the exclude file should be given as the value for key \e TwinsExcludeFile in \c EvilTwins.exe.config. (Do not change the key name \e TwinsExcludeFile to 
+some other name, otherwise the program will malfunction.)
 
 \par EvilTwinsFound log file
 <small>
@@ -419,7 +413,7 @@ otherwise the program will malfunction.)
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -466,9 +460,9 @@ Creates an HTML file with the promote transactions that occurred in specific str
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -535,7 +529,7 @@ Lock promotions to select streams across multiple depots for all except those in
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -569,7 +563,7 @@ Built-in types \b anyuser and \b authuser are unsupported.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <activeDir>
     <domains>
@@ -876,8 +870,9 @@ private static bool fooSync()
    limitations under the License.
 \endverbatim
 
-AcUtils requires .NET Framework 4.6 or higher.
-Microsoft.Experimental.Collections.dll is available under the license <a href="http://www.microsoft.com/net/dotnet_library_license.htm">here</a>.
+AcUtils requires .NET Framework 4.6 or higher. 
+[Microsoft.Experimental.Collections.dll](https://www.nuget.org/packages/Microsoft.Experimental.Collections) is available under the license <a href="http://www.microsoft.com/net/dotnet_library_license.htm">here</a>. 
+[LimitedConcurrencyLevelTaskScheduler](@ref System#Threading#Tasks#Schedulers#LimitedConcurrencyLevelTaskScheduler) is available under the license <a href="https://gallery.technet.microsoft.com/scriptcenter/site/DSC-Resource-Kit-All-c449312d/eulapartial?licenseType=MSLPL">here</a>.
 */
 
 /*! \page requirements AcUtils Requirements

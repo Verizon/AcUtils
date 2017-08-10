@@ -492,7 +492,7 @@ namespace AcUtils
             {
                 // run both in parallel
                 Task<AcResult> rt = getReferenceTreesXMLAsync();
-                AcResult[] arr = await Task.WhenAll(ws, rt);
+                AcResult[] arr = await Task.WhenAll(ws, rt).ConfigureAwait(false);
                 bool ret = (arr != null && arr.All(n => n != null && n.RetVal == 0)); // true if both were successful
                 if (!ret)
                     return false;
@@ -504,7 +504,7 @@ namespace AcUtils
             }
             else
             {
-                AcResult r = await ws;
+                AcResult r = await ws.ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     if (!storeWSpaces(r, depot))
@@ -528,7 +528,7 @@ namespace AcUtils
         /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on <tt>show wspaces</tt> command failure.</exception>
         /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
-        /*! \sa AcWorkspaces#getReferenceTreesXMLAsync */
+        /*! \sa AcWorkspaces.getReferenceTreesXMLAsync */
         private async Task<AcResult> getWorkspacesXMLAsync()
         {
             AcResult result = null;
@@ -548,7 +548,7 @@ namespace AcUtils
                 else if (!_allWSpaces && !_includeHidden)
                     // Only those workspaces that belong to the principal. Do not include deactivated workspaces.
                     cmd = String.Format(@"show -fvx wspaces");
-                result = await AcCommand.runAsync(cmd);
+                result = await AcCommand.runAsync(cmd).ConfigureAwait(false);
             }
 
             catch (AcUtilsException ecx)
@@ -577,7 +577,7 @@ namespace AcUtils
         /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on <tt>show refs</tt> command failure.</exception>
         /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
-        /*! \sa AcWorkspaces#getWorkspacesXMLAsync */
+        /*! \sa AcWorkspaces.getWorkspacesXMLAsync */
         private async Task<AcResult> getReferenceTreesXMLAsync()
         {
             AcResult result = null;
@@ -590,7 +590,7 @@ namespace AcUtils
                 else
                     // Display only active reference trees.
                     cmd = String.Format(@"show -fvx refs");
-                result = await AcCommand.runAsync(cmd);
+                result = await AcCommand.runAsync(cmd).ConfigureAwait(false);
             }
 
             catch (AcUtilsException ecx)

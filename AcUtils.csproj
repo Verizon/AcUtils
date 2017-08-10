@@ -78,6 +78,7 @@
     <Compile Include="GroupsCollection.cs" />
     <Compile Include="GroupsSection.cs" />
     <Compile Include="Hist.cs" />
+    <Compile Include="LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="PrncplDescriptionProvider.cs" />
     <Compile Include="PrncplTypeDescriptor.cs" />
     <Compile Include="PropCollection.cs" />

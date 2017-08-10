@@ -94,7 +94,7 @@ namespace Stranded
                 AcDebug.Log(msg);
             }
 
-            return (ret) ? true : false;
+            return ret;
         }
 
         // Run the AccuRev stat command for the stream param and initialize our class dictionary variable _map 

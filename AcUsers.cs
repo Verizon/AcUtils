@@ -431,7 +431,7 @@ namespace AcUtils
                 }
 
                 return ret;
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -455,7 +455,7 @@ namespace AcUtils
             try
             {
                 string cmd = String.Format(@"show -fx -u ""{0}"" groups", Principal.Name); // works for inactive users too
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
                     SortedSet<string> members = new SortedSet<string>();
@@ -623,8 +623,8 @@ namespace AcUtils
                         while (tasks[0].Count > 0)
                         {
                             // run all user's LDAP initialization in parallel and report sequentially as they complete
-                            Task<bool> n1 = await Task.WhenAny(tasks[0]);
-                            if (!(await n1)) return false; //  // a failure occurred, see log file
+                            Task<bool> n1 = await Task.WhenAny(tasks[0]).ConfigureAwait(false);
+                            if (!(await n1.ConfigureAwait(false))) return false; //  // a failure occurred, see log file
                             tasks[0].Remove(n1); // remove completed task from the list
                             if (progress != null)
                                 progress.Report(++counter);
@@ -637,8 +637,8 @@ namespace AcUtils
                         while (tasks[1].Count > 0)
                         {
                             // run all user's group initialization in parallel and report sequentially as they complete
-                            Task<bool> n2 = await Task.WhenAny(tasks[1]);
-                            if (!(await n2)) return false; //  // a failure occurred, see log file
+                            Task<bool> n2 = await Task.WhenAny(tasks[1]).ConfigureAwait(false);
+                            if (!(await n2.ConfigureAwait(false))) return false; //  // a failure occurred, see log file
                             tasks[1].Remove(n2);
                             if (progress != null)
                                 progress.Report(++counter);

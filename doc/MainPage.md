@@ -16,10 +16,10 @@ limitations under the License. -->
 <img src="Utilities.png" align=right/>
 \endhtmlonly 
 
-AcUtils is a high performance abstraction layer to [AccuRev](http://www.borland.com/en-GB/Products/Change-Management/AccuRev). It's an open source library written in C#, developed at Verizon and available 
-on https://github.com/Verizon. AcUtils expands AccuRev's core product offering by way of [XML](https://en.wikipedia.org/wiki/XML) and the [.NET Framework](http://www.microsoft.com/net). As a strongly named 
+AcUtils is a high performance abstraction layer for [AccuRev](http://www.borland.com/en-GB/Products/Change-Management/AccuRev). It's an open source library written in C#, developed at Verizon and available 
+on https://github.com/Verizon/AcUtils. AcUtils expands AccuRev's core product offering by way of [XML](https://en.wikipedia.org/wiki/XML) and the [.NET Framework](http://www.microsoft.com/net). As a strongly named 
 (tamper resistant) assembly (\c AcUtils.dll), AcUtils provides a secure high level API to 
-[AccuRev CLI commands](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/the_accurev_program.html) 
+[AccuRev CLI commands](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/the_accurev_program.html) 
 by [spawning their execution](@ref AcUtils#AcCommand) and converting the XML result into .NET objects. This allows the use of integrated development environments and programming languages with familiar constructs. 
 AcUtils facilitates the development of ad hoc queries, custom applications, and pre/post operation triggers. It helps streamline administrative tasks and enables third-party integration.
 

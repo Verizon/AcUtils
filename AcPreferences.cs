@@ -47,7 +47,7 @@ namespace AcUtils
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
         public static async Task<bool[]> getIgnoreOptionsAsync()
         {
-            string tmpFile = await getPreferencesAsync();
+            string tmpFile = await getPreferencesAsync().ConfigureAwait(false);
             if (String.IsNullOrEmpty(tmpFile)) // unlikely
                 return null; // error already logged
 
@@ -88,7 +88,7 @@ namespace AcUtils
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
         public static async Task<bool?> getUseIgnoreElemsOptimizationAsync()
         {
-            string tmpFile = await getPreferencesAsync();
+            string tmpFile = await getPreferencesAsync().ConfigureAwait(false);
             if (String.IsNullOrEmpty(tmpFile)) // unlikely
                 return null; // error already logged
 
@@ -128,7 +128,7 @@ namespace AcUtils
         {
             if (_acHomeFolder == null) // first time initialization only
             {
-                string tmpFile = await getPreferencesAsync();
+                string tmpFile = await getPreferencesAsync().ConfigureAwait(false);
                 if (String.IsNullOrEmpty(tmpFile)) // unlikely
                     return null; // error already logged
 
@@ -166,7 +166,7 @@ namespace AcUtils
         /// The caller is responsible for deleting the file.</returns>
         /*! \getpref_  \c getpref */
         /*! \accunote_ When using the AccuRev GUI client, changes in <em>User Preferences</em> do not always persist. 
-            As a workaround, use [setpref](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setpref.html):
+            As a workaround, use [setpref](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setpref.html):
  -# Exit the AccuRev client.
  -# Put the setting\(s\) needed in a file named <tt>set_pref.xml</tt>
  -# Open a command window and cd to the folder where the file is located.
@@ -188,7 +188,7 @@ namespace AcUtils
             string tempFile = null;
             try
             {
-                AcResult r = await AcCommand.runAsync("getpref");
+                AcResult r = await AcCommand.runAsync("getpref").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
                     tempFile = Path.GetTempFileName();

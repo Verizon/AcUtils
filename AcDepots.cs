@@ -117,7 +117,7 @@ namespace AcUtils
             try
             {
                 string cmd = "show -fx depots";
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -141,7 +141,7 @@ namespace AcUtils
                         string temp = (string)e.Attribute("case");
                         Case = (CaseSensitivity)Enum.Parse(typeof(CaseSensitivity), temp);
                         _streams = new AcStreams(_dynamicOnly, _includeHidden);
-                        ret = await _streams.initAsync(this, listFile());
+                        ret = await _streams.initAsync(this, listFile()).ConfigureAwait(false);
                     }
                 }
             }
@@ -404,12 +404,12 @@ namespace AcUtils
         public async Task<bool> forStreamAndAllChildrenAsync(AcStream stream, Action<AcStream> cb, bool includeWSpaces = false)
         {
             cb(stream);
-            var children = await getChildrenAsync(stream, includeWSpaces);
+            var children = await getChildrenAsync(stream, includeWSpaces).ConfigureAwait(false);
             if (children == null) return false; //  operation failed, check log file
             if (children.Item1 == null) return false; // ..
             if (children.Item1 == true) // if children exist
                 foreach (AcStream child in children.Item2)
-                    await forStreamAndAllChildrenAsync(child, cb, includeWSpaces);
+                    await forStreamAndAllChildrenAsync(child, cb, includeWSpaces).ConfigureAwait(false);
 
             return true;
         }
@@ -454,7 +454,7 @@ namespace AcUtils
             // thread safe one-time stream hierarchy initialization
             // see "C# Lazy Initialization && Race-to-initialize" http://stackoverflow.com/questions/11555755/c-sharp-lazy-initialization-race-to-initialize
             await LazyInitializer.EnsureInitialized(ref _hierarchy, ref _hierInit, ref _hierSync, 
-                async () => await getHierarchyAsync(includeWSpaces));
+                async () => await getHierarchyAsync(includeWSpaces).ConfigureAwait(false)).ConfigureAwait(false);
             if (_hierarchy == null)
                 return Tuple.Create(ret, children); // initialization failed, check log file
 
@@ -496,7 +496,7 @@ namespace AcUtils
             {
                 string option = _includeHidden ? "-fix" : "-fx";
                 string cmd = String.Format(@"show -p ""{0}"" {1} -s 1 -r streams", this, option);
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -544,7 +544,7 @@ namespace AcUtils
         /// When this file exists (created manually), it is used as the \e list-file to populate the depot with select streams. 
         /// This function is called internally and not by user code.
         /// </summary>
-        /// <remarks>Implemented with <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a>.
+        /// <remarks>Implemented with <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a>.
         /// </remarks>
         /// <returns>Full path of the list file <tt>\%APPDATA\%\\AcTools\\<prog_name\>\\<depot_name\>.streams</tt> if found, otherwise \e null.<br>
         /// Example: <tt>"C:\Users\barnyrd\AppData\Roaming\AcTools\FooApp\NEPTUNE.streams"</tt>.</param>
@@ -702,7 +702,7 @@ namespace AcUtils
             try
             {
                 string cmd = "show -fx depots";
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     List<Task<bool>> tasks = new List<Task<bool>>();
@@ -729,7 +729,7 @@ namespace AcUtils
                         lock (_locker) { Add(depot); }
                     }
 
-                    bool[] arr = await Task.WhenAll(tasks); // run streams initialization in parallel
+                    bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false); // run streams initialization in parallel
                     if (arr != null && arr.All(n => n == true))
                         ret = true; // operation succeeded
                 }
@@ -757,7 +757,7 @@ namespace AcUtils
         #pragma warning disable 0642
         /// <summary>
         /// Get the list of depots \e user has permission to view based on their principal name and group membership 
-        /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entries</a>.
+        /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entries</a>.
         /// </summary>
         /// <remarks>A plus sign (+) appended to the depot name denotes the Inheritable attribute.</remarks>
         /// <param name="user">User for which to query.</param>
@@ -772,8 +772,8 @@ namespace AcUtils
                 async () =>
                 {
                     _permissions = new AcPermissions(PermKind.depot);
-                    return await _permissions.initAsync();
-                });
+                    return await _permissions.initAsync().ConfigureAwait(false);
+                }).ConfigureAwait(false);
 
             if (_depotPermObj.Result == false)
                 return null; // initialization failure, check log file

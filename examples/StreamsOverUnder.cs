@@ -45,14 +45,11 @@ namespace StreamsOverUnder
             Task<bool> init = initStatAsync();
             if (init.Result) // if all ran successfully
             {
+                LapStreamEqualityComparer comparer = new LapStreamEqualityComparer();
                 // Tip: add a Where clause to drill down further
-                //foreach (Element e in Stat.Elements.Where(n => n.Status.Contains("underlap"))
-                //    .Distinct(new LapStreamEqualityComparer()).OrderBy(n => n.LapStream))
-                foreach (Element e in Stat.Elements.Distinct(new LapStreamEqualityComparer())
-                    .OrderBy(n => n.LapStream))
-                {
-                        Console.WriteLine(e.ToString("L"));
-                }
+                //foreach (Element e in Stat.Elements.Where(n => n.Status.Contains("underlap")).Distinct(comparer).OrderBy(n => n.LapStream))
+                foreach (Element e in Stat.Elements.Distinct(comparer).OrderBy(n => n.LapStream))
+                    Console.WriteLine(e.ToString("L"));
 
                 ret = true; // operation completed successfully
             }

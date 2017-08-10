@@ -23,7 +23,7 @@ namespace AcUtils
     /// Supports multiple Active Directory domains plus user properties defined 
     /// beyond the <a href="class_ac_utils_1_1_ac_user.html#properties">default set</a>.
     /// </summary>
-    /*! \sa DomainCollection, PropCollection, AcUser#Other */
+    /*! \sa DomainCollection, PropCollection, AcUser.Other */
     [Serializable]
     public sealed class ADSection : ConfigurationSection
     {

@@ -374,7 +374,7 @@ namespace AcUtils
             try
             {
                 string cmd = "show -fx locks";
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -421,13 +421,13 @@ namespace AcUtils
         public async Task<bool> initAsync(DepotsCollection depots)
         {
             AcDepots dlist = new AcDepots();
-            if (!(await dlist.initAsync(depots))) return false;
+            if (!(await dlist.initAsync(depots).ConfigureAwait(false))) return false;
 
             bool ret = false; // assume failure
             try
             {
                 string cmd = "show -fx locks";
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     bool result = true;
@@ -479,7 +479,7 @@ namespace AcUtils
             try
             {
                 string cmd = "show -fx locks";
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -603,7 +603,7 @@ namespace AcUtils
                 else if (kind == LockKind.all)
                     cmd = String.Format(@"lock -c ""{0}"" ""{1}""", comment, stream); // lock 'to and from' for all
 
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                     ret = true; // operation succeeded
             }
@@ -640,7 +640,7 @@ namespace AcUtils
                 else if (kind == LockKind.all)
                     cmd = String.Format(@"unlock ""{0}""", stream);
 
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                     ret = true; // operation succeeded
             }

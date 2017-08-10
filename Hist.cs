@@ -948,7 +948,7 @@ namespace AcUtils
 
         /// <summary>
         /// Populate this list with transactions from the XML emitted by the 
-        /// [hist](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/6.2/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_hist.html) command.
+        /// [hist](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_hist.html) command.
         /// </summary>
         /// <param name="xml">XML from the AccuRev \c hist command.</param>
         /// <param name="EID">\e true if the \c hist command that generated \e xml included 

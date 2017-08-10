@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Schedulers;
 
 namespace AcUtils
 {
@@ -136,9 +137,40 @@ namespace AcUtils
     [Serializable]
     public static class AcCommand
     {
+        #region class variables
+        private static readonly int MaxConcurrencyDefault = 8; // default when ACUTILS_MAXCONCURRENT environment variable doesn't exist
+        private static TaskFactory _taskFactory;
+        #endregion
+
         /// <summary>
-        /// Run the AccuRev \e command asynchronously with non-blocking I/O.
+        /// Initialize our task scheduler that allows no more than n tasks to execute simultaneously.
         /// </summary>
+        /*! \sa [LimitedConcurrencyLevelTaskScheduler](@ref System#Threading#Tasks#Schedulers#LimitedConcurrencyLevelTaskScheduler), 
+        <a href="https://blogs.msdn.microsoft.com/pfxteam/2010/04/09/parallelextensionsextras-tour-7-additional-taskschedulers/">ParallelExtensionsExtras Tour - #7 - Additional TaskSchedulers</a> */
+        static AcCommand()
+        {
+            try
+            {
+                string maxconcurrent = Environment.GetEnvironmentVariable("ACUTILS_MAXCONCURRENT");
+                int max = (maxconcurrent != null) ? Int32.Parse(maxconcurrent) : MaxConcurrencyDefault;
+                LimitedConcurrencyLevelTaskScheduler ts = new LimitedConcurrencyLevelTaskScheduler(max);
+                _taskFactory = new TaskFactory(ts);
+            }
+
+            catch (Exception ecx)
+            {
+                string err = String.Format("Exception caught and logged in AcCommand constructor{0}{1}",
+                    Environment.NewLine, ecx.Message);
+                AcDebug.Log(err);
+            }
+        }
+
+        /// <summary>Run the AccuRev \e command asynchronously with non-blocking I/O.</summary>
+        /// <remarks>To reduce the risk of the AccuRev server becoming unresponsive due to an excess of commands, 
+        /// the maximum number of commands that will run simultaneously for a client application is eight (8). 
+        /// Other commands [are queued](@ref System#Threading#Tasks#Schedulers#LimitedConcurrencyLevelTaskScheduler) 
+        /// until space is available. You can override this default value by creating the environment variable 
+        /// \b ACUTILS_MAXCONCURRENT and specifying a different number, e.g. \c ACUTILS_MAXCONCURRENT=12.</remarks>
         /// <param name="command">The AccuRev command to run, e.g. <tt>hist -fx -p AcTools -t 453</tt></param>
         /// <param name="validator">Use to change the [default logic](@ref AcUtils#CmdValidate#isValid) for determining 
         /// if an AcUtilsException should be thrown based on AccuRev's program return value for \e command.</param>
@@ -153,51 +185,54 @@ namespace AcUtils
         /*! \attention Do not use this function for the <tt>ismember</tt> command. Instead, use AcGroups#isMember. */
         public static async Task<AcResult> runAsync(string command, ICmdValidate validator = null)
         {
-            var tcs = new TaskCompletionSource<AcResult>();
+            TaskCompletionSource<AcResult> tcs = new TaskCompletionSource<AcResult>();
             StringBuilder error = new StringBuilder();
             error.Capacity = 512;
             try
             {
-                using (Process process = new Process())
+                await _taskFactory.StartNew(() =>
                 {
-                    process.StartInfo.FileName = "accurev";
-                    process.StartInfo.Arguments = command;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.CreateNoWindow = true;
-                    process.StartInfo.RedirectStandardInput = true; // fix for AccuRev defect 29059
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.RedirectStandardError = true;
-                    process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                    process.StartInfo.StandardErrorEncoding = Encoding.UTF8;
-                    process.ErrorDataReceived += (sender, e) =>
+                    using (Process process = new Process())
                     {
-                        error.AppendLine(e.Data);
-                    };
-                    process.Start();
-                    process.BeginErrorReadLine();
-                    string output = await process.StandardOutput.ReadToEndAsync().ConfigureAwait(false);
-                    process.WaitForExit(); // recommended to ensure output buffer has been flushed
-                    if (process.HasExited)
-                    {
-                        string err = error.ToString().Trim();
-                        if (!String.IsNullOrEmpty(err) &&
-                            !(String.Equals("You are not in a directory associated with a workspace", err)))
+                        process.StartInfo.FileName = "accurev";
+                        process.StartInfo.Arguments = command;
+                        process.StartInfo.UseShellExecute = false;
+                        process.StartInfo.CreateNoWindow = true;
+                        process.StartInfo.RedirectStandardInput = true; // fix for AccuRev defect 29059
+                        process.StartInfo.RedirectStandardOutput = true;
+                        process.StartInfo.RedirectStandardError = true;
+                        process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                        process.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+                        process.ErrorDataReceived += (sender, e) =>
                         {
-                            AcDebug.Log(err, false);
-                        }
+                            error.AppendLine(e.Data);
+                        };
+                        process.Start();
+                        process.BeginErrorReadLine();
+                        Task<string> output = process.StandardOutput.ReadToEndAsync();
+                        process.WaitForExit();
+                        if (process.HasExited)
+                        {
+                            string err = error.ToString().Trim();
+                            if (!String.IsNullOrEmpty(err) &&
+                                !(String.Equals("You are not in a directory associated with a workspace", err)))
+                            {
+                                AcDebug.Log(err, false);
+                            }
 
-                        ICmdValidate validate = validator ?? new CmdValidate();
-                        if (validate.isValid(command, process.ExitCode))
-                        {
-                            tcs.SetResult(new AcResult(process.ExitCode, output));
-                        }
-                        else
-                        {
-                            string msg = String.Format("AccuRev program return: {0}{1}{2}", process.ExitCode, Environment.NewLine, "accurev " + command);
-                            tcs.SetException(new AcUtilsException(msg)); // let calling method handle
+                            ICmdValidate validate = validator ?? new CmdValidate();
+                            if (validate.isValid(command, process.ExitCode))
+                            {
+                                tcs.SetResult(new AcResult(process.ExitCode, output.Result));
+                            }
+                            else
+                            {
+                                string msg = String.Format("AccuRev program return: {0}{1}{2}", process.ExitCode, Environment.NewLine, "accurev " + command);
+                                tcs.SetException(new AcUtilsException(msg)); // let calling method handle
+                            }
                         }
                     }
-                }
+                }).ConfigureAwait(false);
             }
 
             catch (Win32Exception ecx)
@@ -216,12 +251,10 @@ namespace AcUtils
                 tcs.SetException(ecx);
             }
 
-            return await tcs.Task;
+            return await tcs.Task.ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Run the AccuRev \e command synchronously (blocks) on the current thread.
-        /// </summary>
+        /// <summary>Run the AccuRev \e command synchronously (blocks) on the current thread.</summary>
         /// <param name="command">The AccuRev command to run, e.g. <tt>hist -fx -p AcTools -t 453</tt></param>
         /// <param name="validator">Use to change the [default logic](@ref AcUtils#CmdValidate#isValid) for determining 
         /// if an AcUtilsException should be thrown based on AccuRev's program return value for \e command.</param>

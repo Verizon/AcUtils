@@ -19,21 +19,20 @@ using System.Configuration;
 namespace AcUtils
 {
     /// <summary>
-    /// The list of AccuRev users from <tt>\<prog_name\>.exe.config</tt>.
+    /// The list of user domain (login) ID's or email addresses from <tt>\<prog_name\>.exe.config</tt>.
     /// </summary>
     /*! \code
         <?xml version="1.0" encoding="utf-8"?>
         <configuration>
           <configSections>
-            <section name="Users" type="AcUtils.UsersSection, AcUtils, Version=1.4.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+            <section name="Users" type="AcUtils.UsersSection, AcUtils, Version=1.5.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
             ...
           </configSections>
           <Users>
             <users>
-              <add user="mugcot" name="Mugwort, Cottar" />
-              <add user="sanpim" name="Sandyman, Pimpernel" />
-              <add user="haymer" name="Hayward, Meriadoc" />
-              <add user="gruela" name="Grubb, Elanor" />
+              <add user="mugwoco" />
+              <add user="barnyrd" />
+              <add user="Pimpernel.Sandyman@Hobbit.com" />
               ...
             </users>
           </Users>
