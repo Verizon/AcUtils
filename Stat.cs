@@ -511,20 +511,26 @@ namespace AcUtils
                     if (modtime != 0)
                         element.ModTime = AcDateTime.AcDate2DateTime(modtime);
                     element.HierType = (string)e.Attribute("hierType") ?? String.Empty;
-                    string vir = (string)e.Attribute("Virtual") ?? String.Empty;
-                    string[] arrVir = vir.Split('\\');
                     int ival;
-                    if (Int32.TryParse(arrVir[0], NumberStyles.Integer, null, out ival))
-                        element.VirStreamNumber = ival;
-                    if (Int32.TryParse(arrVir[1], NumberStyles.Integer, null, out ival))
-                        element.VirVersionNumber = ival;
+                    string vir = (string)e.Attribute("Virtual") ?? String.Empty;
+                    if (!String.IsNullOrEmpty(vir))
+                    {
+                        string[] arrVir = vir.Split('\\');
+                        if (Int32.TryParse(arrVir[0], NumberStyles.Integer, null, out ival))
+                            element.VirStreamNumber = ival;
+                        if (Int32.TryParse(arrVir[1], NumberStyles.Integer, null, out ival))
+                            element.VirVersionNumber = ival;
+                    }
                     element.NamedVersion = (string)e.Attribute("namedVersion") ?? String.Empty;
                     string real = (string)e.Attribute("Real") ?? String.Empty;
-                    string[] arrReal = real.Split('\\');
-                    if (Int32.TryParse(arrReal[0], NumberStyles.Integer, null, out ival))
-                        element.RealStreamNumber = ival;
-                    if (Int32.TryParse(arrReal[1], NumberStyles.Integer, null, out ival))
-                        element.RealVersionNumber = ival;
+                    if (!String.IsNullOrEmpty(real))
+                    {
+                        string[] arrReal = real.Split('\\');
+                        if (Int32.TryParse(arrReal[0], NumberStyles.Integer, null, out ival))
+                            element.RealStreamNumber = ival;
+                        if (Int32.TryParse(arrReal[1], NumberStyles.Integer, null, out ival))
+                            element.RealVersionNumber = ival;
+                    }
                     element.LapStream = (string)e.Attribute("overlapStream") ?? String.Empty;
                     element.TimeBasedStream = (string)e.Attribute("timeBasisStream") ?? String.Empty;
                     lock (_locker) { _elements.Add(element); }

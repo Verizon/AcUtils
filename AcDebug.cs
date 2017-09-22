@@ -174,7 +174,7 @@ namespace AcUtils
             {
                 String err = String.Format("Exception caught and logged in AcDebug.paramFileCopy(string, ParamFileCopy, string, string, string){0}{1}",
                     Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                Log(err);
                 ret = false;
             }
 
@@ -233,7 +233,7 @@ namespace AcUtils
             {
                 String err = String.Format("Exception caught and logged in AcDebug.paramFileCopy(ParamFileCopy, string, string, string){0}{1}",
                     Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                Log(err);
                 ret = false;
             }
 
@@ -535,6 +535,7 @@ namespace AcUtils
         /// <returns>Full path to the log file if it exists, otherwise \e null.</returns>
         public static string getLogFile()
         {
+            // referencing FullLogFileName property will create a zero-byte log file if it doesn't exist
             return (_log != null) ? _log.FullLogFileName : null;
         }
 

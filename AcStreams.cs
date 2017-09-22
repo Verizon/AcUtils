@@ -51,7 +51,13 @@ namespace AcUtils
         passthru,
         /*! \var passthrough
         A passthrough stream. */
-        passthrough
+        passthrough,
+        /*! \var gated
+        A gated stream. */
+        gated,
+        /*! \var staging
+        A staging stream. */
+        staging
     };
     ///@}
     #endregion
