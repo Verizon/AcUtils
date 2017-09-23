@@ -1,0 +1,4 @@
+<map id="AcUtils.AcWorkspaces" name="AcUtils.AcWorkspaces">
+<area shape="rect" id="node3" href="$class_ac_utils_1_1_ac_depots.html" title="A container of AcDepot objects that define AccuRev depots in the repository. " alt="" coords="179,171,304,197"/>
+<area shape="rect" id="node5" href="$class_ac_utils_1_1_ac_permissions.html" title="A container of AcPermission objects that define AccuRev access control list (ACL) entries..." alt="" coords="273,81,429,108"/>
+</map>
