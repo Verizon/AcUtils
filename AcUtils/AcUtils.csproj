@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9FDA4C6E-5FA8-4914-9FC3-43CDFB7200BF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AcUtils</RootNamespace>
+    <AssemblyName>AcUtils</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Experimental.Collections">
+      <HintPath>binaries\Microsoft.Experimental.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AcCommand.cs" />
+    <Compile Include="AcDateTime.cs" />
+    <Compile Include="AcDebug.cs" />
+    <Compile Include="AcDepots.cs" />
+    <Compile Include="AcDuration.cs" />
+    <Compile Include="AcGroups.cs" />
+    <Compile Include="AcLocks.cs" />
+    <Compile Include="AcPermissions.cs" />
+    <Compile Include="AcPreferences.cs" />
+    <Compile Include="AcPrincipal.cs" />
+    <Compile Include="AcProperties.cs" />
+    <Compile Include="AcQuery.cs" />
+    <Compile Include="AcRules.cs" />
+    <Compile Include="AcSessions.cs" />
+    <Compile Include="AcStopWatch.cs" />
+    <Compile Include="AcStreams.cs" />
+    <Compile Include="AcUsers.cs" />
+    <Compile Include="AcUtilsException.cs" />
+    <Compile Include="AcWorkspaces.cs" />
+    <Compile Include="ADSection.cs" />
+    <Compile Include="DepotElement.cs" />
+    <Compile Include="DepotsCollection.cs" />
+    <Compile Include="DepotsSection.cs" />
+    <Compile Include="DomainCollection.cs" />
+    <Compile Include="DomainElement.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="GroupElement.cs" />
+    <Compile Include="GroupsCollection.cs" />
+    <Compile Include="GroupsSection.cs" />
+    <Compile Include="Hist.cs" />
+    <Compile Include="LimitedConcurrencyLevelTaskScheduler.cs" />
+    <Compile Include="PrncplDescriptionProvider.cs" />
+    <Compile Include="PrncplTypeDescriptor.cs" />
+    <Compile Include="PropCollection.cs" />
+    <Compile Include="PropElement.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepoCollection.cs" />
+    <Compile Include="RepoElement.cs" />
+    <Compile Include="RepoSection.cs" />
+    <Compile Include="Stat.cs" />
+    <Compile Include="StreamElement.cs" />
+    <Compile Include="StreamsCollection.cs" />
+    <Compile Include="StreamsSection.cs" />
+    <Compile Include="SubPropertyDescriptor.cs" />
+    <Compile Include="UserElement.cs" />
+    <Compile Include="UsersCollection.cs" />
+    <Compile Include="UsersSection.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
+<!-- Copyright (C) 2016 Verizon. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
