@@ -1,4 +1,0 @@
-<map id="AcUtils.AcUsers" name="AcUtils.AcUsers">
-<area shape="rect" id="node3" href="$class_ac_utils_1_1_prop_collection.html" title="The list of Active Directory user property field&#45;title pairs from &lt;prog_name&gt;.exe.config. These are user properties not in the regular default set. " alt="" coords="141,81,293,108"/>
-<area shape="rect" id="node5" href="$class_ac_utils_1_1_domain_collection.html" title="The list of Active Directory domain host&#45;path pairs from &lt;prog_name&gt;.exe.config. " alt="" coords="317,81,487,108"/>
-</map>
