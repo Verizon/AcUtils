@@ -580,6 +580,64 @@ Built-in types \b anyuser and \b authuser are unsupported.
 \endcode
 */
 
+/*! \example Triggers.cs
+List triggers created with the \c mktrig command for all depots in the repository.
+
+\par Triggers.exe.config
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <system.diagnostics>
+    <assert assertuienabled="false"/>
+    <sources>
+      <source name="Triggers">
+        <listeners>
+          <remove name="Default"/>
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+        </listeners>
+      </source>
+    </sources>
+  </system.diagnostics>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+  </startup>
+</configuration>
+\endcode
+*/
+
+/*! \example LatestTransactions.cs
+Generates an Excel worksheet with the latest transactions for all depots. The list is in reverse chronological order so the most recent activity 
+in the repository is shown on top. Change \e FileName and \e FileLocation in \c LatestTransactions.exe.config to specify the name and location 
+of the resultant Excel file. \e FileLocation must be an existing folder with read/write access privileges. The program uses MS Office interop 
+so Excel must be installed. [Tested with Excel 2010.]
+
+\par LatestTransactions.exe.config
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <appSettings>
+    <add key="FileName" value="LatestTransactions.xlsx"/>
+    <!-- FileLocation must be an existing folder with read/write access privileges -->
+    <add key="FileLocation" value="C:\Bin"/>
+  </appSettings>
+  <system.diagnostics>
+    <assert assertuienabled="false"/>
+    <sources>
+      <source name="LatestTransactions">
+        <listeners>
+          <remove name="Default"/>
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+        </listeners>
+      </source>
+    </sources>
+  </system.diagnostics>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+  </startup>
+</configuration>
+\endcode
+*/
+
 /*! \page perfdemo
 Demo that shows the difference in performance between the synchronous and asynchronous creation of two large lists. 
 Results will vary but in this run the asynchronous way **reduced execution time by 35%**.  [100-((11/17)*100)]
