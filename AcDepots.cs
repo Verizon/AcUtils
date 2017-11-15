@@ -116,8 +116,7 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                string cmd = "show -fx depots";
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync("show -fx depots").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -148,16 +147,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcDepot.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcDepot.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcDepot.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcDepot.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -389,9 +384,8 @@ namespace AcUtils
         /*! \pre Using \e includeWSpaces to include workspaces requires that all stream types be specified at AcDepot 
              object creation as per the \e dynamicOnly=false (default) constructor parameter. */
         /*! \code
-            AcDepot depot = new AcDepot("NEPTUNE", true); // true for dynamic streams only
-            if (!(await depot.initAsync()))
-                return false; // error occurred, check log file
+            AcDepot depot = new AcDepot("NEPTUNE", dynamicOnly: true);
+            if (!(await depot.initAsync())) return false; // error occurred, check log file
 
             // list streams beginning with NEPTUNE_DEV2 and its hierarchy
             AcStream stream = depot.getStream("NEPTUNE_DEV2");
@@ -424,11 +418,10 @@ namespace AcUtils
              object creation as per the \e dynamicOnly=false (default) constructor parameter. */
         /*! \code
             AcDepot depot = new AcDepot("MARS"); // includes workspace streams
-            if (!(await depot.initAsync()))
-                return false; // operation failed, check log file
+            if (!(await depot.initAsync())) return false; // operation failed, check log file
 
             AcStream stage = depot.getStream("MARS_STAGE");
-            var children = await depot.getChildrenAsync(stage, true); // true to include workspaces off MARS_STAGE
+            var children = await depot.getChildrenAsync(stage, includeWSpaces: true);
             bool? res = children.Item1;
             if (res == null) return false; // operation failed, check log file
 
@@ -494,9 +487,8 @@ namespace AcUtils
             MultiValueDictionary<int, int> hierarchy = null;
             try
             {
-                string option = _includeHidden ? "-fix" : "-fx";
-                string cmd = String.Format(@"show -p ""{0}"" {1} -s 1 -r streams", this, option);
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync($@"show -p ""{this}"" {(_includeHidden ? " -fix" : " -fx")} -s 1 -r streams")
+                    .ConfigureAwait(false);
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -523,17 +515,13 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcDepot.getHierarchyAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcDepot.getHierarchyAsync{Environment.NewLine}{ecx.Message}");
                 hierarchy = null;
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcDepot.getHierarchyAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcDepot.getHierarchyAsync{Environment.NewLine}{ecx.Message}");
                 hierarchy = null;
             }
 
@@ -544,13 +532,32 @@ namespace AcUtils
         /// When this file exists (created manually), it is used as the \e list-file to populate the depot with select streams. 
         /// This function is called internally and not by user code.
         /// </summary>
-        /// <remarks>Implemented with <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a>.
+        /// <remarks>Implemented with <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a>
         /// </remarks>
+/*! > -l <list-file> Process the streams listed in the specified file. The file must be text only, containing one stream name or number per line. Extra whitespace is not allowed; make sure there are no empty lines and no leading or trailing whitespace around the filenames. There is no provision for comment lines in a list-file. This option can also be used with one of -1 ("dash-one"), -r, or -R. You cannot also specify streams using the -s option. */
         /// <returns>Full path of the list file <tt>\%APPDATA\%\\AcTools\\<prog_name\>\\<depot_name\>.streams</tt> if found, otherwise \e null.<br>
-        /// Example: <tt>"C:\Users\barnyrd\AppData\Roaming\AcTools\FooApp\NEPTUNE.streams"</tt>.</param>
+        /// Example: <tt>"C:\Users\barnyrd\AppData\Roaming\AcTools\FooApp\NEPTUNE.streams"</tt>
         /// </returns>
         /// <exception cref="Exception">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
+        /*! \code
+            list-file content:
+            NEPTUNE_DEV3
+            NEPTUNE_MAINT2
+            ...
+            AcDepot depot = new AcDepot("NEPTUNE"); // two-part object construction
+            if (!(await depot.initAsync())) return false; // operation failed, check log file
+            foreach (AcStream stream in depot.Streams.OrderBy(n => n))
+                Console.WriteLine(stream.ToString("lv") + Environment.NewLine);
+            ...
+            NEPTUNE_DEV3 (10) {normal} 
+            Basis: NEPTUNE_UAT (8)
+            Depot: NEPTUNE, Hidden: False, HasDefaultGroup: True
+
+            NEPTUNE_MAINT2 (6) {normal} 
+            Basis: NEPTUNE_MAINT (4)
+            Depot: NEPTUNE, Hidden: False, HasDefaultGroup: False
+            \endcode */
         internal string listFile()
         {
             string listfile = null;
@@ -574,9 +581,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcDepot.listFile{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcDepot.listFile{Environment.NewLine}{ecx.Message}");
             }
 
             return listfile;
@@ -628,7 +633,7 @@ namespace AcUtils
                 case "C": // whether the depot is case sensitive or insensitive
                     return Case.ToString();
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException($"The {format} format string is not supported.");
             }
         }
 
@@ -659,7 +664,8 @@ namespace AcUtils
         [NonSerialized] private bool _permInit;
         private bool _dynamicOnly; // true if request is for dynamic streams only
         private bool _includeHidden; // true if removed streams should be included in the list
-        [NonSerialized] private readonly object _locker = new object();
+        [NonSerialized] private readonly object _locker = new object(); // token for lock keyword scope
+        [NonSerialized] private int _counter; // used to report initialization progress back to the caller
         #endregion
 
         #region object construction:
@@ -672,8 +678,7 @@ namespace AcUtils
         /// <param name="includeHidden">\e true to include hidden (removed) streams, otherwise do not include hidden streams.</param>
         /*! \code
             // list all depots in the repository that are case-sensitive
-            // true for dynamic streams only
-            AcDepots depots = new AcDepots(true); // two-part object construction
+            AcDepots depots = new AcDepots(dynamicOnly: true); // two-part object construction
             if (!(await depots.initAsync())) return false; // operation failed, check log file
 
             foreach(AcDepot depot in depots.Where(n => n.Case == CaseSensitivity.sensitive).OrderBy(n => n)) // use default comparer
@@ -687,33 +692,86 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Populate this container with AcDepot objects as per constructor parameters.
+        /// Populate this container with AcDepot objects as per [constructor parameters](@ref AcUtils#AcDepots#AcDepots).
         /// </summary>
-        /// <param name="depots">List of depots to create, otherwise \e null for all depots.</param>
+        /// <param name="depotsCol">List of depots to create, otherwise \e null for all depots.</param>
+        /// <param name="progress">Optionally report progress back to the caller.</param>
         /// <returns>\e true if initialization succeeded, \e false otherwise.</returns>
-        /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
-        /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c show command failure.</exception>
+        /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) in 
+        /// <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c show command failure.</exception>
         /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
-        /*! \sa [AcDepots constructor](@ref AcUtils#AcDepots#AcDepots) */
+        /*! \code
+            DepotsSection ds = ConfigurationManager.GetSection("Depots") as DepotsSection;
+            DepotsCollection _dcol = ds.Depots; // list of depots from FooApp.exe.config
+            ...
+            private async Task<bool> initComboBoxDepotsAsync()
+            {
+                bool ret = false; // assume failure
+                try
+                {
+                    toolStripStatusLabel.Text = "Initializing...";
+                    toolStripProgressBar.Visible = true;
+                    toolStripProgressBar.Maximum = _dcol.Count;
+                    Progress<int> progress = new Progress<int>(i => toolStripProgressBar.Value = i);
+
+                    AcDepots depots = new AcDepots(dynamicOnly: true);
+                    if (await depots.initAsync(_dcol, progress)) // if initialization succeeds
+                    {
+                        foreach (AcDepot depot in depots)
+                            toolStripComboBoxDepot.Items.Add(depot); // a ToolStripComboBox control
+                        ret = true; // operation succeeded
+                    }
+                    else
+                    {
+                        AcDebug.Log("Failure in FooApp.initComboBoxDepotsAsync");
+                        MessageBox.Show($"Depots list initialization failed. See log file:{Environment.NewLine}{AcDebug.getLogFile()}",
+                            "FooApp", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                    }
+                }
+
+                catch (Exception ecx)
+                {
+                    AcDebug.Log($"Exception caught and logged in FooApp.initComboBoxDepotsAsync{Environment.NewLine}{ecx.Message}");
+                }
+
+                finally
+                {
+                    toolStripStatusLabel.Text = "Ready";
+                    toolStripProgressBar.Visible = false;
+                }
+
+                return ret;
+            }
+            \endcode */
+        /*! \sa [AcDepots constructor](@ref AcUtils#AcDepots#AcDepots), DepotsCollection, AcGroups.initAsync */
         /*! \show_ <tt>show -fx depots</tt> */
-        public async Task<bool> initAsync(DepotsCollection depots = null)
+        /*! \accunote_ The XML attribute \e locWidth from <tt>show -fx depots</tt> is obsolete. 
+            It's an AccuRev 4.x artifact and should be removed. RPI defect 1112042, SupportLine AR3325. */
+        public async Task<bool> initAsync(DepotsCollection depotsCol = null, IProgress<int> progress = null)
         {
             bool ret = false; // assume failure
             try
             {
-                string cmd = "show -fx depots";
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync("show -fx depots").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
-                    List<Task<bool>> tasks = new List<Task<bool>>();
                     XElement xml = XElement.Parse(r.CmdResult);
                     IEnumerable<XElement> query = null;
-                    if (depots == null)
+                    if (depotsCol == null)
                         query = from e in xml.Descendants("Element") select e;
                     else
                         query = from e in xml.Descendants("Element")
-                                where depots.OfType<DepotElement>().Any(de => String.Equals(de.Depot, (string)e.Attribute("Name")))
+                                where depotsCol.OfType<DepotElement>().Any(de => String.Equals(de.Depot, (string)e.Attribute("Name")))
                                 select e;
+
+                    int num = query.Count();
+                    List<Task<bool>> tasks = new List<Task<bool>>(num);
+                    Func<Task<bool>, bool> cf = t =>
+                    {
+                        bool res = t.Result;
+                        if (res && progress != null) progress.Report(Interlocked.Increment(ref _counter));
+                        return res;
+                    };
 
                     foreach (XElement e in query)
                     {
@@ -725,28 +783,24 @@ namespace AcUtils
                         string temp = (string)e.Attribute("case");
                         depot.Case = (CaseSensitivity)Enum.Parse(typeof(CaseSensitivity), temp);
                         depot._streams = new AcStreams(_dynamicOnly, _includeHidden);
-                        tasks.Add(depot._streams.initAsync(depot, depot.listFile()));
                         lock (_locker) { Add(depot); }
+                        Task<bool> t = depot._streams.initAsync(depot, depot.listFile()).ContinueWith(cf);
+                        tasks.Add(t);
                     }
 
-                    bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false); // run streams initialization in parallel
-                    if (arr != null && arr.All(n => n == true))
-                        ret = true; // operation succeeded
+                    bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
+                    ret = (arr != null && arr.All(n => n == true)); // true if all succeeded
                 }
             }
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcDepots.initAsync(DepotsCollection){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcDepots.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcDepots.initAsync(DepotsCollection){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcDepots.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;

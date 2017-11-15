@@ -16,6 +16,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -278,7 +279,8 @@ namespace AcUtils
     public sealed class AcRules : List<AcRule>
     {
         private bool _explicitOnly;
-        [NonSerialized] private readonly object _locker = new object();
+        [NonSerialized] private readonly object _locker = new object(); // token for lock keyword scope
+        [NonSerialized] private int _counter; // used to report initialization progress back to the caller
 
         #region object construction:
         //! \name Two-part object construction:
@@ -291,158 +293,43 @@ namespace AcUtils
         /// not those inherited from higher level streams. 
         /// </param>
         /*! \code
-            // show the rules barnyrd set on his workspaces throughout the repository
-            AcDepots depots = new AcDepots();
-            if (!(await depots.initAsync())) return false;
-
-            List<Task<bool>> tasks = new List<Task<bool>>();
-            List<AcRules> list = new List<AcRules>();
-            foreach (AcDepot depot in depots.OrderBy(n => n)) // use default comparer
+            // show rules user set on their workspaces in the MARS depot
+            public static async Task<bool> showRulesAsync(AcUser user)
             {
-                foreach (AcStream stream in depot.Streams.Where(n => n.Type == StreamType.workspace &&
-                    n.Name.EndsWith("barnyrd")).OrderBy(n => n)) // workspace names always have principal name appended
+                var progress = new Progress<int>(n =>
                 {
-                    AcRules r = new AcRules(true); // true for explicitly-set rules only
-                    tasks.Add(r.initAsync(stream));
-                    list.Add(r);
-                }
-            }
+                    if ((n % 10) == 0)
+                        Console.WriteLine("Loading rules: " + n);
+                });
 
-            bool[] arr = await Task.WhenAll(tasks); // asynchronously await multiple asynchronous operations.. fast!
-            if (arr == null || arr.Any(n => n == false)) // if one or more failed to initialize
-                return false;
+                AcDepot depot = new AcDepot("MARS"); // includes workspaces
+                if (!(await depot.initAsync())) return false; // initialization failure, check log file
 
-            foreach (AcRules rules in list)
-                foreach (AcRule rule in rules.OrderBy(n => n)) // use default comparer
+                AcRules rules = new AcRules(explicitOnly: true); // exclude rules inherited from higher-level streams
+                if (!(await rules.initAsync(depot, progress))) return false;
+
+                foreach (AcRule rule in rules.Where(n => n.SetInStream.EndsWith(user.Principal.Name)).OrderBy(n => n))
                     Console.WriteLine(rule);
+
+                return true;
+            }
             \endcode */
-        /*! [Default comparer](@ref AcRule#CompareTo) */
+        /*! \sa [Default comparer](@ref AcRule#CompareTo) */
         public AcRules(bool explicitOnly = false)
         {
             _explicitOnly = explicitOnly;
         }
 
         /// <summary>
-        /// Populate this container with AcRule objects for \e stream as per constructor parameter \e explicitOnly.
+        /// Populate this container with AcRule objects for \e stream as per 
+        /// [constructor parameter](@ref AcUtils#AcRules#AcRules) \e explicitOnly.
         /// </summary>
         /// <param name="stream">The stream to query for rules.</param>
         /// <returns>\e true if no failure occurred and list was initialized successfully, \e false otherwise.</returns>
-        /*! \sa [AcRules constructor](@ref AcUtils#AcRules#AcRules) */
-        /*! \lsrules_ <tt>lsrules -s \<stream\> [-d] -fx</tt>  */
-        public async Task<bool> initAsync(AcStream stream)
-        {
-            string cmd = String.Empty;
-            if (_explicitOnly)
-                // Include only rules that were explicitly set for the workspace or stream,
-                // not rules that apply because they are inherited from higher level streams.
-                cmd = String.Format(@"lsrules -s ""{0}"" -d -fx", stream);
-            else
-                // Include rules that are inherited from higher level streams.
-                cmd = String.Format(@"lsrules -s ""{0}"" -fx", stream);
-
-            return await runCmdAsync(cmd).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Populate this container with AcRule objects for all streams in \e depot as per constructor parameter \e explicitOnly.
-        /// </summary>
-        /// <param name="depot">All streams in \e depot to query for rules.</param>
-        /// <returns>\e true if no failure occurred and list was initialized successfully, \e false otherwise.</returns>
-        /*! \sa [AcRules constructor](@ref AcUtils#AcRules#AcRules) */
-        /*! \lsrules_ <tt>lsrules -s \<stream\> [-d] -fx</tt>  */
-        public async Task<bool> initAsync(AcDepot depot)
-        {
-            string cmd = String.Empty;
-            List<Task<bool>> tasks = new List<Task<bool>>(depot.Streams.Count());
-            foreach (AcStream stream in depot.Streams)
-            {
-                if (_explicitOnly)
-                    // Include only rules that were explicitly set for the workspace or stream,
-                    // not rules that apply because they are inherited from higher level streams.
-                    cmd = String.Format(@"lsrules -s ""{0}"" -d -fx", stream);
-                else
-                    // Include rules that are inherited from higher level streams.
-                    cmd = String.Format(@"lsrules -s ""{0}"" -fx", stream);
-
-                tasks.Add(runCmdAsync(cmd));
-            }
-
-            bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
-            return (arr != null && arr.All(n => n == true)); // true if all succeeded
-        }
-
-        /// <summary>
-        /// Populate this container with AcRule objects for select \e streams as per constructor parameter \e explicitOnly.
-        /// </summary>
-        /// <param name="streams">The list of streams to query for rules.</param>
-        /// <returns>\e true if no failure occurred and list was initialized successfully, \e false otherwise.</returns>
-        /*! \sa [AcRules constructor](@ref AcUtils#AcRules#AcRules) */
-        /*! \lsrules_ <tt>lsrules -s \<stream\> [-d] -fx</tt>  */
-        public async Task<bool> initAsync(StreamsCollection streams)
-        {
-            string cmd = String.Empty;
-            List<Task<bool>> tasks = new List<Task<bool>>(streams.Count);
-            foreach (StreamElement se in streams)
-            {
-                if (_explicitOnly)
-                    // Include only rules that were explicitly set for the workspace or stream,
-                    // not rules that apply because they are inherited from higher level streams.
-                    cmd = String.Format(@"lsrules -s ""{0}"" -d -fx", se.Stream);
-                else
-                    // Include rules that are inherited from higher level streams.
-                    cmd = String.Format(@"lsrules -s ""{0}"" -fx", se.Stream);
-
-                tasks.Add(runCmdAsync(cmd));
-            }
-
-            bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
-            return (arr != null && arr.All(n => n == true)); // true if all succeeded
-        }
-
-        /// <summary>
-        /// Populate this container with AcRule objects for all streams in select \e depots as per constructor parameter \e explicitOnly.
-        /// </summary>
-        /// <param name="depots">The list of depots to query for rules.</param>
-        /// <returns>\e true if no failure occurred and list was initialized successfully, \e false otherwise.</returns>
-        /*! \sa [AcRules constructor](@ref AcUtils#AcRules#AcRules) */
-        /*! \lsrules_ <tt>lsrules -s \<stream\> [-d] -fx</tt>  */
-        public async Task<bool> initAsync(DepotsCollection depots)
-        {
-            AcDepots dlist = new AcDepots();
-            if (!(await dlist.initAsync(depots).ConfigureAwait(false))) return false;
-
-            string cmd = String.Empty;
-            List<Task<bool>> tasks = new List<Task<bool>>();
-            foreach (AcDepot d in dlist)
-            {
-                foreach (AcStream stream in d.Streams)
-                {
-                    if (_explicitOnly)
-                        // Include only rules that were explicitly set for the workspace or stream,
-                        // not rules that apply because they are inherited from higher level streams.
-                        cmd = String.Format(@"lsrules -s ""{0}"" -d -fx", stream);
-                    else
-                        // Include rules that are inherited from higher level streams.
-                        cmd = String.Format(@"lsrules -s ""{0}"" -fx", stream);
-
-                    tasks.Add(runCmdAsync(cmd));
-                }
-            }
-
-            bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
-            return (arr != null && arr.All(n => n == true)); // true if all succeeded
-        }
-        //@}
-        #endregion
-
-        /// <summary>
-        /// Helper function that runs the \c lsrules command sent by one of the initAsync overloads.
-        /// </summary>
-        /// <param name="cmd">AccuRev \c lsrules command to run.</param>
-        /// <returns>\e true if no failure occurred and list was initialized successfully, \e false otherwise.</returns>
-        /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
-        /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c lsrules command failure.</exception>
+        /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) in 
+        /// <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c lsrules command failure.</exception>
         /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
+        /*! \lsrules_ <tt>lsrules -s \<stream\> [-d] -fx</tt>  */
         /*! \code
             <!-- accurev lsrules -s "PG_DEV1" -fx -->
             <AcResponse
@@ -465,12 +352,13 @@ namespace AcUtils
                 options="1"/>
             </AcResponse>
             \endcode */
-        private async Task<bool> runCmdAsync(string cmd)
+        public async Task<bool> initAsync(AcStream stream)
         {
             bool ret = false; // assume failure
             try
             {
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync($@"lsrules -s ""{stream}"" {(_explicitOnly ? "-d" : String.Empty)} -fx")
+                    .ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -484,8 +372,7 @@ namespace AcUtils
                         rule.Type = (ElementType)Enum.Parse(typeof(ElementType), type);
                         rule.Location = (string)e.Attribute("location");
                         rule.SetInStream = (string)e.Attribute("setInStream");
-                        rule.XlinkToStream = (e.Attribute("xlinkToStream") != null) ?
-                            (string)e.Attribute("xlinkToStream") : null;
+                        rule.XlinkToStream = (string)e.Attribute("xlinkToStream") ?? String.Empty;
                         lock (_locker) { Add(rule); }
                     }
 
@@ -495,19 +382,161 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcRules.runCmdAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcRules.initAsync(AcStream){Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcRules.runCmdAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcRules.initAsync(AcStream){Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
         }
+
+        /// <summary>
+        /// Populate this container with AcRule objects for all streams in \e depot 
+        /// as per [constructor parameter](@ref AcUtils#AcRules#AcRules) \e explicitOnly.
+        /// </summary>
+        /// <param name="depot">All streams in \e depot to query for rules.</param>
+        /// <param name="progress">Optionally report progress back to the caller.</param>
+        /// <returns>\e true if no failure occurred and list was initialized successfully, \e false otherwise.</returns>
+        /// <exception cref="Exception">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) in 
+        /// <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
+        public async Task<bool> initAsync(AcDepot depot, IProgress<int> progress = null)
+        {
+            bool ret = false; // assume failure
+            try
+            {
+                int num = depot.Streams.Count();
+                List<Task<bool>> tasks = new List<Task<bool>>(num);
+                Func<Task<bool>, bool> cf = t =>
+                {
+                    bool res = t.Result;
+                    if (res && progress != null) progress.Report(Interlocked.Increment(ref _counter));
+                    return res;
+                };
+
+                foreach (AcStream stream in depot.Streams)
+                {
+                    Task<bool> t = initAsync(stream).ContinueWith(cf);
+                    tasks.Add(t);
+                }
+
+                bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
+                ret = (arr != null && arr.All(n => n == true)); // true if all succeeded
+            }
+
+            catch (Exception ecx)
+            {
+                AcDebug.Log($"Exception caught and logged in AcRules.initAsync(AcDepot){Environment.NewLine}{ecx.Message}");
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Populate this container with AcRule objects for all streams in \e streamsCol 
+        /// as per [constructor parameter](@ref AcUtils#AcRules#AcRules) \e explicitOnly.
+        /// </summary>
+        /// <param name="streamsCol">The list of streams to query for rules.</param>
+        /// <param name="progress">Optionally report progress back to the caller.</param>
+        /// <returns>\e true if no failure occurred and list was initialized successfully, \e false otherwise.</returns>
+        /// <exception cref="Exception">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) in 
+        /// <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
+        public async Task<bool> initAsync(StreamsCollection streamsCol, IProgress<int> progress = null)
+        {
+            bool ret = false; // assume failure
+            try
+            {
+                AcDepots depots = new AcDepots();
+                if (!(await depots.initAsync(null, progress).ConfigureAwait(false))) return false;
+                int num = 0; // get number of streams for tasks list
+                foreach (AcDepot depot in depots)
+                {
+                    IEnumerable<AcStream> filter = depot.Streams.Where(n =>
+                        streamsCol.OfType<StreamElement>().Any(s => n.Name.Equals(s.Stream)));
+                    num += filter.Count();
+                }
+
+                List<Task<bool>> tasks = new List<Task<bool>>(num);
+                Func<Task<bool>, bool> cf = t =>
+                {
+                    bool res = t.Result;
+                    if (res && progress != null) progress.Report(Interlocked.Increment(ref _counter));
+                    return res;
+                };
+
+                foreach (AcDepot depot in depots)
+                {
+                    IEnumerable<AcStream> filter = depot.Streams.Where(n =>
+                        streamsCol.OfType<StreamElement>().Any(s => n.Name.Equals(s.Stream)));
+                    foreach (AcStream stream in filter)
+                    {
+                        Task<bool> t = initAsync(stream).ContinueWith(cf);
+                        tasks.Add(t);
+                    }
+                }
+
+                bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
+                ret = (arr != null && arr.All(n => n == true)); // true if all succeeded
+            }
+
+            catch (Exception ecx)
+            {
+                AcDebug.Log($"Exception caught and logged in AcRules.initAsync(StreamsCollection){Environment.NewLine}{ecx.Message}");
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Populate this container with AcRule objects for all streams in \e depotsCol 
+        /// as per [constructor parameter](@ref AcUtils#AcRules#AcRules) \e explicitOnly.
+        /// </summary>
+        /// <param name="depotsCol">The list of depots to query for rules.</param>
+        /// <param name="progress">Optionally report progress back to the caller.</param>
+        /// <returns>\e true if no failure occurred and list was initialized successfully, \e false otherwise.</returns>
+        /// <exception cref="Exception">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) in 
+        /// <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
+        public async Task<bool> initAsync(DepotsCollection depotsCol, IProgress<int> progress = null)
+        {
+            bool ret = false; // assume failure
+            try
+            {
+                AcDepots depots = new AcDepots();
+                if (!(await depots.initAsync(depotsCol, progress).ConfigureAwait(false))) return false;
+                int num = 0; // get number of streams for tasks list
+                foreach (AcDepot depot in depots)
+                    num += depot.Streams.Count();
+                List<Task<bool>> tasks = new List<Task<bool>>(num);
+                Func<Task<bool>, bool> cf = t =>
+                {
+                    bool res = t.Result;
+                    if (res && progress != null) progress.Report(Interlocked.Increment(ref _counter));
+                    return res;
+                };
+
+                foreach (AcDepot depot in depots)
+                {
+                    foreach (AcStream stream in depot.Streams)
+                    {
+                        Task<bool> t = initAsync(stream).ContinueWith(cf);
+                        tasks.Add(t);
+                    }
+                }
+
+                bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
+                ret = (arr != null && arr.All(n => n == true));
+            }
+
+            catch (Exception ecx)
+            {
+                AcDebug.Log($"Exception caught and logged in AcRules.initAsync(DepotsCollection){Environment.NewLine}{ecx.Message}");
+            }
+
+            return ret;
+        }
+        //@}
+        #endregion
     }
 }

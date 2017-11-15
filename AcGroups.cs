@@ -19,6 +19,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -38,7 +39,8 @@ namespace AcUtils
         #region Class variables
         private bool _includeMembersList;
         private bool _includeDeactivated;
-        [NonSerialized] private readonly object _locker = new object();
+        [NonSerialized] private readonly object _locker = new object(); // token for lock keyword scope
+        [NonSerialized] private int _counter; // used to report membership initialization progress back to the caller
         #endregion
 
         #region object construction:
@@ -61,20 +63,31 @@ namespace AcUtils
         /// \e false for no initialization (faster).</param>
         /// <param name="includeDeactivated">\e true to include deactivated (removed) groups, otherwise \e false.</param>
         /*! \code
-            static async Task<bool> showGroupsAsync()
+            public static async Task<bool> showGroupsAsync()
             {
-                // list all group names
-                AcGroups groups = new AcGroups(); // two-part object construction
-                if (!(await groups.initAsync())) // ..
-                    return false; // see log file for error
+                var progress = new Progress<int>(n =>
+                {
+                    if ((n % 10) == 0)
+                        Console.WriteLine("Initializing group memberships: " + n);
+                });
 
-                foreach (AcPrincipal prncpl in groups.OrderBy(n => n)) // use default comparer
+                AcGroups groups = new AcGroups(includeMembersList: true); // true to initialize each group's membership list
+                if (!(await groups.initAsync(progress))) return false; // initialization failure, check log file
+
+                foreach (AcPrincipal prncpl in groups.OrderBy(n => n))
+                {
                     Console.WriteLine(prncpl);
+                    if (prncpl.Members != null) // if initialized as per includeMembersList param
+                    {
+                        string members = groups.getMembers(prncpl.Name);
+                        Console.WriteLine("\t" + members);
+                    }
+                }
 
-                return true; // operation succeeded
+                return true;
             }
             \endcode */
-        /*! \sa initAsync, #initMembersListAsync, [default comparer](@ref AcPrincipal#CompareTo), [AcUsers constructor](@ref AcUtils#AcUsers#AcUsers) */
+        /*! \sa initAsync, [AcGroups.initMembersListAsync](@ref AcUtils#AcGroups#initMembersListAsync), [default comparer](@ref AcUtils#AcPrincipal#CompareTo), [AcUsers constructor](@ref AcUtils#AcUsers#AcUsers) */
         public AcGroups(bool includeMembersList = false, bool includeDeactivated = false)
         {
             _includeMembersList = includeMembersList;
@@ -84,23 +97,37 @@ namespace AcUtils
         /// <summary>
         /// Populate this container with AcPrincipal objects as per [constructor parameters](@ref AcUtils#AcGroups#AcGroups).
         /// </summary>
+        /// <param name="progress">Optionally report progress back to the caller when group membership initialization 
+        /// is requested as per [constructor parameter](@ref AcUtils#AcGroups#AcGroups) \e includeMembersList.</param>
         /// <returns>\e true if initialization succeeded, \e false otherwise.</returns>
-        /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
-        /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c show command failure.</exception>
+        /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) in 
+        /// <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c show command failure.</exception>
         /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
         /*! \show_ <tt>show \<-fx | -fix\> groups</tt> */
-        public async Task<bool> initAsync()
+        public async Task<bool> initAsync(IProgress<int> progress = null)
         {
             bool ret = false; // assume failure
             try
             {
-                string cmd = _includeDeactivated ? "show -fix groups" : "show -fx groups";
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync($"show {(_includeDeactivated ? "-fix" : "-fx")} groups")
+                    .ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
-                    List<Task<bool>> tasks = new List<Task<bool>>();
                     XElement xml = XElement.Parse(r.CmdResult);
                     IEnumerable<XElement> query = from element in xml.Descendants("Element") select element;
+                    List<Task<bool>> tasks = null;
+                    if (_includeMembersList)
+                    {
+                        int num = query.Count();
+                        tasks = new List<Task<bool>>(num);
+                    }
+                    Func<Task<bool>, bool> cf = t =>
+                    {
+                        bool res = t.Result;
+                        if (res && progress != null) progress.Report(Interlocked.Increment(ref _counter));
+                        return res;
+                    };
+
                     foreach (XElement e in query)
                     {
                         AcPrincipal group = new AcPrincipal();
@@ -111,34 +138,29 @@ namespace AcUtils
                         lock (_locker) { Add(group); }
                         if (_includeMembersList)
                         {
-                            Task<bool> task = initMembersListAsync(group.Name);
-                            tasks.Add(task);
+                            Task<bool> t = initMembersListAsync(group.Name).ContinueWith(cf);
+                            tasks.Add(t);
                         }
                     }
 
-                    if (_includeMembersList && tasks.Count > 0)
+                    if (!_includeMembersList)
+                        ret = true; // list initialization succeeded
+                    else // run membership initialization in parallel
                     {
-                        bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false); // run all group's membership initialization in parallel
-                        if (arr == null || arr.Any(n => n == false))
-                            return false; // failure in initMembersListAsync, see log file
+                        bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
+                        ret = (arr != null && arr.All(n => n == true));
                     }
-
-                    ret = true; // list initialization succeeded
                 }
             }
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcGroups.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcGroups.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcGroups.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcGroups.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -147,8 +169,9 @@ namespace AcUtils
         #endregion
 
         /// <summary>
-        /// Called (optional) during [list construction](@ref AcUtils#AcGroups#AcGroups) to initialize the 
-        /// [list of principals](@ref AcPrincipal#Members) (users and groups) that are direct (explicit) members of \e group.
+        /// Optionally called during [list construction](@ref AcUtils#AcGroups#AcGroups) to initialize the 
+        /// [list of principals](@ref AcPrincipal#Members) (users and groups) that are direct (explicit) members of \e group. 
+        /// This method is called internally and not by user code.
         /// </summary>
         /// <remarks>Membership lists for inactive groups are empty (not initialized). An inactive group's membership list will 
         /// reappear when the group is reactivated.</remarks>
@@ -166,8 +189,7 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                string cmd = String.Format(@"show -fx -g ""{0}"" members", group);
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync($@"show -fx -g ""{group}"" members").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
                     SortedSet<string> members = new SortedSet<string>();
@@ -191,16 +213,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcGroups.initMembersListAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcGroups.initMembersListAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcGroups.initMembersListAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcGroups.initMembersListAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -289,7 +307,7 @@ namespace AcUtils
         /// List optionally initialized by [AcGroups constructor](@ref AcUtils#AcGroups#AcGroups) when \e includeMembersList param is \e true.
         /// </summary>
         /// <param name="group">AccuRev group name to query.</param>
-        /// <returns>Group's membership list as an ordered formatted comma-delimited string, otherwise \e null if not found.</returns>
+        /// <returns>Group's membership list as an ordered formatted comma-delimited string, otherwise \e null if membership list was not initialized.</returns>
         /*! \sa [AcGroups.isMember](@ref AcUtils#AcGroups#isMember), [AcUser.getGroups](@ref AcUtils#AcUser#getGroups) */
         public string getMembers(string group)
         {
@@ -299,10 +317,7 @@ namespace AcUtils
             {
                 SortedSet<string> members = prncpl.Members;
                 if (members != null)
-                {
-                    IEnumerable<string> e = members.OrderBy(s => s);
-                    list = String.Join(", ", e);
-                }
+                    list = String.Join(", ", members);
             }
 
             return list;

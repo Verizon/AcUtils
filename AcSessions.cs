@@ -229,7 +229,7 @@ namespace AcUtils
         /// </summary>
         /*! \code
             // returns true if operation was successful, false on error
-            static async Task<bool> showSessionsAsync()
+            public static async Task<bool> showSessionsAsync()
             {
                 AcSessions sessions = new AcSessions(); // two-part object construction
                 if (!(await sessions.initAsync()))  // ..
@@ -261,8 +261,7 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                string cmd = "show -fx sessions";
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync("show -fx sessions").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -288,16 +287,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcSessions.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcSessions.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcSessions.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcSessions.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;

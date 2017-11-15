@@ -305,7 +305,7 @@ namespace AcUtils
                 case "I":
                     return Inheritable.ToString();
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException($"The {format} format string is not supported.");
             }
         }
 
@@ -396,8 +396,7 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                string cmd = String.Format(@"lsacl -fx {0} ""{1}""", _kind, name);
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync($@"lsacl -fx {_kind} ""{name}""").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -421,16 +420,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcPermissions.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcPermissions.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcPermissions.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcPermissions.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;

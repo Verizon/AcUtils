@@ -397,9 +397,9 @@ namespace AcUtils
                 case "H": // hierarchy type: parallel or serial
                     return HierType;
                 case "V": // virtual stream\\version number designation, e.g. 5\12
-                    return String.Format("{0}\\{1}", VirStreamNumber, VirVersionNumber);
+                    return $"{VirStreamNumber}\\{VirVersionNumber}";
                 case "R": // real stream\\version number designation, e.g. 5\12
-                    return String.Format("{0}\\{1}", RealStreamNumber, RealVersionNumber);
+                    return $"{RealStreamNumber}\\{RealVersionNumber}";
                 case "N": // named stream\version number format, e.g. MARS_STAGE\7 or MARS_STAGE_barnyrd\24
                     return NamedVersion;
                 case "L": // stream where element is located when it has (\e underlap)(\e member) or (\e overlap)(\e member) status
@@ -409,7 +409,7 @@ namespace AcUtils
                 case "S": // version's status, e.g. (kept)(member)
                     return Status;
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException($"The {format} format string is not supported.");
             }
         }
 
@@ -441,14 +441,12 @@ namespace AcUtils
 
         catch (AcUtilsException ecx)
         {
-            string msg = String.Format("AcUtilsException caught in Program.show{0}{1}", Environment.NewLine, ecx.Message);
-            Console.WriteLine(msg);
+            Console.WriteLine($"AcUtilsException caught in Program.show{Environment.NewLine}{ecx.Message}");
         }
 
         catch (Exception ecx)
         {
-            string msg = String.Format("Exception caught in Program.show{0}{1}", Environment.NewLine, ecx.Message);
-            Console.WriteLine(msg);
+            Console.WriteLine($"Exception caught in Program.show{Environment.NewLine}{ecx.Message}");
         }
         \endcode */
     [Serializable]
@@ -541,9 +539,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in Stat.init{0}{1}", 
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in Stat.init{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;

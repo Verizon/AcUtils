@@ -69,9 +69,7 @@ namespace AcUtils
 
             catch (ArgumentOutOfRangeException ecx)
             {
-                string msg = String.Format("ArgumentOutOfRangeException caught and logged in AcDateTime.AcDate2DateTime{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"ArgumentOutOfRangeException caught and logged in AcDateTime.AcDate2DateTime{Environment.NewLine}{ecx.Message}");
             }
 
             return dt;

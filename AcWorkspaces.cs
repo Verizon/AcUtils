@@ -411,7 +411,7 @@ namespace AcUtils
                 case "PN": // principal name of the workspace owner
                     return Principal.Name;
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException($"The {format} format string is not supported.");
             }
         }
 
@@ -454,19 +454,28 @@ namespace AcUtils
         /// <param name="includeHidden">\e true to include deactivated (removed) workspaces/reference trees.</param>
         /// <param name="includeRefTrees">\e true to include reference trees.</param>
         /*! \code
-            // defaults to the list of depots the script user can view based on ACL permissions
-            AcDepots depots = new AcDepots(); // typical two-part object construction
-            if (!(await depots.initAsync())) return false; // initialization failed, check log file
+            public static async Task<bool> showWorkspacesAsync()
+            {
+                var progress = new Progress<int>(n =>
+                {
+                    if ((n % 10) == 0) Console.WriteLine("Initializing: " + n);
+                });
 
-            // false to include only the script user's workspaces (not all workspaces) in the MARS depot
-            // true to include their deactivated (hidden) workspaces
-            AcWorkspaces wspaces = new AcWorkspaces(depots, false, true);
-            AcDepot depot = depots.getDepot("MARS");
-            if (!(await wspaces.initAsync(depot))) return false; // ..
+                // depots list is required for workspace list construction
+                // defaults to those the script user can view based on ACL permissions
+                AcDepots depots = new AcDepots();
+                if (!(await depots.initAsync(null, progress))) return false;
 
-            // list active workspaces on top then ordered by workspace name
-            foreach (AcWorkspace wspace in wspaces.OrderBy(n => n.Hidden).ThenBy(n => n.Name))
-                Console.WriteLine(wspace.ToString("lv")); // more descriptive long version
+                // false to include only the script user's workspaces (not all)
+                // true to include their deactivated (hidden) workspaces
+                AcWorkspaces wspaces = new AcWorkspaces(depots, allWSpaces: false, includeHidden: true);
+                if (!(await wspaces.initAsync())) return false;
+
+                foreach (AcWorkspace wspace in wspaces.OrderBy(n => n.Hidden).ThenBy(n => n.Name))
+                    Console.WriteLine(wspace.ToString("lv") + Environment.NewLine);
+
+                return true;
+            }
             \endcode */
         /*! \sa initAsync, [default comparer](@ref AcWorkspace#CompareTo) */
         /*! \pre \e depots cannot be initialized in parallel with AcWorkspaces initialization; it must be a fully initialized list. */
@@ -538,31 +547,27 @@ namespace AcUtils
                 // for all below, -v option adds the Loc (location) to output
                 if (_allWSpaces && _includeHidden)
                     // All workspaces, not just those that belong to the principal. Include deactivated workspaces.
-                    cmd = String.Format(@"show -fvix -a wspaces"); // -a is the only option available for show wspaces
+                    cmd = "show -fvix -a wspaces"; // -a is the only option available for show wspaces
                 else if (_allWSpaces && !_includeHidden)
                     // All workspaces, not just those that belong to the principal. Do not include deactivated workspaces.
-                    cmd = String.Format(@"show -fvx -a wspaces");
+                    cmd = "show -fvx -a wspaces";
                 else if (!_allWSpaces && _includeHidden)
                     // Only those workspaces that belong to the principal. Include deactivated workspaces.
-                    cmd = String.Format(@"show -fvix wspaces");
+                    cmd = "show -fvix wspaces";
                 else if (!_allWSpaces && !_includeHidden)
                     // Only those workspaces that belong to the principal. Do not include deactivated workspaces.
-                    cmd = String.Format(@"show -fvx wspaces");
+                    cmd = "show -fvx wspaces";
                 result = await AcCommand.runAsync(cmd).ConfigureAwait(false);
             }
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcWorkspaces.getWorkspacesXMLAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcWorkspaces.getWorkspacesXMLAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcWorkspaces.getWorkspacesXMLAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcWorkspaces.getWorkspacesXMLAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return result;
@@ -583,28 +588,19 @@ namespace AcUtils
             AcResult result = null;
             try
             {
-                string cmd = null;
-                if (_includeHidden)
-                    // Display all reference trees including deactivated ones
-                    cmd = String.Format(@"show -fvix refs");
-                else
-                    // Display only active reference trees.
-                    cmd = String.Format(@"show -fvx refs");
-                result = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                // -fvix: display all reference trees including deactivated ones
+                // -fvx: display only active reference trees
+                result = await AcCommand.runAsync($"show {(_includeHidden ? "-fvix" : "-fvx")} refs").ConfigureAwait(false);
             }
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcWorkspaces.getReferenceTreesXMLAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcWorkspaces.getReferenceTreesXMLAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcWorkspaces.getReferenceTreesXMLAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcWorkspaces.getReferenceTreesXMLAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return result;
@@ -668,9 +664,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcWorkspaces.storeWSpaces{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcWorkspaces.storeWSpaces{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;

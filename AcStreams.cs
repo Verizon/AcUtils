@@ -28,12 +28,15 @@ namespace AcUtils
     /// The type of stream.
     /// </summary>
     /*! \accunote_ AccuRev is not consistent in its designation of stream types. The <tt>show streams</tt> command returns 
-    \b passthrough and \b normal while the server_admin_trig receives \b passthru and \b regular. We cover them 
-    all here in one enum. */
+    \b passthrough and \b normal while the server_admin_trig receives \b passthru and \b regular and the server_master_trig 
+    receives /b dynamic. We cover them all here in one enum. */
     public enum StreamType {
         /*! \var unknown
         A defect where \"<b>* unknown *</b>\" is sent. */
         unknown,
+        /*! \var dynamic
+        A dynamic stream. */
+        dynamic,
         /*! \var normal
         A dynamic stream. */
         normal,
@@ -330,7 +333,7 @@ namespace AcUtils
                 }
                 case "I": // stream's ID number
                     return ID.ToString();
-                case "T": // type of stream: unknown, normal, regular, workspace, snapshot, passthru, or passthrough
+                case "T": // type of stream: unknown, normal, regular, dynamic, workspace, snapshot, passthru, or passthrough
                     return Type.ToString();
                 case "BT": // stream's time basis
                     return Time.ToString();
@@ -349,7 +352,7 @@ namespace AcUtils
                 case "DG": // True if stream has a default group, False otherwise
                     return HasDefaultGroup.ToString();
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException($"The {format} format string is not supported.");
             }
         }
 
@@ -427,19 +430,19 @@ namespace AcUtils
         /// to handle a range of exceptions.</exception>
         /*! \sa [AcStreams constructor](@ref AcUtils#AcStreams#AcStreams) */
         /*! \show_ <tt>show \<-fxig|-fxg\> -p \<depot\> [-l listfile] streams</tt> */
+        /*! \accunote_ The following XML attributes from <tt>show -fx -p \<depot\> streams</tt> may exist depending on the version of AccuRev in use. 
+        They are used internally by AccuRev and are not intended for customer usage. Micro Focus incident #3132463.
+- \e eventStream: Efficient way to determine if the server process needs to fire the event trigger processing.
+- \e eventStreamHWM: Used by GitCentric to track the high watermark for synchronization.
+- \e hasProperties: Efficient way for the GUI to determine if the property icon is displayed in the StreamBrowser. */
         internal async Task<bool> initAsync(AcDepot depot, string listfile = null)
         {
             bool ret = false; // assume failure
             try
             {
-                string cmd = null;
-                string option = _includeHidden ? "-fxig" : "-fxg";
-                if (String.IsNullOrEmpty(listfile))
-                    cmd = String.Format(@"show {0} -p ""{1}"" streams", option, depot);
-                else
-                    cmd = String.Format(@"show {0} -p ""{1}"" -l ""{2}"" streams", option, depot, listfile);
-
-                AcResult result = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult result = await AcCommand
+                    .runAsync($@"show {(_includeHidden ? "-fxig" : "-fxg")} -p ""{depot}"" {((listfile == null) ? String.Empty : "-l " + "" + listfile + "")} streams")
+                    .ConfigureAwait(false);
                 if (result != null && result.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(result.CmdResult);
@@ -479,16 +482,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcStreams.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcStreams.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcStreams.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcStreams.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;

@@ -66,9 +66,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                String err = String.Format("Exception caught and logged in AcPreferences.getIgnoreOptionsAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"Exception caught and logged in AcPreferences.getIgnoreOptionsAsync{Environment.NewLine}{ecx.Message}");
             }
 
             finally
@@ -104,9 +102,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                String err = String.Format("Exception caught and logged in AcPreferences.getUseIgnoreElemsOptimizationAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"Exception caught and logged in AcPreferences.getUseIgnoreElemsOptimizationAsync{Environment.NewLine}{ecx.Message}");
             }
 
             finally
@@ -144,9 +140,7 @@ namespace AcUtils
 
                 catch (Exception ecx)
                 {
-                    String err = String.Format("Exception caught and logged in AcPreferences.getAcHomeFolderAsync{0}{1}",
-                        Environment.NewLine, ecx.Message);
-                    AcDebug.Log(err);
+                    AcDebug.Log($"Exception caught and logged in AcPreferences.getAcHomeFolderAsync{Environment.NewLine}{ecx.Message}");
                 }
 
                 finally
@@ -201,16 +195,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcPreferences.getPreferencesAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcPreferences.getPreferencesAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx) // IOException, DirectoryNotFoundException, PathTooLongException, SecurityException... others
             {
-                String err = String.Format("Exception caught and logged in AcPreferences.getPreferencesAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"Exception caught and logged in AcPreferences.getPreferencesAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return tempFile;

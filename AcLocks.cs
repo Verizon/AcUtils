@@ -373,8 +373,7 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                string cmd = "show -fx locks";
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync("show -fx locks").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -392,16 +391,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcLocks.initAsync(AcDepot){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcLocks.initAsync(AcDepot){Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcLocks.initAsync(AcDepot){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcLocks.initAsync(AcDepot){Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -426,8 +421,7 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                string cmd = "show -fx locks";
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync("show -fx locks").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     bool result = true;
@@ -447,16 +441,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcLocks.initAsync(DepotsCollection){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcLocks.initAsync(DepotsCollection){Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcLocks.initAsync(DepotsCollection){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcLocks.initAsync(DepotsCollection){Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -478,8 +468,7 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                string cmd = "show -fx locks";
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync("show -fx locks").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -492,16 +481,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcLocks.initAsync(StreamsCollection){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcLocks.initAsync(StreamsCollection){Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcLocks.initAsync(StreamsCollection){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcLocks.initAsync(StreamsCollection){Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -545,9 +530,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcLocks.runCommand{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcLocks.runCommand{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -610,9 +593,7 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException in AcLocks.lockAsync caught and logged.{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException in AcLocks.lockAsync caught and logged.{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -647,9 +628,7 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException in AcLocks.unlockAsync caught and logged.{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException in AcLocks.unlockAsync caught and logged.{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;

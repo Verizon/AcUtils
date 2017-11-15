@@ -172,9 +172,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                String err = String.Format("Exception caught and logged in AcDebug.paramFileCopy(string, ParamFileCopy, string, string, string){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                Log(err);
+                Log($"Exception caught and logged in AcDebug.paramFileCopy(string, ParamFileCopy, string, string, string){Environment.NewLine}{ecx.Message}");
                 ret = false;
             }
 

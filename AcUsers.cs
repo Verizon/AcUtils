@@ -19,6 +19,7 @@ using System.ComponentModel;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -331,7 +332,7 @@ namespace AcUtils
                 case "DG": // distinguished name from Active Directory
                     return DistinguishedName;
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException($"The {format} format string is not supported.");
             }
         }
 
@@ -360,21 +361,7 @@ namespace AcUtils
         /// <returns>\e true if no exception was thrown and operation succeeded, \e false otherwise.</returns>
         /// <exception cref="Exception">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
-        /*! \code
-          <activeDir>
-            <domains>
-              <add host="xyzdc.mycorp.com" path="DC=XYZ,DC=xy,DC=zcorp,DC=com"/>
-              <add host="abcdc.mycorp.com" path="DC=ABC,DC=ab,DC=com"/>
-            </domains>
-            <properties>
-              <add field="mobile" title="Mobile" />
-              <add field="manager" title="Manager" />
-              <add field="department" title="Department" />
-                ...
-            </properties >
-          </activeDir>
-          \endcode */
-        /*! \sa DomainCollection, PropCollection */
+        /*! \sa DomainCollection, PropCollection, Other */
         /*! \attention User properties require that AccuRev principal names match login names stored on the LDAP server. */
         internal async Task<bool> initFromADAsync(DomainCollection dc, PropCollection pc = null)
         {
@@ -422,8 +409,7 @@ namespace AcUtils
                     catch (Exception ecx)
                     {
                         ret = false;
-                        string msg = String.Format("Exception caught and logged in AcUser.initFromADAsync{0}{1}", Environment.NewLine, ecx.Message);
-                        AcDebug.Log(msg);
+                        AcDebug.Log($"Exception caught and logged in AcUser.initFromADAsync{Environment.NewLine}{ecx.Message}");
                     }
 
                     // avoid CA2202: Do not dispose objects multiple times
@@ -440,7 +426,8 @@ namespace AcUtils
         /// of groupA because she's a member of groupB which is a member of groupA. This method is called internally 
         /// and not by user code.
         /// </summary>
-        /// <remarks>Membership lists for inactive users are initialized too.</remarks>
+        /// <remarks>Membership lists for inactive users are initialized too when 
+        /// [constructor parameter](@ref AcUtils#AcUsers#AcUsers) \e includeDeactivated is \e true.</remarks>
         /// <returns>\e true if no exception was thrown and operation succeeded, \e false otherwise.</returns>
         /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c show command failure.</exception>
@@ -454,8 +441,8 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                string cmd = String.Format(@"show -fx -u ""{0}"" groups", Principal.Name); // works for inactive users too
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                // works for inactive users too
+                AcResult r = await AcCommand.runAsync($@"show -fx -u ""{Principal.Name}"" groups").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
                     SortedSet<string> members = new SortedSet<string>();
@@ -474,16 +461,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcUser.initGroupsListAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcUser.initGroupsListAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcUser.initGroupsListAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcUser.initGroupsListAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -499,10 +482,7 @@ namespace AcUtils
         {
             string list = null;
             if (Principal.Members != null)
-            {
-                IEnumerable<string> e = Principal.Members.OrderBy(n => n);
-                list = String.Join(", ", e);
-            }
+                list = String.Join(", ", Principal.Members);
 
             return list;
         }
@@ -526,7 +506,8 @@ namespace AcUtils
         private PropCollection _pc; // user properties from Active Directory beyond the default set
         private bool _includeGroupsList;
         private bool _includeDeactivated;
-        [NonSerialized] private readonly object _locker = new object();
+        [NonSerialized] private readonly object _locker = new object(); // token for lock keyword scope
+        [NonSerialized] private int _counter; // used to report initialization progress back to the caller
         #endregion
 
         #region object construction:
@@ -557,10 +538,10 @@ namespace AcUtils
             _domains = adSection.Domains;
             _pc = adSection.Props;
             ...
-            genToolStripStatusLabel.Text = "Loading users...";
-            genToolStripProgressBar.Maximum = await AcQuery.getUsersCountAsync();
-            var progress = new Progress<int>(i => genToolStripProgressBar.Value = i);
-            AcUsers users = new AcUsers(_domains, _pc, true); // true to include group membership initialization (slower)
+            toolStripStatusLabel.Text = "Loading users...";
+            toolStripProgressBar.Maximum = await AcQuery.getUsersCountAsync();
+            var progress = new Progress<int>(i => toolStripProgressBar.Value = i);
+            AcUsers users = new AcUsers(_domains, _pc, includeGroupsList: true);
             if (await users.initAsync(progress)) // if successful
             {
                 foreach (AcUser user in users.OrderBy(n => n)) // use default comparer
@@ -582,8 +563,8 @@ namespace AcUtils
         /// </summary>
         /// <param name="progress">Optionally report progress back to the caller.</param>
         /// <returns>\e true if list initialization succeeded, \e false otherwise.</returns>
-        /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
-        /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c show command failure.</exception>
+        /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) in 
+        /// <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c show command failure.</exception>
         /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
         /*! \show_ <tt>show \<-fx | -fix\> users</tt> */
         public async Task<bool> initAsync(IProgress<int> progress = null)
@@ -591,15 +572,21 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                string cmd = _includeDeactivated ? "show -fix users" : "show -fx users";
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync($"show {(_includeDeactivated ? "-fix" : "-fx")} users")
+                    .ConfigureAwait(false);
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
-                    List<Task<bool>>[] tasks = new List<Task<bool>>[2];
-                    tasks[0] = new List<Task<bool>>(); // active directory user properties
-                    tasks[1] = new List<Task<bool>>(); // group membership lists
                     XElement xml = XElement.Parse(r.CmdResult);
                     IEnumerable<XElement> query = from element in xml.Descendants("Element") select element;
+                    int num = query.Count();
+                    List<Task<bool>> tasks = new List<Task<bool>>(num);
+                    Func<Task<bool>, bool> cf = t =>
+                    {
+                        bool res = t.Result;
+                        if (res && progress != null) progress.Report(Interlocked.Increment(ref _counter));
+                        return res;
+                    };
+
                     foreach (XElement e in query)
                     {
                         string name = (string)e.Attribute("Name");
@@ -608,65 +595,68 @@ namespace AcUtils
                         PrinStatus status = (e.Attribute("isActive") == null) ? PrinStatus.Active : PrinStatus.Inactive;
                         AcUser user = new AcUser(id, name, status);
                         lock (_locker) { Add(user); }
-
-                        if (_dc != null)
-                            // initialize default set and other user properties from Active Directory
-                            tasks[0].Add(user.initFromADAsync(_dc, _pc));
-                        if (_includeGroupsList)
-                            // include group membership list initialization
-                            tasks[1].Add(user.initGroupsListAsync());
+                        Task<bool> t = initUserPropsAsync(user).ContinueWith(cf);
+                        tasks.Add(t);
                     }
 
-                    int counter = 0; // used to report progress back to the user during list construction
-                    if (_dc != null && tasks[0].Count > 0)
-                    {
-                        while (tasks[0].Count > 0)
-                        {
-                            // run all user's LDAP initialization in parallel and report sequentially as they complete
-                            Task<bool> n1 = await Task.WhenAny(tasks[0]).ConfigureAwait(false);
-                            if (!(await n1.ConfigureAwait(false))) return false; //  // a failure occurred, see log file
-                            tasks[0].Remove(n1); // remove completed task from the list
-                            if (progress != null)
-                                progress.Report(++counter);
-                        }
-                    }
-
-                    if (_includeGroupsList && tasks[1].Count > 0)
-                    {
-                        counter = 0; // reset for group membership initialization
-                        while (tasks[1].Count > 0)
-                        {
-                            // run all user's group initialization in parallel and report sequentially as they complete
-                            Task<bool> n2 = await Task.WhenAny(tasks[1]).ConfigureAwait(false);
-                            if (!(await n2.ConfigureAwait(false))) return false; //  // a failure occurred, see log file
-                            tasks[1].Remove(n2);
-                            if (progress != null)
-                                progress.Report(++counter);
-                        }
-                    }
-
-                    ret = true; // operation completed with no errors
+                    bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
+                    ret = (arr != null && arr.All(n => n == true));
                 }
             }
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcUsers.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcUsers.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcUsers.initAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcUsers.initAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
         }
         //@}
         #endregion
+
+        /// <summary>
+        /// Helper function for initializing \e user with their Active Directory properties and group memberships 
+        /// as per [constructor parameters](@ref AcUtils#AcUsers#AcUsers). Called internally and not by user code.
+        /// </summary>
+        /// <param name="user">The user to initialize.</param>
+        /// <returns>\e true if list initialization succeeded, \e false otherwise.</returns>
+        /// <exception cref="Exception">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) in 
+        /// <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
+        private async Task<bool> initUserPropsAsync(AcUser user)
+        {
+            bool ret = false; // assume failure
+            try
+            {
+                if (_dc != null && _includeGroupsList)
+                {
+                    Task<bool>[] tasks = new Task<bool>[2];
+                    // initialize default set and other user properties from Active Directory
+                    tasks[0] = user.initFromADAsync(_dc, _pc);
+                    // include group membership list initialization
+                    tasks[1] = user.initGroupsListAsync();
+                    bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);
+                    ret = (arr != null && arr.All(n => n == true));
+                }
+                else if (_dc != null && !_includeGroupsList)
+                    ret = await user.initFromADAsync(_dc, _pc).ConfigureAwait(false);
+                else if (_dc == null && _includeGroupsList)
+                    ret = await user.initGroupsListAsync().ConfigureAwait(false);
+                else // _dc == null && !_includeGroupsList
+                    ret = true; // nothing to do
+            }
+
+            catch (Exception ecx)
+            {
+                AcDebug.Log($"Exception caught and logged in AcUsers.initUserPropsAsync{Environment.NewLine}{ecx.Message}");
+            }
+
+            return ret;
+        }
 
         /// <summary>
         /// Get the AcUser object for AccuRev principal \e name.

@@ -17,7 +17,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using AcUtils;
 
 namespace AcUtils
 {
@@ -90,10 +89,7 @@ namespace AcUtils
             Debug.Assert(transaction.Name == "transaction", @"transaction.Name == ""transaction""");
             string name = null;
             if (transaction.acxIsPromote())
-            {
-                name = String.Format("{0} ({1})", (string)transaction.Attribute("fromStreamName"),
-                    (int)transaction.Attribute("fromStreamNumber"));
-            }
+                name = $"{(string)transaction.Attribute("fromStreamName")} ({(int)transaction.Attribute("fromStreamNumber")})";
 
             return name;
         }
@@ -109,10 +105,7 @@ namespace AcUtils
             Debug.Assert(transaction.Name == "transaction", @"transaction.Name == ""transaction""");
             string name = null;
             if (transaction.acxIsPromote())
-            {
-                name = String.Format("{0} ({1})", (string)transaction.Attribute("streamName"),
-                    (int)transaction.Attribute("streamNumber"));
-            }
+                name = $"{(string)transaction.Attribute("streamName")} ({(int)transaction.Attribute("streamNumber")})";
 
             return name;
         }
@@ -146,8 +139,7 @@ namespace AcUtils
             {
                 XElement first = transaction.Elements("version").FirstOrDefault();
                 if (first != null)
-                    name = String.Format("{0} ({1})", (string)first.Attribute("virtualNamedVersion"),
-                        (string)first.Attribute("virtual"));
+                    name = $"{(string)first.Attribute("virtualNamedVersion")} ({(string)first.Attribute("virtual")})";
             }
 
             return name;
@@ -171,8 +163,7 @@ namespace AcUtils
             if (first != null && version == first && transaction.acxIsPromote())
                 return null;
 
-            string name = String.Format("{0} ({1})", (string)version.Attribute("realNamedVersion"),
-                (string)version.Attribute("real"));
+            string name = $"{(string)version.Attribute("realNamedVersion")} ({(string)version.Attribute("real")})";
             return name;
         }
 
@@ -188,7 +179,7 @@ namespace AcUtils
             string name = null;
             string ancestorNamedVersion = (string)version.Attribute("ancestorNamedVersion");
             if (!String.IsNullOrEmpty(ancestorNamedVersion))
-                name = String.Format("{0} ({1})", ancestorNamedVersion, (string)version.Attribute("ancestor"));
+                name = $"{ancestorNamedVersion} ({(string)version.Attribute("ancestor")})";
             return name;
         }
 
@@ -204,7 +195,7 @@ namespace AcUtils
             string name = null;
             string mergedAgainstNamedVersion = (string)version.Attribute("mergedAgainstNamedVersion");
             if (!String.IsNullOrEmpty(mergedAgainstNamedVersion))
-                name = String.Format("{0} ({1})", mergedAgainstNamedVersion, (string)version.Attribute("merged_against"));
+                name = $"{mergedAgainstNamedVersion} ({(string)version.Attribute("merged_against")})";
             return name;
         }
 

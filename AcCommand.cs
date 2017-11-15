@@ -159,9 +159,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                string err = String.Format("Exception caught and logged in AcCommand constructor{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"Exception caught and logged in AcCommand constructor{Environment.NewLine}{ecx.Message}");
             }
         }
 
@@ -186,8 +184,7 @@ namespace AcUtils
         public static async Task<AcResult> runAsync(string command, ICmdValidate validator = null)
         {
             TaskCompletionSource<AcResult> tcs = new TaskCompletionSource<AcResult>();
-            StringBuilder error = new StringBuilder();
-            error.Capacity = 512;
+            StringBuilder error = new StringBuilder(512);
             try
             {
                 await _taskFactory.StartNew(() =>
@@ -227,8 +224,7 @@ namespace AcUtils
                             }
                             else
                             {
-                                string msg = String.Format("AccuRev program return: {0}{1}{2}", process.ExitCode, Environment.NewLine, "accurev " + command);
-                                tcs.SetException(new AcUtilsException(msg)); // let calling method handle
+                                tcs.SetException(new AcUtilsException($"AccuRev program return: {process.ExitCode}{Environment.NewLine}accurev {command}")); // let calling method handle
                             }
                         }
                     }
@@ -270,8 +266,7 @@ namespace AcUtils
         public static AcResult run(string command, ICmdValidate validator = null)
         {
             AcResult result = new AcResult();
-            StringBuilder error = new StringBuilder();
-            error.Capacity = 512;
+            StringBuilder error = new StringBuilder(512);
             try
             {
                 using (Process process = new Process())
@@ -316,8 +311,7 @@ namespace AcUtils
                         }
                         else
                         {
-                            string msg = String.Format("AccuRev program return: {0}{1}{2}", process.ExitCode, Environment.NewLine, "accurev " + command);
-                            throw new AcUtilsException(msg); // let calling method handle
+                            throw new AcUtilsException($"AccuRev program return: {process.ExitCode}{Environment.NewLine}accurev {command}"); // let calling method handle
                         }
                     }
                 }

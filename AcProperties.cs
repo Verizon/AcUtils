@@ -253,7 +253,7 @@ namespace AcUtils
                 case "PV": // property value
                     return PropValue;
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException($"The {format} format string is not supported.");
             }
         }
 
@@ -292,8 +292,7 @@ namespace AcUtils
         /*! \code
             public static async Task<bool> showPropertiesAsync()
             {
-                // true for dynamic streams only
-                AcDepot depot = new AcDepot("MARS", true);
+                AcDepot depot = new AcDepot("MARS", dynamicOnly: true);
                 if (!(await depot.initAsync())) return false;
 
                 // get the properties for all dynamic streams in the MARS depot
@@ -368,16 +367,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcProperties.initAsync(AcDepot, AcStream, bool){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcProperties.initAsync(AcDepot, AcStream, bool){Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcProperties.initAsync(AcDepot, AcStream, bool){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcProperties.initAsync(AcDepot, AcStream, bool){Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -433,16 +428,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcProperties.initAsync(string, bool){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcProperties.initAsync(string, bool){Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcProperties.initAsync(string, bool){0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcProperties.initAsync(string, bool){Environment.NewLine}{ecx.Message}");
             }
 
             return ret;

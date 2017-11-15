@@ -84,16 +84,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getPrincipalAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getPrincipalAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                String err = String.Format("Exception caught and logged in AcQuery.getPrincipalAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getPrincipalAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return prncpl; // principal name or null if not logged in
@@ -121,8 +117,7 @@ namespace AcUtils
             string tmpFile = null;
             try
             {
-                string cmd = String.Format(@"cat -v ""{0}"" -p ""{1}"" -e {2}", ver_spec, depot, eid);
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync($@"cat -v ""{ver_spec}"" -p ""{depot}"" -e {eid}").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     tmpFile = Path.GetTempFileName();
@@ -135,16 +130,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getCatFileAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getCatFileAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx) // IOException, DirectoryNotFoundException, PathTooLongException, SecurityException... others
             {
-                String err = String.Format("Exception caught and logged in AcQuery.getCatFileAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getCatFileAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return tmpFile;
@@ -173,15 +164,13 @@ namespace AcUtils
             try
             {
                 // -i switch reports the EID's of the two versions and does not do the comparison.
-                string cmd = String.Format(@"diff -i -b -fx -v ""{0}"" -p ""{1}"" ""{2}""", realverspec, depot, depotrelpath);
-                result = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                result = await AcCommand.runAsync($@"diff -i -b -fx -v ""{realverspec}"" -p ""{depot}"" ""{depotrelpath}""")
+                    .ConfigureAwait(false);
             }
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getBackedVersionAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getBackedVersionAsync{Environment.NewLine}{ecx.Message}");
             }
 
             try
@@ -208,9 +197,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcQuery.getBackedVersionAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getBackedVersionAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return arr;
@@ -248,8 +235,7 @@ namespace AcUtils
             string[] arr = null; // depot-relative path, parent folder EID
             try
             {
-                string cmd = String.Format(@"name -v ""{0}"" -fx -e {1}", stream, EID);
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync($@"name -v ""{stream}"" -fx -e {EID}").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     using (StringReader reader = new StringReader(r.CmdResult))
@@ -270,16 +256,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getElementNameAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getElementNameAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                String err = String.Format("Exception caught and logged in AcQuery.getElementNameAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getElementNameAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return arr;
@@ -329,8 +311,7 @@ namespace AcUtils
                     streamWriter.Write(@"<serverInfo/>"); // set up the query
                 }
 
-                string cmd = String.Format(@"xml -l ""{0}""", tempFile);
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync($@"xml -l ""{tempFile}""").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     using (StringReader reader = new StringReader(r.CmdResult))
@@ -347,16 +328,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getAccuRevVersionAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getAccuRevVersionAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                String err = String.Format("Exception caught and logged in AcQuery.getAccuRevVersionAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getAccuRevVersionAsync{Environment.NewLine}{ecx.Message}");
             }
 
             finally
@@ -382,8 +359,7 @@ namespace AcUtils
             int count = -1; // assume failure
             try
             {
-                string cmd = includeDeactivated ? "show -fix users" : "show -fx users";
-                AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync(includeDeactivated ? "show -fix users" : "show -fx users").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement t = XElement.Parse(r.CmdResult);
@@ -393,16 +369,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getUsersCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getUsersCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcQuery.getUsersCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getUsersCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return count;
@@ -431,16 +403,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getDepotsCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getDepotsCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcQuery.getDepotsCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getDepotsCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return count;
@@ -469,16 +437,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getDynStreamsCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getDynStreamsCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcQuery.getDynStreamsCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getDynStreamsCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return count;
@@ -507,16 +471,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getTotalStreamsCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getTotalStreamsCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcQuery.getTotalStreamsCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getTotalStreamsCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return count;
@@ -545,16 +505,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getStreamsWithDefaultGroupCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getStreamsWithDefaultGroupCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcQuery.getStreamsWithDefaultGroupCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getStreamsWithDefaultGroupCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return count;
@@ -583,16 +539,12 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in AcQuery.getTotalWorkspaceCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getTotalWorkspaceCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in AcQuery.getTotalWorkspaceCountAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getTotalWorkspaceCountAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return count;
@@ -627,9 +579,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                string err = String.Format("Exception in AcQuery.getAcGUIpath.{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getAcGUIpath{Environment.NewLine}{ecx.Message}");
                 error = true;
             }
 
@@ -690,9 +640,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                string err = String.Format("Exception in AcQuery.getServerFromAcClientCnf.{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"Exception caught and logged in AcQuery.getServerFromAcClientCnf{Environment.NewLine}{ecx.Message}");
             }
 
             finally // avoids CA2202: Do not dispose objects multiple times
@@ -718,9 +666,7 @@ namespace AcUtils
 
             catch (AcUtilsException ecx)
             {
-                string err = String.Format("AcUtilsException in AcQuery.getDepotNameListAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(err);
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getDepotNameListAsync{Environment.NewLine}{ecx.Message}");
             }
 
             if (result != null && result.RetVal == 0) // if command succeeded
@@ -728,7 +674,8 @@ namespace AcUtils
                 XElement xml = XElement.Parse(result.CmdResult);
                 IEnumerable<XElement> query = from e in xml.Descendants("Element")
                                               select e;
-                depots = new List<string>(query.Count());
+                int num = query.Count();
+                depots = new List<string>(num);
                 foreach (XElement n in query)
                     depots.Add((string)n.Attribute("Name"));
 
