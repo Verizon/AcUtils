@@ -66,8 +66,6 @@
 Collaboration diagram for AcUtils.AcStreams:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_ac_utils_1_1_ac_streams__coll__graph.png" border="0" usemap="#_ac_utils_8_ac_streams_coll__map" alt="Collaboration graph"/></div>
-<map name="_ac_utils_8_ac_streams_coll__map" id="_ac_utils_8_ac_streams_coll__map">
-</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -89,7 +87,7 @@ Internal Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A container of <a class="el" href="class_ac_utils_1_1_ac_stream.html" title="A stream object that defines the attributes of an AccuRev stream. AcStream objects are instantiated d...">AcStream</a> objects that define AccuRev streams. <a class="el" href="class_ac_utils_1_1_ac_stream.html" title="A stream object that defines the attributes of an AccuRev stream. AcStream objects are instantiated d...">AcStream</a> objects are instantiated during <a class="el" href="class_ac_utils_1_1_ac_depot.html" title="A depot object that defines the attributes of an AccuRev depot. ">AcDepot</a> and <a class="el" href="class_ac_utils_1_1_ac_depots.html" title="A container of AcDepot objects that define AccuRev depots in the repository. ">AcDepots</a> construction. </p>
 
-<p>Definition at line <a class="el" href="_ac_streams_8cs_source.html#l00375">375</a> of file <a class="el" href="_ac_streams_8cs_source.html">AcStreams.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_streams_8cs_source.html#l00378">378</a> of file <a class="el" href="_ac_streams_8cs_source.html">AcStreams.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a44247be6ea38d05823048247397fac1e"></a>
 <div class="memitem">
@@ -143,7 +141,7 @@ Internal Functions</h2></td></tr>
 <div class="line">}</div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_streams.html#af7282977525827980a4ef540514d3176" title="Populate this container with AcStream objects as per constructor parameters. AcStream objects are ins...">initAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_stream.html#a8f6c9ba0a327343ff541c12855e1daeb">default comparer</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_streams_8cs_source.html#l00406">406</a> of file <a class="el" href="_ac_streams_8cs_source.html">AcStreams.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_streams_8cs_source.html#l00409">409</a> of file <a class="el" href="_ac_streams_8cs_source.html">AcStreams.cs</a>.</p>
 
 </div>
 </div>
@@ -179,7 +177,7 @@ Internal Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_ac_utils_1_1_ac_stream.html" title="A stream object that defines the attributes of an AccuRev stream. AcStream objects are instantiated d...">AcStream</a> object for stream <em>name</em>, otherwise <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_streams_8cs_source.html#l00504">504</a> of file <a class="el" href="_ac_streams_8cs_source.html">AcStreams.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_streams_8cs_source.html#l00503">503</a> of file <a class="el" href="_ac_streams_8cs_source.html">AcStreams.cs</a>.</p>
 
 </div>
 </div>
@@ -234,17 +232,23 @@ Internal Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_streams.html#a44247be6ea38d05823048247397fac1e">AcStreams constructor</a></dd></dl>
 <dl class="shows_"><dt><b><a class="el" href="shows_.html#_shows_000017">show command:</a></b></dt><dd><code>show &lt;-fxig|-fxg&gt; -p &lt;depot&gt; [-l listfile] streams</code> </dd></dl>
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000013">AccuNote:</a></b></dt><dd>The following XML attributes from <code>show -fx -p &lt;depot&gt; streams</code> may exist depending on the version of AccuRev in use. They are used internally by AccuRev and are not intended for customer usage. Micro Focus incident #3132463.<ul>
+<li><em>eventStream:</em> Efficient way to determine if the server process needs to fire the event trigger processing.</li>
+<li><em>eventStreamHWM:</em> Used by GitCentric to track the high watermark for synchronization.</li>
+<li><em>hasProperties:</em> Efficient way for the GUI to determine if the property icon is displayed in the StreamBrowser. </li>
+</ul>
+</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_streams_8cs_source.html#l00430">430</a> of file <a class="el" href="_ac_streams_8cs_source.html">AcStreams.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_streams_8cs_source.html#l00438">438</a> of file <a class="el" href="_ac_streams_8cs_source.html">AcStreams.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_depots_8cs_source.html#l00114">AcUtils.AcDepot.initAsync()</a>, and <a class="el" href="_ac_depots_8cs_source.html#l00699">AcUtils.AcDepots.initAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_depots_8cs_source.html#l00114">AcUtils.AcDepot.initAsync()</a>, and <a class="el" href="_ac_depots_8cs_source.html#l00750">AcUtils.AcDepots.initAsync()</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 10 2017 07:08:37 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

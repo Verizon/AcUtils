@@ -73,16 +73,17 @@ Enumerations</h2></td></tr>
 <tr class="separator:gad7e684b07d7e19ab166efd38207cf884"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0a9d168d367dad9bab253eafa49aae77"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acenum.html#ga0a9d168d367dad9bab253eafa49aae77">AcUtils.StreamType</a> { <br />
 &#160;&#160;<a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77aad921d60486366258809553a3db49a4a">AcUtils.StreamType.unknown</a>
+, <a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77ab72f3bd391ba731a35708bfd8cd8a68f">AcUtils.StreamType.dynamic</a>
 , <a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77afea087517c26fadd409bd4b9dc642555">AcUtils.StreamType.normal</a>
 , <a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77aaf37d08ae228a87dc6b265fd1019c97d">AcUtils.StreamType.regular</a>
-, <a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77a1629dee48cc4e53161f9b2be8614e062">AcUtils.StreamType.workspace</a>
 , <br />
-&#160;&#160;<a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77ac322d3de29d2b0c5e2e011dad5e77df2">AcUtils.StreamType.snapshot</a>
+&#160;&#160;<a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77a1629dee48cc4e53161f9b2be8614e062">AcUtils.StreamType.workspace</a>
+, <a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77ac322d3de29d2b0c5e2e011dad5e77df2">AcUtils.StreamType.snapshot</a>
 , <a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77ac784b69fc7345ec7177909289dba6404">AcUtils.StreamType.passthru</a>
 , <a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77a711163e72324e9c53f060441eebc86e1">AcUtils.StreamType.passthrough</a>
-, <a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77a06b8d65f97c9ccb2e687fa811de6c177">AcUtils.StreamType.gated</a>
 , <br />
-&#160;&#160;<a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77a830f78e090fe8aec00891405dfc14824">AcUtils.StreamType.staging</a>
+&#160;&#160;<a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77a06b8d65f97c9ccb2e687fa811de6c177">AcUtils.StreamType.gated</a>
+, <a class="el" href="group__acenum.html#gga0a9d168d367dad9bab253eafa49aae77a830f78e090fe8aec00891405dfc14824">AcUtils.StreamType.staging</a>
 <br />
  }</td></tr>
 <tr class="memdesc:ga0a9d168d367dad9bab253eafa49aae77"><td class="mdescLeft">&#160;</td><td class="mdescRight">The type of stream.  <a href="group__acenum.html#ga0a9d168d367dad9bab253eafa49aae77">More...</a><br /></td></tr>
@@ -202,8 +203,8 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Indicates the element's type. By default, AccuRev determines the element type for a newly created version automatically. </p>
-<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000016">AccuNote:</a></b></dt><dd>A defect exists where the XML <em>elem_type</em> attribute value can be the string "<b>* unknown *</b>". </dd></dl>
-<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000017">AccuNote:</a></b></dt><dd>(<em>external</em>)(<em>elink</em>) elements are grayed out in the Mac GUI and cannot be added to the depot. Defect 1101826. </dd></dl>
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000018">AccuNote:</a></b></dt><dd>A defect exists where the XML <em>elem_type</em> attribute value can be the string "<b>* unknown *</b>". </dd></dl>
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000019">AccuNote:</a></b></dt><dd>(<em>external</em>)(<em>elink</em>) elements are grayed out in the Mac GUI and cannot be added to the depot. Defect 1101826. </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="gga3164dabd0d78a5482aea218fa9154669aad921d60486366258809553a3db49a4a"></a>unknown&#160;</td><td class="fielddoc">
 <p>Should not occur normally except for noted defect. </p>
@@ -535,7 +536,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00030">30</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00031">31</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
 
 </div>
 </div>
@@ -550,10 +551,13 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The type of stream. </p>
-<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000011">AccuNote:</a></b></dt><dd>AccuRev is not consistent in its designation of stream types. The <code>show streams</code> command returns <b>passthrough</b> and <b>normal</b> while the server_admin_trig receives <b>passthru</b> and <b>regular</b>. We cover them all here in one enum. </dd></dl>
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000012">AccuNote:</a></b></dt><dd>AccuRev is not consistent in its designation of stream types. The <code>show streams</code> command returns <b>passthrough</b> and <b>normal</b> while the server_admin_trig receives <b>passthru</b> and <b>regular</b> and the server_master_trig receives /b dynamic. We cover them all here in one enum. </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="gga0a9d168d367dad9bab253eafa49aae77aad921d60486366258809553a3db49a4a"></a>unknown&#160;</td><td class="fielddoc">
 <p>A defect where "<b>* unknown *</b>" is sent. </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="gga0a9d168d367dad9bab253eafa49aae77ab72f3bd391ba731a35708bfd8cd8a68f"></a>dynamic&#160;</td><td class="fielddoc">
+<p>A dynamic stream. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="gga0a9d168d367dad9bab253eafa49aae77afea087517c26fadd409bd4b9dc642555"></a>normal&#160;</td><td class="fielddoc">
 <p>A dynamic stream. </p>
@@ -646,7 +650,7 @@ Enumerations</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 10 2017 07:08:37 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

@@ -94,17 +94,15 @@ Properties</h2></td></tr>
 <div class="line"></div>
 <div class="line"><span class="keywordflow">catch</span> (AcUtilsException ecx)</div>
 <div class="line">{</div>
-<div class="line">    <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;AcUtilsException caught in Program.show{0}{1}&quot;</span>, Environment.NewLine, ecx.Message);</div>
-<div class="line">    Console.WriteLine(msg);</div>
+<div class="line">    Console.WriteLine($<span class="stringliteral">&quot;AcUtilsException caught in Program.show{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">}</div>
 <div class="line"></div>
 <div class="line"><span class="keywordflow">catch</span> (Exception ecx)</div>
 <div class="line">{</div>
-<div class="line">    <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Exception caught in Program.show{0}{1}&quot;</span>, Environment.NewLine, ecx.Message);</div>
-<div class="line">    Console.WriteLine(msg);</div>
+<div class="line">    Console.WriteLine($<span class="stringliteral">&quot;Exception caught in Program.show{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">}</div>
 </div><!-- fragment --> 
-<p>Definition at line <a class="el" href="_stat_8cs_source.html#l00455">455</a> of file <a class="el" href="_stat_8cs_source.html">Stat.cs</a>.</p>
+<p>Definition at line <a class="el" href="_stat_8cs_source.html#l00453">453</a> of file <a class="el" href="_stat_8cs_source.html">Stat.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="aa3c98fde7367cd84f3223b4f3201c11c"></a>
 <div class="memitem">
@@ -129,7 +127,7 @@ Properties</h2></td></tr>
 
 <p>Remove all elements from the (static) element's list. </p>
 
-<p>Definition at line <a class="el" href="_stat_8cs_source.html#l00474">474</a> of file <a class="el" href="_stat_8cs_source.html">Stat.cs</a>.</p>
+<p>Definition at line <a class="el" href="_stat_8cs_source.html#l00472">472</a> of file <a class="el" href="_stat_8cs_source.html">Stat.cs</a>.</p>
 
 </div>
 </div>
@@ -175,7 +173,7 @@ Properties</h2></td></tr>
 <div class="line">        ...</div>
 </div><!-- fragment --><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000006">Deprecated:</a></b></dt><dd>Prefer using LINQ to XML and custom query operators from the <a class="el" href="class_ac_utils_1_1_extensions.html" title="Custom query operators for use when using LINQ to XML. ">Extensions</a> class. </dd></dl>
 
-<p>Definition at line <a class="el" href="_stat_8cs_source.html#l00573">573</a> of file <a class="el" href="_stat_8cs_source.html">Stat.cs</a>.</p>
+<p>Definition at line <a class="el" href="_stat_8cs_source.html#l00569">569</a> of file <a class="el" href="_stat_8cs_source.html">Stat.cs</a>.</p>
 
 </div>
 </div>
@@ -216,7 +214,7 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_stat_8cs_source.html#l00487">487</a> of file <a class="el" href="_stat_8cs_source.html">Stat.cs</a>.</p>
+<p>Definition at line <a class="el" href="_stat_8cs_source.html#l00485">485</a> of file <a class="el" href="_stat_8cs_source.html">Stat.cs</a>.</p>
 
 </div>
 </div>
@@ -241,14 +239,14 @@ Properties</h2></td></tr>
 
 <p>The list of <a class="el" href="class_ac_utils_1_1_element.html" title="Defines the attributes of an element from the stat command. ">Element</a> objects. </p>
 
-<p>Definition at line <a class="el" href="_stat_8cs_source.html#l00466">466</a> of file <a class="el" href="_stat_8cs_source.html">Stat.cs</a>.</p>
+<p>Definition at line <a class="el" href="_stat_8cs_source.html#l00464">464</a> of file <a class="el" href="_stat_8cs_source.html">Stat.cs</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 10 2017 07:08:37 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 15 2017 07:57:41 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

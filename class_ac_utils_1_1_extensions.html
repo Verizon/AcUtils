@@ -103,7 +103,7 @@ Static Public Member Functions</h2></td></tr>
 <div class="textblock"><p>Custom query operators for use when using <a href="https://msdn.microsoft.com/en-us/library/bb387098.aspx">LINQ to XML</a>. </p>
 <dl class="section see"><dt>See also</dt><dd><a href="_file_hist_8cs-example.html">FileHist.cs</a>, <a href="_user_changes_8cs-example.html">UserChanges.cs</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00028">28</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00027">27</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a38e9d18488f147e0e91b7c03e9ffb874"></a>
 <div class="memitem">
@@ -136,7 +136,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Formatted ancestor-named version, e.g. <code>NEPTUNE_DEV4_thomas/6 (114/6)</code>, otherwise <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00185">185</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00176">176</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -170,9 +170,9 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The <em>comment</em> element value, e.g. <code>&lt;comment&gt;<b>Fix defect 452.</b>&lt;/comment&gt;</code>, otherwise <em>null</em> if no comment exists or if <em>element</em> is a version element and the first in a <code>promote</code> transaction.</dd></dl>
-<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000015">AccuNote:</a></b></dt><dd>For <code>promote</code> transactions, the <em>comment</em> element above the first <em>version</em> element listed in the parent <em>transaction</em> is the transaction comment and not the version comment. Therefore in this case, when querying version elements, the first <em>version</em> element in the <em>transaction</em> is ignored and <em>null</em> is returned. </dd></dl>
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000017">AccuNote:</a></b></dt><dd>For <code>promote</code> transactions, the <em>comment</em> element above the first <em>version</em> element listed in the parent <em>transaction</em> is the transaction comment and not the version comment. Therefore in this case, when querying version elements, the first <em>version</em> element in the <em>transaction</em> is ignored and <em>null</em> is returned. </dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00222">222</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00213">213</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -207,7 +207,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Formatted from-stream version, e.g. <code>NEPTUNE_DEV2_thomas/7 (110/7)</code>, otherwise <em>null</em> if <em>transaction</em> was not a <code>promote</code> operation.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00088">88</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00087">87</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -242,7 +242,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><em>true</em> if <em>transaction</em> was a <code>co</code> operation, <em>false</em> otherwise.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00125">125</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00118">118</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -277,7 +277,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><em>true</em> if <em>transaction</em> was a <code>promote</code> operation, <em>false</em> otherwise.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00076">76</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00075">75</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -312,7 +312,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Formatted merged-against-named version, e.g. <code>JUPITER_DEV1_robert/5 (142/5)</code>, otherwise <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00201">201</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00192">192</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -346,9 +346,9 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Formatted real-named version, e.g. <code>MARS_DEV3_barnyrd/2 (17/2)</code>, otherwise <em>null</em> if not found.</dd></dl>
-<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000014">AccuNote:</a></b></dt><dd>For <code>promote</code> transactions, the <em>realNamedVersion</em> attribute value in the transaction's first <em>version</em> element is the same in the second <em>version</em> element. Therefore, in this case the first <em>version</em> element is ignored and <em>null</em> is returned. </dd></dl>
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000016">AccuNote:</a></b></dt><dd>For <code>promote</code> transactions, the <em>realNamedVersion</em> attribute value in the transaction's first <em>version</em> element is the same in the second <em>version</em> element. Therefore, in this case the first <em>version</em> element is ignored and <em>null</em> is returned. </dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00165">165</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00157">157</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -395,7 +395,7 @@ Static Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>On success a DateTime object with the converted value, otherwise <em>null</em>.</dd></dl>
 <div class="fragment"><div class="line">DateTime? mtime = v.acxTime(<span class="stringliteral">&quot;mtime&quot;</span>); <span class="comment">// version&#39;s last modified time</span></div>
 </div><!-- fragment --> 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00039">39</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00038">38</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -430,7 +430,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Formatted to-stream version, e.g. <code>NEPTUNE_DEV4/12 (8/12)</code>, otherwise <em>null</em> if <em>transaction</em> was not a <code>promote</code> operation.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00107">107</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00103">103</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -477,7 +477,7 @@ Static Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>On success an <a class="el" href="group__acenum.html#ga3164dabd0d78a5482aea218fa9154669" title="Indicates the element&#39;s type. By default, AccuRev determines the element type for a newly created ver...">AcUtils.ElementType</a> enum that is the converted value, otherwise <em>ElementType.unknown</em>.</dd></dl>
 <div class="fragment"><div class="line"><a class="code" href="group__acenum.html#ga3164dabd0d78a5482aea218fa9154669">ElementType</a> type = v.acxType(<span class="stringliteral">&quot;elemType&quot;</span>);</div>
 </div><!-- fragment --> 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00057">57</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00056">56</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -511,16 +511,16 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Formatted virtual-named version, e.g. <code>MARS_UAT/4 (11/4)</code> for the <code>promote</code> or <code>co</code> <em>transaction</em>, otherwise <em>null</em> if not found.</dd></dl>
-<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000013">AccuNote:</a></b></dt><dd>For <code>promote</code> transactions, the <em>virtualNamedVersion</em> attribute value is correct only in the first <em>version</em> element listed in the parent <em>transaction</em>. In all other <em>version</em> elements, the <em>virtualNamedVersion</em> attribute has the same value as its <em>realNamedVersion</em> attribute sibling. This falls under AccuRev defect 18636, RPI # 1107275. </dd></dl>
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000015">AccuNote:</a></b></dt><dd>For <code>promote</code> transactions, the <em>virtualNamedVersion</em> attribute value is correct only in the first <em>version</em> element listed in the parent <em>transaction</em>. In all other <em>version</em> elements, the <em>virtualNamedVersion</em> attribute has the same value as its <em>realNamedVersion</em> attribute sibling. This falls under AccuRev defect 18636, RPI # 1107275. </dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00141">141</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00134">134</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 10 2017 07:08:37 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

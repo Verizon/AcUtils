@@ -65,8 +65,6 @@
 Collaboration diagram for AcUtils.AcProperties:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_ac_utils_1_1_ac_properties__coll__graph.png" border="0" usemap="#_ac_utils_8_ac_properties_coll__map" alt="Collaboration graph"/></div>
-<map name="_ac_utils_8_ac_properties_coll__map" id="_ac_utils_8_ac_properties_coll__map">
-</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -111,8 +109,7 @@ Public Member Functions</h2></td></tr>
 <p>A container of <a class="el" href="class_ac_utils_1_1_ac_property.html" title="A property object that defines the attributes of an AccuRev property assigned to a stream or principa...">AcProperty</a> objects that define AccuRev properties assigned to a stream or principal by the <code>setproperty</code> command. </p>
 <div class="fragment"><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; showPropertiesAsync()</div>
 <div class="line">{</div>
-<div class="line">    <span class="comment">// true for dynamic streams only</span></div>
-<div class="line">    AcDepot depot = <span class="keyword">new</span> AcDepot(<span class="stringliteral">&quot;MARS&quot;</span>, <span class="keyword">true</span>);</div>
+<div class="line">    AcDepot depot = <span class="keyword">new</span> AcDepot(<span class="stringliteral">&quot;MARS&quot;</span>, dynamicOnly: <span class="keyword">true</span>);</div>
 <div class="line">    <span class="keywordflow">if</span> (!(await depot.initAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// get the properties for all dynamic streams in the MARS depot</span></div>
@@ -133,7 +130,7 @@ Public Member Functions</h2></td></tr>
 <div class="line">...</div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_properties.html#a6d2eff579ee384248aab0f64608a5e9c" title="Populate this container with AcProperty objects for all principals or a specific principal only...">initAsync(string, bool)</a>, <a class="el" href="class_ac_utils_1_1_ac_properties.html#a659f3fe2929b5f5ba692a4919246946b" title="Populate this container with AcProperty objects for all streams in depot or just stream in depot...">initAsync(AcDepot, AcStream, bool)</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_properties_8cs_source.html#l00317">317</a> of file <a class="el" href="_ac_properties_8cs_source.html">AcProperties.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_properties_8cs_source.html#l00316">316</a> of file <a class="el" href="_ac_properties_8cs_source.html">AcProperties.cs</a>.</p>
 
 </div>
 </div>
@@ -196,7 +193,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_properties.html#adbdb4c07d0af26155a5bd3a702beaa2f">AcProperties constructor</a>, <a class="el" href="class_ac_utils_1_1_ac_properties.html#a6d2eff579ee384248aab0f64608a5e9c" title="Populate this container with AcProperty objects for all principals or a specific principal only...">initAsync(string, bool)</a></dd></dl>
 <dl class="getproperties_"><dt><b><a class="el" href="getproperties_.html#_getproperties_000001">getproperty command:</a></b></dt><dd><code>getproperty &lt;-fx | -fix&gt; &lt;-s &lt;stream&gt; | -ks -p &lt;depot&gt;&gt;</code> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_properties_8cs_source.html#l00332">332</a> of file <a class="el" href="_ac_properties_8cs_source.html">AcProperties.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_properties_8cs_source.html#l00331">331</a> of file <a class="el" href="_ac_properties_8cs_source.html">AcProperties.cs</a>.</p>
 
 </div>
 </div>
@@ -251,14 +248,14 @@ Public Member Functions</h2></td></tr>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_properties.html#adbdb4c07d0af26155a5bd3a702beaa2f">AcProperties constructor</a>, <a class="el" href="class_ac_utils_1_1_ac_properties.html#a659f3fe2929b5f5ba692a4919246946b" title="Populate this container with AcProperty objects for all streams in depot or just stream in depot...">initAsync(AcDepot, AcStream, bool)</a></dd></dl>
 <dl class="getproperties_"><dt><b><a class="el" href="getproperties_.html#_getproperties_000002">getproperty command:</a></b></dt><dd><code>getproperty &lt;-fx | -fix&gt; &lt;-u &lt;prncpl&gt; | -ku&gt;</code> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_properties_8cs_source.html#l00398">398</a> of file <a class="el" href="_ac_properties_8cs_source.html">AcProperties.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_properties_8cs_source.html#l00393">393</a> of file <a class="el" href="_ac_properties_8cs_source.html">AcProperties.cs</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 10 2017 07:08:37 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

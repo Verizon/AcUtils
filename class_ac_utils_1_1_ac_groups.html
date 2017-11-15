@@ -68,8 +68,6 @@
 Collaboration diagram for AcUtils.AcGroups:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_ac_utils_1_1_ac_groups__coll__graph.png" border="0" usemap="#_ac_utils_8_ac_groups_coll__map" alt="Collaboration graph"/></div>
-<map name="_ac_utils_8_ac_groups_coll__map" id="_ac_utils_8_ac_groups_coll__map">
-</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -84,9 +82,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acb74f2f65b4b76d172fe3783390d8df3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">AcGroups</a> (bool includeMembersList=false, bool includeDeactivated=false)</td></tr>
 <tr class="memdesc:acb74f2f65b4b76d172fe3783390d8df3"><td class="mdescLeft">&#160;</td><td class="mdescRight">A container class for <a class="el" href="class_ac_utils_1_1_ac_principal.html" title="Contains the AccuRev principal attributes name, ID and status (active or inactive) for users and grou...">AcPrincipal</a> objects that define AccuRev groups. Elements contain AccuRev group <a class="el" href="class_ac_utils_1_1_ac_principal.html">principal attributes</a> <em>name</em>, <em>ID</em>, and <em>status</em> (active or inactive), and optionally their members list. Including group membership (<em>includeMembersList = true</em>) is slower, so we give the option to exclude it when the list isn't needed. Deactivated (removed) groups can be included in the list as well.  <a href="#acb74f2f65b4b76d172fe3783390d8df3">More...</a><br /></td></tr>
 <tr class="separator:acb74f2f65b4b76d172fe3783390d8df3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecf60da682773c3d73bde2f05f231e84"><td class="memItemLeft" align="right" valign="top">async Task&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_groups.html#aecf60da682773c3d73bde2f05f231e84">initAsync</a> ()</td></tr>
-<tr class="memdesc:aecf60da682773c3d73bde2f05f231e84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Populate this container with <a class="el" href="class_ac_utils_1_1_ac_principal.html" title="Contains the AccuRev principal attributes name, ID and status (active or inactive) for users and grou...">AcPrincipal</a> objects as per <a class="el" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">constructor parameters</a>.  <a href="#aecf60da682773c3d73bde2f05f231e84">More...</a><br /></td></tr>
-<tr class="separator:aecf60da682773c3d73bde2f05f231e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bd367dee4a3b1039614653b0d2b9741"><td class="memItemLeft" align="right" valign="top">async Task&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_groups.html#a2bd367dee4a3b1039614653b0d2b9741">initAsync</a> (IProgress&lt; int &gt; progress=null)</td></tr>
+<tr class="memdesc:a2bd367dee4a3b1039614653b0d2b9741"><td class="mdescLeft">&#160;</td><td class="mdescRight">Populate this container with <a class="el" href="class_ac_utils_1_1_ac_principal.html" title="Contains the AccuRev principal attributes name, ID and status (active or inactive) for users and grou...">AcPrincipal</a> objects as per <a class="el" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">constructor parameters</a>.  <a href="#a2bd367dee4a3b1039614653b0d2b9741">More...</a><br /></td></tr>
+<tr class="separator:a2bd367dee4a3b1039614653b0d2b9741"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -97,14 +95,14 @@ Static Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a818356bf9afc3c3ade157a97e0d7d410"><td class="memItemLeft" align="right" valign="top">async Task&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_groups.html#a818356bf9afc3c3ade157a97e0d7d410">initMembersListAsync</a> (string <a class="el" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631badb0f6f37ebeb6ea09489124345af2a45">group</a>)</td></tr>
-<tr class="memdesc:a818356bf9afc3c3ade157a97e0d7d410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called (optional) during <a class="el" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">list construction</a> to initialize the <a class="el" href="class_ac_utils_1_1_ac_principal.html#ab71381386e86212bfbea6ce8541ae9d9">list of principals</a> (users and groups) that are direct (explicit) members of <em>group</em>.  <a href="#a818356bf9afc3c3ade157a97e0d7d410">More...</a><br /></td></tr>
+<tr class="memdesc:a818356bf9afc3c3ade157a97e0d7d410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optionally called during <a class="el" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">list construction</a> to initialize the <a class="el" href="class_ac_utils_1_1_ac_principal.html#ab71381386e86212bfbea6ce8541ae9d9">list of principals</a> (users and groups) that are direct (explicit) members of <em>group</em>. This method is called internally and not by user code.  <a href="#a818356bf9afc3c3ade157a97e0d7d410">More...</a><br /></td></tr>
 <tr class="separator:a818356bf9afc3c3ade157a97e0d7d410"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A container class for <a class="el" href="class_ac_utils_1_1_ac_principal.html" title="Contains the AccuRev principal attributes name, ID and status (active or inactive) for users and grou...">AcPrincipal</a> objects that define AccuRev groups. </p>
 <p>Elements contain AccuRev group <a class="el" href="class_ac_utils_1_1_ac_principal.html">principal attributes</a> <em>name</em>, <em>ID</em>, and <em>status</em> (active or inactive), and optionally their <a class="el" href="class_ac_utils_1_1_ac_groups.html#a818356bf9afc3c3ade157a97e0d7d410">members list</a>. Deactivated (removed) groups can be included in the list as well. </p>
 
-<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00036">36</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00037">37</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="acb74f2f65b4b76d172fe3783390d8df3"></a>
 <div class="memitem">
@@ -147,21 +145,32 @@ Private Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<div class="fragment"><div class="line"><span class="keyword">static</span> async Task&lt;bool&gt; showGroupsAsync()</div>
+<div class="fragment"><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; showGroupsAsync()</div>
 <div class="line">{</div>
-<div class="line">    <span class="comment">// list all group names</span></div>
-<div class="line">    <a class="code" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">AcGroups</a> groups = <span class="keyword">new</span> <a class="code" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">AcGroups</a>(); <span class="comment">// two-part object construction</span></div>
-<div class="line">    <span class="keywordflow">if</span> (!(await groups.initAsync())) <span class="comment">// ..</span></div>
-<div class="line">        <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// see log file for error</span></div>
+<div class="line">    var progress = <span class="keyword">new</span> Progress&lt;int&gt;(n =&gt;</div>
+<div class="line">    {</div>
+<div class="line">        <span class="keywordflow">if</span> ((n % 10) == 0)</div>
+<div class="line">            Console.WriteLine(<span class="stringliteral">&quot;Initializing group memberships: &quot;</span> + n);</div>
+<div class="line">    });</div>
 <div class="line"></div>
-<div class="line">    <span class="keywordflow">foreach</span> (AcPrincipal prncpl <span class="keywordflow">in</span> groups.OrderBy(n =&gt; n)) <span class="comment">// use default comparer</span></div>
+<div class="line">    <a class="code" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">AcGroups</a> groups = <span class="keyword">new</span> <a class="code" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">AcGroups</a>(includeMembersList: <span class="keyword">true</span>); <span class="comment">// true to initialize each group&#39;s membership list</span></div>
+<div class="line">    <span class="keywordflow">if</span> (!(await groups.initAsync(progress))) <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// initialization failure, check log file</span></div>
+<div class="line"></div>
+<div class="line">    <span class="keywordflow">foreach</span> (AcPrincipal prncpl <span class="keywordflow">in</span> groups.OrderBy(n =&gt; n))</div>
+<div class="line">    {</div>
 <div class="line">        Console.WriteLine(prncpl);</div>
+<div class="line">        <span class="keywordflow">if</span> (prncpl.Members != null) <span class="comment">// if initialized as per includeMembersList param</span></div>
+<div class="line">        {</div>
+<div class="line">            <span class="keywordtype">string</span> members = groups.getMembers(prncpl.Name);</div>
+<div class="line">            Console.WriteLine(<span class="stringliteral">&quot;\t&quot;</span> + members);</div>
+<div class="line">        }</div>
+<div class="line">    }</div>
 <div class="line"></div>
-<div class="line">    <span class="keywordflow">return</span> <span class="keyword">true</span>; <span class="comment">// operation succeeded</span></div>
+<div class="line">    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">}</div>
-</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_groups.html#aecf60da682773c3d73bde2f05f231e84" title="Populate this container with AcPrincipal objects as per constructor parameters. ">initAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_groups.html#a818356bf9afc3c3ade157a97e0d7d410" title="Called (optional) during list construction to initialize the list of principals (users and groups) th...">initMembersListAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_principal.html#a883e58ea93087c9600faf13dbc1fe132">default comparer</a>, <a class="el" href="class_ac_utils_1_1_ac_users.html#ab9d6d159b5de4c3ef7ec201c6fde60bf">AcUsers constructor</a> </dd></dl>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_groups.html#a2bd367dee4a3b1039614653b0d2b9741" title="Populate this container with AcPrincipal objects as per constructor parameters. ">initAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_groups.html#a818356bf9afc3c3ade157a97e0d7d410">AcGroups.initMembersListAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_principal.html#a883e58ea93087c9600faf13dbc1fe132">default comparer</a>, <a class="el" href="class_ac_utils_1_1_ac_users.html#ab9d6d159b5de4c3ef7ec201c6fde60bf">AcUsers constructor</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00078">78</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00091">91</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
 
 </div>
 </div>
@@ -195,10 +204,10 @@ Private Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Group's membership list as an ordered formatted comma-delimited string, otherwise <em>null</em> if not found.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Group's membership list as an ordered formatted comma-delimited string, otherwise <em>null</em> if membership list was not initialized.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_groups.html#a8eace483fcda41d2fc8d95ebd4473788">AcGroups.isMember</a>, <a class="el" href="class_ac_utils_1_1_ac_user.html#a5a08a67a935e66d403c8d316b45b4f4f">AcUser.getGroups</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00294">294</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00312">312</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
 
 </div>
 </div>
@@ -233,13 +242,13 @@ Private Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_ac_utils_1_1_ac_principal.html" title="Contains the AccuRev principal attributes name, ID and status (active or inactive) for users and grou...">AcPrincipal</a> object for group <em>name</em> if found, otherwise <em>null</em>.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00282">282</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00300">300</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_groups_8cs_source.html#l00294">AcUtils.AcGroups.getMembers()</a>, and <a class="el" href="_ac_groups_8cs_source.html#l00164">AcUtils.AcGroups.initMembersListAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_groups_8cs_source.html#l00312">AcUtils.AcGroups.getMembers()</a>, and <a class="el" href="_ac_groups_8cs_source.html#l00187">AcUtils.AcGroups.initMembersListAsync()</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="aecf60da682773c3d73bde2f05f231e84"></a>
+<a class="anchor" id="a2bd367dee4a3b1039614653b0d2b9741"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -249,7 +258,8 @@ Private Member Functions</h2></td></tr>
         <tr>
           <td class="memname">async Task&lt;bool&gt; AcUtils.AcGroups.initAsync </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">IProgress&lt; int &gt;&#160;</td>
+          <td class="paramname"><em>progress</em> = <code>null</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -261,6 +271,12 @@ Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Populate this container with <a class="el" href="class_ac_utils_1_1_ac_principal.html" title="Contains the AccuRev principal attributes name, ID and status (active or inactive) for users and grou...">AcPrincipal</a> objects as per <a class="el" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">constructor parameters</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">progress</td><td>Optionally report progress back to the caller when group membership initialization is requested as per <a class="el" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">constructor parameter</a> <em>includeMembersList</em>.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd><em>true</em> if initialization succeeded, <em>false</em> otherwise.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
@@ -271,7 +287,7 @@ Private Member Functions</h2></td></tr>
 </dl>
 <dl class="shows_"><dt><b><a class="el" href="shows_.html#_shows_000004">show command:</a></b></dt><dd><code>show &lt;-fx | -fix&gt; groups</code> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00092">92</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00107">107</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
 
 </div>
 </div>
@@ -297,7 +313,7 @@ Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Called (optional) during <a class="el" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">list construction</a> to initialize the <a class="el" href="class_ac_utils_1_1_ac_principal.html#ab71381386e86212bfbea6ce8541ae9d9">list of principals</a> (users and groups) that are direct (explicit) members of <em>group</em>. </p>
+<p>Optionally called during <a class="el" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">list construction</a> to initialize the <a class="el" href="class_ac_utils_1_1_ac_principal.html#ab71381386e86212bfbea6ce8541ae9d9">list of principals</a> (users and groups) that are direct (explicit) members of <em>group</em>. This method is called internally and not by user code. </p>
 <p>Membership lists for inactive groups are empty (not initialized). An inactive group's membership list will reappear when the group is reactivated.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -315,11 +331,11 @@ Private Member Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_user.html#ac2c670328b4ff40371b44cb47090e908">AcUser.initGroupsListAsync</a></dd></dl>
 <dl class="shows_"><dt><b><a class="el" href="shows_.html#_shows_000005">show command:</a></b></dt><dd><code>show -fx -g &lt;group&gt; members</code> </dd></dl>
-<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000001">AccuNote:</a></b></dt><dd>Unlike the <code>show</code> command used here, its <code>show -fx -u &lt;user&gt; groups</code> counterpart does include memberships resulting from indirect (implicit) membership. </dd></dl>
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000002">AccuNote:</a></b></dt><dd>Unlike the <code>show</code> command used here, its <code>show -fx -u &lt;user&gt; groups</code> counterpart does include memberships resulting from indirect (implicit) membership. </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00164">164</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00187">187</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_groups_8cs_source.html#l00092">AcUtils.AcGroups.initAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_groups_8cs_source.html#l00107">AcUtils.AcGroups.initAsync()</a>.</p>
 
 </div>
 </div>
@@ -377,14 +393,14 @@ Private Member Functions</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>The AccuRev program return value for <code>ismember</code> is <em>zero (0)</em> whether the user is a member of the group or not. It is the command's output (STDOUT) that is "<b>1</b>" (<em>one</em>) if the user is a member of the group or "<b>0</b>" (<em>zero</em>) if not a member.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The server admin trigger must return <em>zero (0)</em> for <code>ismember</code> to prevent an endless recursive loop. </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00225">225</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_groups_8cs_source.html#l00243">243</a> of file <a class="el" href="_ac_groups_8cs_source.html">AcGroups.cs</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 10 2017 07:08:37 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

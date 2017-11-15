@@ -65,8 +65,6 @@
 Collaboration diagram for AcUtils.AcSessions:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_ac_utils_1_1_ac_sessions__coll__graph.png" border="0" usemap="#_ac_utils_8_ac_sessions_coll__map" alt="Collaboration graph"/></div>
-<map name="_ac_utils_8_ac_sessions_coll__map" id="_ac_utils_8_ac_sessions_coll__map">
-</map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -107,7 +105,7 @@ Public Member Functions</h2></td></tr>
 
 <p>A container for <a class="el" href="class_ac_utils_1_1_ac_session.html" title="Holds the attributes for an AccuRev user session: principal name, host machine IP address...">AcSession</a> objects that define AccuRev user sessions. </p>
 <div class="fragment"><div class="line"><span class="comment">// returns true if operation was successful, false on error</span></div>
-<div class="line"><span class="keyword">static</span> async Task&lt;bool&gt; showSessionsAsync()</div>
+<div class="line"><span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; showSessionsAsync()</div>
 <div class="line">{</div>
 <div class="line">    <a class="code" href="class_ac_utils_1_1_ac_sessions.html#a0796ef3f27384c14e71dd8b7e4a73695">AcSessions</a> sessions = <span class="keyword">new</span> <a class="code" href="class_ac_utils_1_1_ac_sessions.html#a0796ef3f27384c14e71dd8b7e4a73695">AcSessions</a>(); <span class="comment">// two-part object construction</span></div>
 <div class="line">    <span class="keywordflow">if</span> (!(await sessions.initAsync()))  <span class="comment">// ..</span></div>
@@ -168,7 +166,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 10 2017 07:08:37 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

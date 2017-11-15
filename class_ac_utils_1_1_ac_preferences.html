@@ -117,7 +117,7 @@ Static Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_ac_preferences_8cs_source.html#l00127">127</a> of file <a class="el" href="_ac_preferences_8cs_source.html">AcPreferences.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_preferences_8cs_source.html#l00123">123</a> of file <a class="el" href="_ac_preferences_8cs_source.html">AcPreferences.cs</a>.</p>
 
 </div>
 </div>
@@ -147,7 +147,7 @@ Static Private Member Functions</h2></td></tr>
  <em>Ignore Changes in Whitespace</em> is <em>true</em> if a change in the amount of whitespace should be considered a change to that line, <em>false</em> otherwise.<br />
  <em>Ignore Case</em> is <em>true</em> if uppercase and lowercase characters should be considered the same when comparing text, <em>false</em> otherwise. </p>
 <dl class="section return"><dt>Returns</dt><dd>An array initialized as <em>bool[]={ignoreWhitespace, ignoreWhitespaceChanges, ignoreCase}</em> on success, otherwise <em>null</em>.</dd></dl>
-<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000003">AccuNote:</a></b></dt><dd>Selecting "Ignore Whitespace" and "Ignore Changes in Whitespace" applies to <code>diff</code> only. The <code>merge</code> command does not use these settings and will show all conflicts. </dd></dl>
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000004">AccuNote:</a></b></dt><dd>Selecting "Ignore Whitespace" and "Ignore Changes in Whitespace" applies to <code>diff</code> only. The <code>merge</code> command does not use these settings and will show all conflicts. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">Exception</td><td>caught and <a class="el" href="class_ac_utils_1_1_ac_debug.html#ab0f6db993371a8857b18b8545bcef24d">logged</a> in <code>%LOCALAPPDATA%\AcTools\Logs\&lt;prog_name&gt;-YYYY-MM-DD.log</code> on failure to handle a range of exceptions.</td></tr>
@@ -183,7 +183,7 @@ Static Private Member Functions</h2></td></tr>
 <p>Get user preferences retrieved by way of the <code>getpref</code> command. </p>
 <dl class="section return"><dt>Returns</dt><dd>The full path to a temp file with the XML results from the <em>getpref</em> command, otherwise <em>null</em> on error. The caller is responsible for deleting the file.</dd></dl>
 <dl class="getprefs_"><dt><b><a class="el" href="getprefs_.html#_getprefs_000001">getpref command:</a></b></dt><dd><code>getpref</code> </dd></dl>
-<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000004">AccuNote:</a></b></dt><dd>When using the AccuRev GUI client, changes in <em>User Preferences</em> do not always persist. As a workaround, use <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setpref.html">setpref</a>:<ol type="1">
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000005">AccuNote:</a></b></dt><dd>When using the AccuRev GUI client, changes in <em>User Preferences</em> do not always persist. As a workaround, use <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setpref.html">setpref</a>:<ol type="1">
 <li>Exit the AccuRev client.</li>
 <li>Put the setting(s) needed in a file named <code>set_pref.xml</code></li>
 <li>Open a command window and cd to the folder where the file is located.</li>
@@ -203,9 +203,9 @@ Static Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_ac_preferences_8cs_source.html#l00184">184</a> of file <a class="el" href="_ac_preferences_8cs_source.html">AcPreferences.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_preferences_8cs_source.html#l00178">178</a> of file <a class="el" href="_ac_preferences_8cs_source.html">AcPreferences.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_preferences_8cs_source.html#l00127">AcUtils.AcPreferences.getAcHomeFolderAsync()</a>, and <a class="el" href="_ac_preferences_8cs_source.html#l00089">AcUtils.AcPreferences.getUseIgnoreElemsOptimizationAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_preferences_8cs_source.html#l00123">AcUtils.AcPreferences.getAcHomeFolderAsync()</a>, and <a class="el" href="_ac_preferences_8cs_source.html#l00087">AcUtils.AcPreferences.getUseIgnoreElemsOptimizationAsync()</a>.</p>
 
 </div>
 </div>
@@ -239,14 +239,14 @@ Static Private Member Functions</h2></td></tr>
 </dl>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_preferences_8cs_source.html#l00089">89</a> of file <a class="el" href="_ac_preferences_8cs_source.html">AcPreferences.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_preferences_8cs_source.html#l00087">87</a> of file <a class="el" href="_ac_preferences_8cs_source.html">AcPreferences.cs</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 10 2017 07:08:37 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

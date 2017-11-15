@@ -91,14 +91,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a047429104b79c593e9880442ffe6863b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">AcDepots</a> (bool dynamicOnly=false, bool includeHidden=false)</td></tr>
 <tr class="memdesc:a047429104b79c593e9880442ffe6863b"><td class="mdescLeft">&#160;</td><td class="mdescRight">A container of <a class="el" href="class_ac_utils_1_1_ac_depot.html" title="A depot object that defines the attributes of an AccuRev depot. ">AcDepot</a> objects that define AccuRev depots in the repository.  <a href="#a047429104b79c593e9880442ffe6863b">More...</a><br /></td></tr>
 <tr class="separator:a047429104b79c593e9880442ffe6863b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a679404cd0d3242df7d42b9637a467bb9"><td class="memItemLeft" align="right" valign="top">async Task&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_depots.html#a679404cd0d3242df7d42b9637a467bb9">initAsync</a> (<a class="el" href="class_ac_utils_1_1_depots_collection.html">DepotsCollection</a> depots=null)</td></tr>
-<tr class="memdesc:a679404cd0d3242df7d42b9637a467bb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Populate this container with <a class="el" href="class_ac_utils_1_1_ac_depot.html" title="A depot object that defines the attributes of an AccuRev depot. ">AcDepot</a> objects as per constructor parameters.  <a href="#a679404cd0d3242df7d42b9637a467bb9">More...</a><br /></td></tr>
-<tr class="separator:a679404cd0d3242df7d42b9637a467bb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefd78501e6a91238cdc7274c6aa985d5"><td class="memItemLeft" align="right" valign="top">async Task&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_depots.html#aefd78501e6a91238cdc7274c6aa985d5">initAsync</a> (<a class="el" href="class_ac_utils_1_1_depots_collection.html">DepotsCollection</a> depotsCol=null, IProgress&lt; int &gt; progress=null)</td></tr>
+<tr class="memdesc:aefd78501e6a91238cdc7274c6aa985d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Populate this container with <a class="el" href="class_ac_utils_1_1_ac_depot.html" title="A depot object that defines the attributes of an AccuRev depot. ">AcDepot</a> objects as per <a class="el" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">constructor parameters</a>.  <a href="#aefd78501e6a91238cdc7274c6aa985d5">More...</a><br /></td></tr>
+<tr class="separator:aefd78501e6a91238cdc7274c6aa985d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A container of <a class="el" href="class_ac_utils_1_1_ac_depot.html" title="A depot object that defines the attributes of an AccuRev depot. ">AcDepot</a> objects that define AccuRev depots in the repository. </p>
 
-<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00653">653</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00658">658</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a047429104b79c593e9880442ffe6863b"></a>
 <div class="memitem">
@@ -141,15 +141,14 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <div class="fragment"><div class="line"><span class="comment">// list all depots in the repository that are case-sensitive</span></div>
-<div class="line"><span class="comment">// true for dynamic streams only</span></div>
-<div class="line"><a class="code" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">AcDepots</a> depots = <span class="keyword">new</span> <a class="code" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">AcDepots</a>(<span class="keyword">true</span>); <span class="comment">// two-part object construction</span></div>
+<div class="line"><a class="code" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">AcDepots</a> depots = <span class="keyword">new</span> <a class="code" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">AcDepots</a>(dynamicOnly: <span class="keyword">true</span>); <span class="comment">// two-part object construction</span></div>
 <div class="line"><span class="keywordflow">if</span> (!(await depots.initAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// operation failed, check log file</span></div>
 <div class="line"></div>
 <div class="line"><span class="keywordflow">foreach</span>(AcDepot depot <span class="keywordflow">in</span> depots.Where(n =&gt; n.Case == <a class="code" href="group__acenum.html#gad7d7bdcb365077a1537c1f62f262b678">CaseSensitivity</a>.sensitive).OrderBy(n =&gt; n)) <span class="comment">// use default comparer</span></div>
 <div class="line">    Console.WriteLine(depot);</div>
-</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_depots.html#a679404cd0d3242df7d42b9637a467bb9" title="Populate this container with AcDepot objects as per constructor parameters. ">initAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_depot.html#a9faf6338d8993711bf05e5b0c73bb7f0">default comparer</a>, <a href="_list_dyn_streams_8cs-example.html">ListDynStreams.cs</a>, <a class="el" href="class_ac_utils_1_1_ac_depot.html#ac4eaf2a4ae0072629a1d65c43e5cf15e">AcDepot.listFile</a> </dd></dl>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_depots.html#aefd78501e6a91238cdc7274c6aa985d5" title="Populate this container with AcDepot objects as per constructor parameters. ">initAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_depot.html#a9faf6338d8993711bf05e5b0c73bb7f0">default comparer</a>, <a href="_list_dyn_streams_8cs-example.html">ListDynStreams.cs</a>, <a class="el" href="class_ac_utils_1_1_ac_depot.html#ac4eaf2a4ae0072629a1d65c43e5cf15e">AcDepot.listFile</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00683">683</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00688">688</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
 
 </div>
 </div>
@@ -188,7 +187,7 @@ Public Member Functions</h2></td></tr>
 <dl class="section pre"><dt>Precondition</dt><dd>Assumes <em>user's</em> group membership list was initialized via <a class="el" href="class_ac_utils_1_1_ac_users.html#ab9d6d159b5de4c3ef7ec201c6fde60bf">AcUsers</a> <em>includeGroupsList</em> constructor parameter.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_permissions.html#a5291bcd4dadd040b2732e5a2723970d7">AcPermissions</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00767">767</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00821">821</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
 
 </div>
 </div>
@@ -223,7 +222,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_ac_utils_1_1_ac_depot.html" title="A depot object that defines the attributes of an AccuRev depot. ">AcDepot</a> object for depot <em>name</em>, otherwise <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00865">865</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00919">919</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
 
 </div>
 </div>
@@ -258,7 +257,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_ac_utils_1_1_ac_depot.html" title="A depot object that defines the attributes of an AccuRev depot. ">AcDepot</a> object for depot <em>ID</em> number, otherwise <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00875">875</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00929">929</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
 
 </div>
 </div>
@@ -293,7 +292,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_ac_utils_1_1_ac_depot.html" title="A depot object that defines the attributes of an AccuRev depot. ">AcDepot</a> object for stream <em>name</em>, otherwise <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00885">885</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00939">939</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
 
 </div>
 </div>
@@ -328,11 +327,11 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_ac_utils_1_1_ac_stream.html" title="A stream object that defines the attributes of an AccuRev stream. AcStream objects are instantiated d...">AcStream</a> object for stream <em>name</em>, otherwise <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00907">907</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00961">961</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a679404cd0d3242df7d42b9637a467bb9"></a>
+<a class="anchor" id="aefd78501e6a91238cdc7274c6aa985d5"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -343,8 +342,18 @@ Public Member Functions</h2></td></tr>
           <td class="memname">async Task&lt;bool&gt; AcUtils.AcDepots.initAsync </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_ac_utils_1_1_depots_collection.html">DepotsCollection</a>&#160;</td>
-          <td class="paramname"><em>depots</em> = <code>null</code></td><td>)</td>
+          <td class="paramname"><em>depotsCol</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">IProgress&lt; int &gt;&#160;</td>
+          <td class="paramname"><em>progress</em> = <code>null</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -354,10 +363,11 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Populate this container with <a class="el" href="class_ac_utils_1_1_ac_depot.html" title="A depot object that defines the attributes of an AccuRev depot. ">AcDepot</a> objects as per constructor parameters. </p>
+<p>Populate this container with <a class="el" href="class_ac_utils_1_1_ac_depot.html" title="A depot object that defines the attributes of an AccuRev depot. ">AcDepot</a> objects as per <a class="el" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">constructor parameters</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">depots</td><td>List of depots to create, otherwise <em>null</em> for all depots.</td></tr>
+    <tr><td class="paramname">depotsCol</td><td>List of depots to create, otherwise <em>null</em> for all depots.</td></tr>
+    <tr><td class="paramname">progress</td><td>Optionally report progress back to the caller.</td></tr>
   </table>
   </dd>
 </dl>
@@ -369,19 +379,61 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">AcDepots constructor</a></dd></dl>
+<div class="fragment"><div class="line">DepotsSection ds = ConfigurationManager.GetSection(<span class="stringliteral">&quot;Depots&quot;</span>) as DepotsSection;</div>
+<div class="line">DepotsCollection _dcol = ds.Depots; <span class="comment">// list of depots from FooApp.exe.config</span></div>
+<div class="line">...</div>
+<div class="line">private async Task&lt;bool&gt; initComboBoxDepotsAsync()</div>
+<div class="line">{</div>
+<div class="line">    <span class="keywordtype">bool</span> ret = <span class="keyword">false</span>; <span class="comment">// assume failure</span></div>
+<div class="line">    <span class="keywordflow">try</span></div>
+<div class="line">    {</div>
+<div class="line">        toolStripStatusLabel.Text = <span class="stringliteral">&quot;Initializing...&quot;</span>;</div>
+<div class="line">        toolStripProgressBar.Visible = <span class="keyword">true</span>;</div>
+<div class="line">        toolStripProgressBar.Maximum = _dcol.Count;</div>
+<div class="line">        Progress&lt;int&gt; progress = <span class="keyword">new</span> Progress&lt;int&gt;(i =&gt; toolStripProgressBar.Value = i);</div>
+<div class="line"></div>
+<div class="line">        <a class="code" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">AcDepots</a> depots = <span class="keyword">new</span> <a class="code" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">AcDepots</a>(dynamicOnly: <span class="keyword">true</span>);</div>
+<div class="line">        <span class="keywordflow">if</span> (await depots.initAsync(_dcol, progress)) <span class="comment">// if initialization succeeds</span></div>
+<div class="line">        {</div>
+<div class="line">            <span class="keywordflow">foreach</span> (AcDepot depot <span class="keywordflow">in</span> depots)</div>
+<div class="line">                toolStripComboBoxDepot.Items.Add(depot); <span class="comment">// a ToolStripComboBox control</span></div>
+<div class="line">            ret = <span class="keyword">true</span>; <span class="comment">// operation succeeded</span></div>
+<div class="line">        }</div>
+<div class="line">        <span class="keywordflow">else</span></div>
+<div class="line">        {</div>
+<div class="line">            AcDebug.Log(<span class="stringliteral">&quot;Failure in FooApp.initComboBoxDepotsAsync&quot;</span>);</div>
+<div class="line">            MessageBox.Show($<span class="stringliteral">&quot;Depots list initialization failed. See log file:{Environment.NewLine}{AcDebug.getLogFile()}&quot;</span>,</div>
+<div class="line">                <span class="stringliteral">&quot;FooApp&quot;</span>, MessageBoxButtons.OK, MessageBoxIcon.Hand);</div>
+<div class="line">        }</div>
+<div class="line">    }</div>
+<div class="line"></div>
+<div class="line">    <span class="keywordflow">catch</span> (Exception ecx)</div>
+<div class="line">    {</div>
+<div class="line">        AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in FooApp.initComboBoxDepotsAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
+<div class="line">    }</div>
+<div class="line"></div>
+<div class="line">    <span class="keywordflow">finally</span></div>
+<div class="line">    {</div>
+<div class="line">        toolStripStatusLabel.Text = <span class="stringliteral">&quot;Ready&quot;</span>;</div>
+<div class="line">        toolStripProgressBar.Visible = <span class="keyword">false</span>;</div>
+<div class="line">    }</div>
+<div class="line"></div>
+<div class="line">    <span class="keywordflow">return</span> ret;</div>
+<div class="line">}</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">AcDepots constructor</a>, <a class="el" href="class_ac_utils_1_1_depots_collection.html" title="The list of AccuRev depots from <prog_name>.exe.config. ">DepotsCollection</a>, <a class="el" href="class_ac_utils_1_1_ac_groups.html#a2bd367dee4a3b1039614653b0d2b9741" title="Populate this container with AcPrincipal objects as per constructor parameters. ">AcGroups.initAsync</a></dd></dl>
 <dl class="shows_"><dt><b><a class="el" href="shows_.html#_shows_000003">show command:</a></b></dt><dd><code>show -fx depots</code> </dd></dl>
+<dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000001">AccuNote:</a></b></dt><dd>The XML attribute <em>locWidth</em> from <code>show -fx depots</code> is obsolete. It's an AccuRev 4.x artifact and should be removed. RPI defect 1112042, SupportLine AR3325. </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00699">699</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_depots_8cs_source.html#l00750">750</a> of file <a class="el" href="_ac_depots_8cs_source.html">AcDepots.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_rules_8cs_source.html#l00409">AcUtils.AcRules.initAsync()</a>, and <a class="el" href="_ac_locks_8cs_source.html#l00421">AcUtils.AcLocks.initAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_locks_8cs_source.html#l00416">AcUtils.AcLocks.initAsync()</a>, and <a class="el" href="_ac_rules_8cs_source.html#l00446">AcUtils.AcRules.initAsync()</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 10 2017 07:08:37 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>
