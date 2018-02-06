@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,11 +25,12 @@ namespace AcUtils
         <?xml version="1.0" encoding="utf-8"?>
         <configuration>
           <configSections>
-            <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+            <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
             ...
           </configSections>
           <activeDir>
             <domains>
+              <!-- contact your company LDAP administrator for these values -->
               <add host="xyzdc.mycorp.com" path="DC=XYZ,DC=xy,DC=zcorp,DC=com"/>
               <add host="abcdc.mycorp.com" path="DC=ABC,DC=ab,DC=com"/>
               ...

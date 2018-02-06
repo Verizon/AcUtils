@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Verizon. All Rights Reserved.
+/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -45,11 +45,11 @@ namespace ShowPermissions
         {
             // since the default is the list of depots the script user can view, 
             // this is typically run by an admin so that all depots are in the list
-            AcDepots depots = new AcDepots(true); // true for dynamic streams only
+            AcDepots depots = new AcDepots(dynamicOnly: true); // dynamic streams only
             Task<bool> dini = depots.initAsync();
 
-            // true to include group membership initialization for each user (slower, but it's required here)
-            AcUsers users = new AcUsers(_domains, null, true);
+            // include group membership initialization for each user (slower, but it's required here)
+            AcUsers users = new AcUsers(_domains, null, includeGroupsList: true);
             Task<bool> uini = users.initAsync();
 
             // initialize both lists in parallel
@@ -58,7 +58,7 @@ namespace ShowPermissions
 
             // show depots for these users only
             var arr = new[] { "thomas", "barnyrd", "madhuri", "robert" };
-            IEnumerable<AcUser> filter = users.Where(n => arr.Any(prncpl => n.Principal.Name.Equals(prncpl)));
+            IEnumerable<AcUser> filter = users.Where(n => arr.Any(user => n.Principal.Name == user));
 
             // list depots each user has permission to access
             // default order comparer sorts by display name from LDAP if available, otherwise principal name
@@ -66,10 +66,7 @@ namespace ShowPermissions
             {
                 string availDepots = await depots.canViewAsync(user);
                 if (!String.IsNullOrEmpty(availDepots))
-                {
-                    string s = String.Format("{1}{0}{2}{0}", Environment.NewLine, user, availDepots);
-                    Console.WriteLine(s);
-                }
+                    Console.WriteLine($"{user}{Environment.NewLine}{availDepots}{Environment.NewLine}");
             }
 
             return true;

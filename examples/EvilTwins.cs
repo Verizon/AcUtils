@@ -1,4 +1,4 @@
-/* Copyright (C) 2017 Verizon. All Rights Reserved.
+/* Copyright (C) 2017-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -72,23 +72,21 @@ namespace EvilTwins
             {
                 if (!File.Exists(_twinsExcludeFile))
                 {
-                    string err = String.Format("TwinsExcludeFile {0} specified in EvilTwins.exe.config not found", _twinsExcludeFile);
-                    AcDebug.Log(err);
+                    AcDebug.Log($"TwinsExcludeFile {_twinsExcludeFile} specified in EvilTwins.exe.config not found");
                     return 1;
                 }
                 else
                     _excludeList = getTwinsExcludeList();
             }
 
-            // false for all stream types in order to include workspace streams
-            // true to include hidden (removed) streams
-            AcDepots depots = new AcDepots(false, true);
+            // all stream types in order to include workspace streams, include hidden (removed) streams
+            AcDepots depots = new AcDepots(dynamicOnly: false, includeHidden: true);
             Task<bool> dini = depots.initAsync(_selDepots);
             if (!dini.Result) return 1;
 
             _tcompare = new TwinEqualityComparer();
             _map = new Dictionary<AcDepot, HashSet<Tuple<string, int>>>();
-            List<Task<bool>> tasks = new List<Task<bool>>();
+            List<Task<bool>> tasks = new List<Task<bool>>(depots.Count);
             foreach (AcDepot depot in depots)
                 tasks.Add(initMapAsync(depot));
 
@@ -99,7 +97,7 @@ namespace EvilTwins
             return (r.Result) ? 0 : 1;
         }
 
-        // Initialize our dictionary class variable with [element, EID] for all elements in all dynamic streams in depot param. 
+        // Initialize our dictionary class variable with [element, EID] for all elements in all dynamic streams in depot. 
         // AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on stat command failure. 
         // Exception caught and logged in same for a range of exceptions.
         private static async Task<bool> initMapAsync(AcDepot depot)
@@ -107,12 +105,12 @@ namespace EvilTwins
             bool ret = false; // assume failure
             try
             {
-                List<Task<AcResult>> tasks = new List<Task<AcResult>>();
-                foreach (AcStream stream in depot.Streams.Where(n => n.IsDynamic && !n.Hidden))
-                {
-                    string cmd = String.Format(@"stat -a -s ""{0}"" -fx", stream); // -a for all elements in stream
-                    tasks.Add(AcCommand.runAsync(cmd));
-                }
+                IEnumerable<AcStream> filter = from n in depot.Streams
+                                               where n.IsDynamic && !n.Hidden
+                                               select n;
+                List<Task<AcResult>> tasks = new List<Task<AcResult>>(filter.Count());
+                foreach (AcStream stream in filter)
+                    tasks.Add(AcCommand.runAsync($@"stat -a -s ""{stream}"" -fx")); // -a for all elements in stream
 
                 AcResult[] arr = await Task.WhenAll(tasks); // finish running stat commands in parallel
                 if (arr != null && arr.All(n => n.RetVal == 0)) // true if all initialized successfully
@@ -138,16 +136,12 @@ namespace EvilTwins
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in Program.initMapAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in Program.initMapAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in Program.initMapAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in Program.initMapAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -174,8 +168,11 @@ namespace EvilTwins
                             continue; // ignore if in TwinsExcludeFile
 
                         log(element);
-                        List<Task<XElement>> tasks = new List<Task<XElement>>();
-                        foreach (AcStream stream in depot.Streams.Where(n => n.IsDynamic && !n.Hidden))
+                        IEnumerable<AcStream> filter = from n in depot.Streams
+                                                       where n.IsDynamic && !n.Hidden
+                                                       select n;
+                        List<Task<XElement>> tasks = new List<Task<XElement>>(filter.Count());
+                        foreach (AcStream stream in filter)
                             tasks.Add(getElementInfoAsync(stream, element));
 
                         XElement[] arr = await Task.WhenAll(tasks); // finish running stat commands in parallel
@@ -184,15 +181,13 @@ namespace EvilTwins
                             foreach (Tuple<string, int> jj in ii.OrderBy(n => n.Item2)) // order twins by EID
                             {
                                 int eid = jj.Item2;
-                                string hdr = String.Format("\tEID: {0} on {1}", eid, DateTime.Now.ToString("ddd MMM d h:mm tt"));
-                                log(hdr);
-                                // C# language short-circuit: the id value test isn't evaluated if "no such elem" is true, 
+                                log($"\tEID: {eid} on {DateTime.Now.ToString("ddd MMM d h:mm tt")}");
+                                // C# language short-circuit: the test for id equals eid isn't evaluated if status equals "(no such elem)", 
                                 // otherwise an exception would be thrown since the id attribute doesn't exist in this case
                                 foreach (XElement e in arr.Where(n => (string)n.Attribute("status") != "(no such elem)" &&
                                     (int)n.Attribute("id") == eid).OrderBy(n => n.Annotation<AcStream>()))
                                 {
-                                    string stream = String.Format("\t\t{0} {1}", e.Annotation<AcStream>(), (string)e.Attribute("status"));
-                                    log(stream);
+                                    log($"\t\t{e.Annotation<AcStream>()} {(string)e.Attribute("status")}");
                                     string namedVersion = (string)e.Attribute("namedVersion"); // virtual stream name and version number
                                     string temp = (string)e.Attribute("Real");
                                     string[] real = temp.Split('\\'); // workspace stream and version numbers
@@ -200,10 +195,10 @@ namespace EvilTwins
                                     ElementType elemType = e.acxType("elemType");
                                     string twin;
                                     if ((long?)e.Attribute("size") != null)
-                                        twin = String.Format("\t\t\tSize: {1}, ModTime: {2} {{{3}}}{0}\t\t\tReal: {4}\\{5}, Virtual: {6}", Environment.NewLine,
-                                            (long)e.Attribute("size"), e.acxTime("modTime"), elemType, wkspace, real[1], namedVersion);
+                                        twin = $"\t\t\tSize: {(long)e.Attribute("size")}, ModTime: {e.acxTime("modTime")} {{{elemType}}}" +
+                                            $"{Environment.NewLine}\t\t\tReal: {wkspace}\\{real[1]}, Virtual: {namedVersion}";
                                     else // a folder or link
-                                        twin = String.Format("\t\t\tReal: {0}\\{1}, Virtual: {2} {{{3}}}", wkspace, real[1], namedVersion, elemType);
+                                        twin = $"\t\t\tReal: {wkspace}\\{real[1]}, Virtual: {namedVersion} {{{elemType}}}";
 
                                     log(twin);
                                 }
@@ -219,23 +214,21 @@ namespace EvilTwins
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in Program.reportAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in Program.reportAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
         }
 
-        // Returns the attributes for the element param in stream param if the query succeeded, otherwise null. 
-        // AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on stat command failure.
+        // Returns the attributes for the element in stream if the query succeeded, otherwise null. 
+        // AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on stat command failure. 
+        // Exception caught and logged in same for a range of exceptions.
         private static async Task<XElement> getElementInfoAsync(AcStream stream, string element)
         {
             XElement e = null;
             try
             {
-                string cmd = String.Format(@"stat -fx -s ""{0}"" ""{1}""", stream, element);
-                AcResult r = await AcCommand.runAsync(cmd);
+                AcResult r = await AcCommand.runAsync($@"stat -fx -s ""{stream}"" ""{element}""");
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
@@ -246,9 +239,12 @@ namespace EvilTwins
 
             catch (AcUtilsException ecx)
             {
-                string msg = String.Format("AcUtilsException caught and logged in Program.getElementInfoAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in Program.getElementInfoAsync{Environment.NewLine}{ecx.Message}");
+            }
+
+            catch (Exception ecx)
+            {
+                AcDebug.Log($"Exception caught and logged in Program.getElementInfoAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return e;
@@ -280,9 +276,7 @@ namespace EvilTwins
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in Program.getTwinsExcludeList{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in Program.getTwinsExcludeList{Environment.NewLine}{ecx.Message}");
             }
 
             finally // avoids CA2202: Do not dispose objects multiple times
@@ -311,9 +305,7 @@ namespace EvilTwins
             Task<string> prncpl = AcQuery.getPrincipalAsync();
             if (String.IsNullOrEmpty(prncpl.Result))
             {
-                string msg = String.Format("Not logged into AccuRev.{0}Please login and try again.",
-                    Environment.NewLine);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Not logged into AccuRev.{Environment.NewLine}Please login and try again.");
                 return false;
             }
 
@@ -349,10 +341,7 @@ namespace EvilTwins
             {
                 Process currentProcess = Process.GetCurrentProcess();
                 ProcessModule pm = currentProcess.MainModule;
-                string exeFile = pm.ModuleName;
-                string msg = String.Format("Invalid data in {1}.config{0}{2}",
-                    Environment.NewLine, exeFile, exc.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Invalid data in {pm.ModuleName}.config{Environment.NewLine}{exc.Message}");
                 ret = false;
             }
 
@@ -383,9 +372,7 @@ namespace EvilTwins
 
             catch (Exception exc)
             {
-                string msg = String.Format("Exception caught and logged in Program.initEvilTwinsLogging{0}{1}",
-                    Environment.NewLine, exc.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in Program.initEvilTwinsLogging{Environment.NewLine}{exc.Message}");
             }
 
             return ret;

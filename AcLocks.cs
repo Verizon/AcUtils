@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -288,7 +288,7 @@ namespace AcUtils
                 case "C": // comment given to the lock
                     return Comment;
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException($"The {format} format string is not supported.");
             }
         }
 

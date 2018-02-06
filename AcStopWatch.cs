@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -79,8 +79,7 @@ namespace AcUtils
         /// <param name="elapsedTime">The time it took the operation to run.</param>
         private static void log(string elapsedTime)
         {
-          string msg = String.Format("{0} to complete.", elapsedTime);
-          Console.WriteLine(msg);
+          Console.WriteLine($"{elapsedTime} to complete.");
         }
     \endcode */
     /*! \sa AcStopWatch#ElapsedTimeHandler delegate type */

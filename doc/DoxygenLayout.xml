@@ -1,5 +1,5 @@
 <doxygenlayout version="1.0">
-<!-- Copyright (C) 2016 Verizon. All Rights Reserved.
+<!-- Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ limitations under the License. -->
   <navindex>
     <tab type="mainpage" visible="yes" title="Main Page"/>
     <tab type="usergroup" title="Docs">
-			<tab type="user" url="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/command_summary.html" title="AccuRev command-line reference"/>
+			<tab type="user" url="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_F4_001.html" title="AccuRev command-line reference"/>
 			<tab type="user" url="@ref commandsinuse_AcUtils" title="AccuRev commands used"/>
       <tab type="user" url="@ref accunotes_" title="AccuNotes"/>
       <tab type="user" url="@ref requirements" title="Requirements"/>

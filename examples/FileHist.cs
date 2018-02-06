@@ -1,4 +1,4 @@
-﻿/* Copyright (C) 2016 Verizon. All Rights Reserved.
+﻿/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -35,30 +35,28 @@ namespace FileHist
 
         private static async Task<bool> fileHistAsync(string depot, int eid, string startTime, string endTime)
         {
-            Console.WriteLine(@"Depot: {0}, EID: {1} ""{2} - {3}""{4}", depot, eid, startTime, endTime, Environment.NewLine);
-            string time = String.Format("{0} - {1}", endTime, startTime); // reverse start-end times as workaround for AccuRev issue 15780
-            string cmd = String.Format(@"hist -p ""{0}"" -t ""{1}"" -e {2} -fevx", depot, time, eid);
-            AcResult result = await AcCommand.runAsync(cmd);
+            Console.WriteLine($@"Depot: {depot}, EID: {eid} ""{startTime} - {endTime}""{Environment.NewLine}");
+            string time = $"{endTime} - {startTime}"; // reverse start-end times as workaround for AccuRev issue 15780
+            AcResult result = await AcCommand.runAsync($@"hist -p ""{depot}"" -t ""{time}"" -e {eid} -fevx");
             if (result == null || result.RetVal != 0) return false; // operation failed, check log file
             XElement xml = XElement.Parse(result.CmdResult);
             XElement e = xml.Element("element");
 
             foreach (XElement t in e.Elements("transaction"))
             {
-                Console.WriteLine("Transaction: {0} {{{1}}}, {2}", (int)t.Attribute("id"),
-                    (string)t.Attribute("type"), // transaction type, e.g. keep, move, promote, purge, etc.
-                    t.acxTime("time")); // convert Epoch "time" attribute
+                Console.WriteLine($"Transaction: {(int)t.Attribute("id")} " + // transaction ID
+                    $"{{{(string)t.Attribute("type")}}}, " + // transaction type, e.g. keep, move, promote, purge, etc.
+                    $"{t.acxTime("time")}"); // convert Epoch "time" attribute to .NET DateTime object
 
                 string tcomment = t.acxComment();
-                Console.WriteLine("User: {0}{1}", (string)t.Attribute("user"),
-                    String.IsNullOrEmpty(tcomment) ? String.Empty : ", " + tcomment);
+                Console.WriteLine($"User: {(string)t.Attribute("user")}{(String.IsNullOrEmpty(tcomment) ? String.Empty : ", " + tcomment)}");
 
                 string fromStream = t.acxFromStream();
                 if (!String.IsNullOrEmpty(fromStream))
-                    Console.WriteLine("From {0} to {1}", fromStream, t.acxToStream()); // attributes that exist for promote transactions only
+                    Console.WriteLine($"From {fromStream} to {t.acxToStream()}"); // attributes that exist for promote transactions only
 
                 string virtualNamed = t.acxVirtualNamed();
-                if (!String.IsNullOrEmpty(virtualNamed)) Console.WriteLine("Virtual: {0}", virtualNamed); // a promote or co operation
+                if (!String.IsNullOrEmpty(virtualNamed)) Console.WriteLine($"Virtual: {virtualNamed}"); // a promote or co operation
 
                 Console.WriteLine();
                 foreach (XElement v in t.Elements("version"))
@@ -70,17 +68,16 @@ namespace FileHist
                     if (!String.IsNullOrEmpty(vcomment)) Console.WriteLine("\t" + vcomment);
 
                     string path = (string)v.Attribute("path");
-                    if (!String.IsNullOrEmpty(path)) Console.WriteLine("\tEID: {0} {1}", eid, path);
+                    if (!String.IsNullOrEmpty(path)) Console.WriteLine($"\tEID: {eid} {path}");
 
                     DateTime? mtime = v.acxTime("mtime"); // convert Epoch "mtime" attribute
-                    Console.WriteLine("\tReal: {0} {1}", realNamed,
-                        (mtime == null) ? String.Empty : "Modified: " + mtime);
+                    Console.WriteLine($"\tReal: {realNamed} {((mtime == null) ? String.Empty : "Modified: " + mtime)}");
 
                     string ancestorNamed = v.acxAncestorNamed();
-                    if (!String.IsNullOrEmpty(ancestorNamed)) Console.WriteLine("\tAncestor: {0}", ancestorNamed);
+                    if (!String.IsNullOrEmpty(ancestorNamed)) Console.WriteLine($"\tAncestor: {ancestorNamed}");
 
                     string mergedAgainstNamed = v.acxMergedAgainstNamed();
-                    if (!String.IsNullOrEmpty(mergedAgainstNamed)) Console.WriteLine("\tMerged against: {0}", mergedAgainstNamed);
+                    if (!String.IsNullOrEmpty(mergedAgainstNamed)) Console.WriteLine($"\tMerged against: {mergedAgainstNamed}");
 
                     Console.WriteLine();
                 }

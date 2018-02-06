@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -532,7 +532,7 @@ namespace AcUtils
         /// When this file exists (created manually), it is used as the \e list-file to populate the depot with select streams. 
         /// This function is called internally and not by user code.
         /// </summary>
-        /// <remarks>Implemented with <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a>
+        /// <remarks>Implemented with <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a>
         /// </remarks>
 /*! > -l <list-file> Process the streams listed in the specified file. The file must be text only, containing one stream name or number per line. Extra whitespace is not allowed; make sure there are no empty lines and no leading or trailing whitespace around the filenames. There is no provision for comment lines in a list-file. This option can also be used with one of -1 ("dash-one"), -r, or -R. You cannot also specify streams using the -s option. */
         /// <returns>Full path of the list file <tt>\%APPDATA\%\\AcTools\\<prog_name\>\\<depot_name\>.streams</tt> if found, otherwise \e null.<br>
@@ -811,7 +811,7 @@ namespace AcUtils
         #pragma warning disable 0642
         /// <summary>
         /// Get the list of depots \e user has permission to view based on their principal name and group membership 
-        /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entries</a>.
+        /// <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setacl.html">access control list (ACL) entries</a>.
         /// </summary>
         /// <remarks>A plus sign (+) appended to the depot name denotes the Inheritable attribute.</remarks>
         /// <param name="user">User for which to query.</param>

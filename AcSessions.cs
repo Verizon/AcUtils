@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,11 +22,13 @@ using System.Xml.Linq;
 namespace AcUtils
 {
     /// <summary>
-    /// Holds the attributes for an AccuRev user session: principal name, host machine IP address, and length of time logged in. 
+    /// Holds the attributes for an AccuRev user session: principal name, 
+    /// host machine IP address, and length of time logged in. 
     /// AcSession objects are instantiated during AcSessions construction.
     /// </summary>
-    /*! \accunote_ A server IP address change requires renewing the session token for the service account that runs 
-         the AccuRev service, otherwise trigger operations will fail. To do so, reissue the persistent login command 
+    /*! \accunote_ A server IP address change requires renewing the session token 
+         for the service account that runs the AccuRev service, otherwise trigger 
+         operations will fail. To do so, reissue the persistent login command 
          <tt>login -n</tt> for the service account. */
     [Serializable]
     public sealed class AcSession : IFormattable, IEquatable<AcSession>, IComparable<AcSession>, IComparable
@@ -88,7 +90,8 @@ namespace AcUtils
         /*! \name Order comparison */
         /**@{*/
         /// <summary>
-        /// Generic IComparable implementation (default) for comparing AcSession objects to sort by Duration and then Name.
+        /// Generic IComparable implementation (default) for comparing AcSession objects 
+        /// to sort by Duration and then Name.
         /// </summary>
         /// <param name="other">An AcSession object to compare with this instance.</param>
         /// <returns>Value indicating the relative order of the AcSession objects being compared.</returns>
@@ -157,7 +160,8 @@ namespace AcUtils
         /// <summary>
         /// The ToString implementation.
         /// </summary>
-        /// <param name="format">The format specifier to use, e.g. <b>Console.WriteLine(rule.ToString("n"));</b></param>
+        /// <param name="format">The format specifier to use, 
+        /// e.g. <b>Console.WriteLine(rule.ToString("n"));</b></param>
         /// <param name="provider">Allow clients to format output for their own types using 
         /// [ICustomFormatter](https://msdn.microsoft.com/en-us/library/system.icustomformatter.aspx).</param>
         /// <returns>The formatted string.</returns>
@@ -183,7 +187,7 @@ namespace AcUtils
             {
                 case "G": // default when not using a format specifier
                 {
-                    string text = String.Format("{0}, {1}, {2}", Name, Host, Duration);
+                    string text = $"{Name}, {Host}, {Duration}";
                     return text;
                 }
                 case "N": // user's AccuRev principal name
@@ -193,7 +197,7 @@ namespace AcUtils
                 case "D": // length of time user has been logged on
                     return Duration.ToString();
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException($"The {format} format string is not supported.");
             }
         }
 
@@ -228,18 +232,15 @@ namespace AcUtils
         /// A container for AcSession objects that define AccuRev user sessions.
         /// </summary>
         /*! \code
-            // returns true if operation was successful, false on error
             public static async Task<bool> showSessionsAsync()
             {
-                AcSessions sessions = new AcSessions(); // two-part object construction
-                if (!(await sessions.initAsync()))  // ..
-                    return false;
+                AcSessions sessions = new AcSessions();
+                if (!(await sessions.initAsync())) return false;
 
-                foreach (AcSession session in sessions.OrderBy(n => n)) // use default comparer
+                foreach (AcSession session in sessions
+                    .Where(n => n.Duration != TimeSpan.Zero).OrderBy(n => n))
                 {
-                    TimeSpan span = session.Duration;
-                    if (span != TimeSpan.Zero)
-                        Console.WriteLine(session);
+                    Console.WriteLine(session);
                 }
 
                 return true;
@@ -265,7 +266,8 @@ namespace AcUtils
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from element in xml.Descendants("Element") select element;
+                    IEnumerable<XElement> query = from element in xml.Descendants("Element")
+                                                  select element;
                     foreach (XElement e in query)
                     {
                         AcSession session = new AcSession();

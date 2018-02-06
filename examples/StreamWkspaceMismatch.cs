@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Verizon. All Rights Reserved.
+/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-// Required references: AcUtils.dll, System.configuration
+// Required references: AcUtils.dll
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,12 +32,12 @@ namespace StreamWkspaceMismatch
             bool ret = false; // assume failure
             try
             {
-                // false for all streams and not just dynamic, true to include hidden streams
-                AcDepots depots = new AcDepots(false, true);
+                // all streams and not just dynamic, include hidden streams
+                AcDepots depots = new AcDepots(dynamicOnly: false, includeHidden: true);
                 if (!(await depots.initAsync())) return false;
 
-                // true for all workspaces (not just the script user), true to include hidden workspaces
-                AcWorkspaces wkspaces = new AcWorkspaces(depots, true, true);
+                // all workspaces (not just the script user), include hidden workspaces
+                AcWorkspaces wkspaces = new AcWorkspaces(depots, allWSpaces: true, includeHidden: true);
                 if (!(await wkspaces.initAsync())) return false;
 
                 foreach (AcDepot depot in depots.OrderBy(n => n))
@@ -54,11 +54,7 @@ namespace StreamWkspaceMismatch
                                 };
 
                     foreach (var f in query)
-                    {
-                        string msg = String.Format("{0} wspace: {1}, stream: {2}", f.Hidden ? "Hidden" : "Visible",
-                            f.WorkspaceName, f.StreamName);
-                        Console.WriteLine(msg);
-                    }
+                        Console.WriteLine($"{(f.Hidden ? "Hidden" : "Visible")} wspace: {f.WorkspaceName}, stream: {f.StreamName}");
                 }
 
                 ret = true; // operation succeeded
@@ -66,9 +62,7 @@ namespace StreamWkspaceMismatch
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in Program.streamWkspaceMismatchAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                Console.WriteLine(msg);
+                Console.WriteLine($"Exception caught and logged in Program.streamWkspaceMismatchAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;

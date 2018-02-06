@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -252,7 +252,7 @@ namespace AcUtils
                 case "X": // if cross-link the basis stream for the SetInStream
                     return XlinkToStream;
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException($"The {format} format string is not supported.");
             }
         }
 
@@ -293,28 +293,22 @@ namespace AcUtils
         /// not those inherited from higher level streams. 
         /// </param>
         /*! \code
-            // show rules user set on their workspaces in the MARS depot
-            public static async Task<bool> showRulesAsync(AcUser user)
+            // show rules explicitly set on dynamic streams in depot name
+            public static async Task<bool> showRulesAsync(string name)
             {
-                var progress = new Progress<int>(n =>
-                {
-                    if ((n % 10) == 0)
-                        Console.WriteLine("Loading rules: " + n);
-                });
-
-                AcDepot depot = new AcDepot("MARS"); // includes workspaces
-                if (!(await depot.initAsync())) return false; // initialization failure, check log file
+                AcDepot depot = new AcDepot(name, dynamicOnly: true); // dynamic streams only
+                if (!(await depot.initAsync())) return false;
 
                 AcRules rules = new AcRules(explicitOnly: true); // exclude rules inherited from higher-level streams
-                if (!(await rules.initAsync(depot, progress))) return false;
+                if (!(await rules.initAsync(depot))) return false;
 
-                foreach (AcRule rule in rules.Where(n => n.SetInStream.EndsWith(user.Principal.Name)).OrderBy(n => n))
+                foreach(AcRule rule in rules.OrderBy(n => n))
                     Console.WriteLine(rule);
 
                 return true;
             }
             \endcode */
-        /*! \sa [Default comparer](@ref AcRule#CompareTo) */
+        /*! \sa [Default comparer](@ref AcRule#CompareTo), <a href="_show_rules_8cs-example.html">ShowRules.cs</a> */
         public AcRules(bool explicitOnly = false)
         {
             _explicitOnly = explicitOnly;

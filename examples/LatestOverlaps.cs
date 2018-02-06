@@ -1,4 +1,4 @@
-/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.
+﻿/* Copyright (C) 2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using AcUtils;
 
-namespace LatestPromotions
+namespace LatestOverlaps
 {
     class Program
     {
@@ -30,75 +30,58 @@ namespace LatestPromotions
         private static DomainCollection _domains;
         private static PropCollection _properties;
         private static DepotsCollection _selDepots;
-        private static StreamsCollection _selStreams;
         private static int _fromHoursAgo;
         private static string _outputFile;
-        private static AcDepots _depots;
         private static AcUsers _users;
+        private static AcDepots _depots;
         private static List<XElement> _hist;
         #endregion
 
-        static int Main()
+        static int Main(string[] args)
         {
             // general program startup initialization
             if (!init()) return 1; // initialization failure, check log file
+            return (reportAsync().Result) ? 0 : 1;
+        }
 
+        // Initialize our history and stat lists for streams in depots listed in 
+        // the Depots section of LatestOverlaps.exe.config and generate the report.
+        private static async Task<bool> reportAsync()
+        {
             DateTime past = DateTime.Now.AddHours(_fromHoursAgo * -1); // go back this many hours
-            if (!initListsAsync(past).Result) return 1; // operation failed, check log file
+            if (!(await initHistAsync(past))) return false;
             if (_hist != null && _hist.Count > 0)
             {
+                if (!(await initStatAsync())) return false;
                 XElement report = buildReport(past);
                 report.Save(_outputFile);
             }
 
-            return 0;
+            return true;
         }
 
-        // Initialize our history and stat lists for each stream listed in the LatestPromotions.exe.config Streams section. 
-        // AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\LatestPromotions-YYYY-MM-DD.log on hist or stat 
-        // command failure. Exception caught and logged in same on failure to handle a range of exceptions.
-        private static async Task<bool> initListsAsync(DateTime past)
+        // Run the hist command for depots listed in LatestOverlaps.exe.config and add the results to 
+        // our history list class variable. Returns true if initialization succeeded, false otherwise. 
+        // AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\LatestOverlaps-YYYY-MM-DD.log 
+        // on hist command failure. Exception caught and logged in same for a range of exceptions.
+        private static async Task<bool> initHistAsync(DateTime past)
         {
             bool ret = false; // assume failure
             try
             {
                 string timeHrsAgo = AcDateTime.DateTime2AcDate(past); // get date in string format suitable for AccuRev CLI
-                List<Task<AcResult>>[] tasks = new List<Task<AcResult>>[2];
-                tasks[0] = new List<Task<AcResult>>(); // for hist results
-                tasks[1] = new List<Task<AcResult>>(); // for stat results
-
+                List<Task<AcResult>> tasks = new List<Task<AcResult>>(_depots.Count);
                 foreach (AcDepot depot in _depots)
-                {
-                    // Alternatively change Equals() to Contains() and modify LatestPromotions.exe.config stream values 
-                    // accordingly to filter on stream name subsets, e.g. <add stream="DEV"/> for all streams with DEV in their name.
-                    IEnumerable<AcStream> filter = depot.Streams.Where(n =>
-                        _selStreams.OfType<StreamElement>().Any(s => n.Name.Equals(s.Stream)));
+                    tasks.Add(AcCommand.runAsync($@"hist -k promote -p ""{depot}"" -t now-""{timeHrsAgo}"" -fex"));
 
-                    foreach (AcStream stream in filter)
-                    {
-                        Task<AcResult> hr = AcCommand.runAsync($@"hist -k promote -s ""{stream}"" -t now-""{timeHrsAgo}"" -fx");
-                        tasks[0].Add(hr);
-                        Task<AcResult> sr = AcCommand.runAsync($@"stat -s ""{stream}"" -d -fx"); // stream's default group
-                        tasks[1].Add(sr);
-                    }
-                }
-
-                _hist = new List<XElement>(tasks[0].Count);
-                while (tasks[0].Count > 0) // process hist results
+                _hist = new List<XElement>(_depots.Count);
+                while (tasks.Count > 0)
                 {
-                    Task<AcResult> r = await Task.WhenAny(tasks[0]);
-                    tasks[0].Remove(r);
+                    Task<AcResult> r = await Task.WhenAny(tasks);
+                    tasks.Remove(r);
                     if (r == null || r.Result.RetVal != 0) return false;
                     XElement xml = XElement.Parse(r.Result.CmdResult);
                     _hist.Add(xml);
-                }
-
-                while (tasks[1].Count > 0) // process stat results
-                {
-                    Task<AcResult> r = await Task.WhenAny(tasks[1]);
-                    tasks[1].Remove(r);
-                    if (r == null || r.Result.RetVal != 0) return false;
-                    if (!Stat.init(r.Result.CmdResult)) return false;
                 }
 
                 ret = true; // if we're here then all completed successfully
@@ -106,12 +89,58 @@ namespace LatestPromotions
 
             catch (AcUtilsException exc)
             {
-                AcDebug.Log($"AcUtilsException caught and logged in Program.initListsAsync{Environment.NewLine}{exc.Message}");
+                AcDebug.Log($"AcUtilsException caught and logged in Program.initHistAsync{Environment.NewLine}{exc.Message}");
             }
 
             catch (Exception ecx)
             {
-                AcDebug.Log($"Exception caught and logged in Program.initListsAsync{Environment.NewLine}{ecx.Message}");
+                AcDebug.Log($"Exception caught and logged in Program.initHistAsync{Environment.NewLine}{ecx.Message}");
+            }
+
+            return ret;
+        }
+
+        // Run the stat command for streams in depots listed in LatestOverlaps.exe.config and add the 
+        // results to the Stat.Elements list. Returns true if initialization succeeded, false otherwise. 
+        // AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\LatestOverlaps-YYYY-MM-DD.log 
+        // on stat command failure. Exception caught and logged in same for a range of exceptions.
+        private static async Task<bool> initStatAsync()
+        {
+            bool ret = false; // assume failure
+            try
+            {
+                IEnumerable<XElement> trans = from e in _hist.Elements("transaction")
+                                              select e;
+                // get unique list of stream names from transactions
+                ILookup<string, XElement> map = trans.ToLookup(n => (string)n.Attribute("streamName"), n => n);
+
+                List<Task<AcResult>> tasks = new List<Task<AcResult>>();
+                foreach (var ii in map) // for each stream
+                {
+                    AcStream stream = _depots.getStream(ii.Key);
+                    if (!stream.HasDefaultGroup) continue; // run stat only if default group exists
+                    tasks.Add(AcCommand.runAsync($@"stat -s ""{stream}"" -o -fx"));
+                }
+
+                bool op = true;
+                while (tasks.Count > 0 && op)
+                {
+                    Task<AcResult> r = await Task.WhenAny(tasks);
+                    tasks.Remove(r);
+                    op = (r != null && r.Result.RetVal == 0 && Stat.init(r.Result.CmdResult));
+                }
+
+                ret = op; // true if all completed successfully
+            }
+
+            catch (AcUtilsException exc)
+            {
+                AcDebug.Log($"AcUtilsException caught and logged in Program.initStatAsync{Environment.NewLine}{exc.Message}");
+            }
+
+            catch (Exception ecx)
+            {
+                AcDebug.Log($"Exception caught and logged in Program.initStatAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -120,6 +149,13 @@ namespace LatestPromotions
         // Returns the content for our HTML file.
         private static XElement buildReport(DateTime past)
         {
+            // transactions where one or more versions have overlap status
+            IEnumerable<XElement> trans = from t in _hist.Elements("transaction")
+                                          where Stat.getElement(t.Element("version")) != null
+                                          select t;
+            // get unique list of stream names from transactions
+            ILookup<string, XElement> map = trans.ToLookup(n => (string)n.Attribute("streamName"), n => n);
+
             return new XElement("html",
                 new XElement("head"),
                 new XElement("body",
@@ -132,10 +168,10 @@ namespace LatestPromotions
                     new XAttribute("style", "font family: Arial; font-size: 12pt"),
                     new XAttribute("text", "#0000ff"),
                     new XAttribute("bgcolor", "#cccccc"),
-                    new XElement("p", "Promotions since " + past.ToString("f") + " to:", new XElement("ul",
-                        from s in _selStreams.OfType<StreamElement>()
-                        orderby s.Stream
-                        select new XElement("li", s.Stream)),
+                    new XElement("p", "Promotions with overlaps since " + past.ToString("f") + " exist in:", new XElement("ul",
+                        from s in map
+                        orderby s.Key // stream name
+                        select new XElement("li", s.Key)),
                         new XElement("table",
                             new XAttribute("border", 1),
                             new XAttribute("cellpadding", 3),
@@ -152,7 +188,7 @@ namespace LatestPromotions
                                 )
                             ),
                             new XElement("tbody",
-                                from t in _hist.Elements("transaction")
+                                from t in trans
                                 orderby _users.getUser((string)t.Attribute("user")), t.acxTime("time") descending // by user with their latest transactions on top
                                 select new XElement("tr",
                                     new XElement("td", (int)t.Attribute("id")),
@@ -180,6 +216,7 @@ namespace LatestPromotions
                                             ),
                                             new XElement("tbody",
                                                 from v in t.Elements("version")
+                                                where (int?)v.Attribute("eid") != null
                                                 orderby Path.GetFileName((string)v.Attribute("path"))
                                                 select new XElement("tr",
                                                     new XElement("td", (int)v.Attribute("eid")),
@@ -233,7 +270,7 @@ namespace LatestPromotions
                 return false;
             }
 
-            // save an unhandled exception in log file before program terminates
+            // in the event of an unhandled exception, save it to our log file before the program terminates
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AcDebug.unhandledException);
 
             // ensure we're logged into AccuRev
@@ -244,26 +281,25 @@ namespace LatestPromotions
                 return false;
             }
 
-            // initialize our class variables from LatestPromotions.exe.config
+            // initialize our class variables from LatestOverlaps.exe.config
             if (!initAppConfigData()) return false;
 
-            // dynamic streams only in select depots
-            _depots = new AcDepots(dynamicOnly: true);
+            _depots = new AcDepots(dynamicOnly: true); // dynamic streams only
             Task<bool> dini = _depots.initAsync(_selDepots);
 
-            // no group membership initialization, include deactivated users
+            // exclude group membership initialization, include deactivated users
             _users = new AcUsers(_domains, _properties, includeGroupsList: false, includeDeactivated: true);
             Task<bool> uini = _users.initAsync();
 
-            Task<bool[]> all = Task.WhenAll(dini, uini); // finish initializing both lists in parallel
-            if (all == null || all.Result.Any(n => n == false)) return false;
+            Task<bool[]> arr = Task.WhenAll(dini, uini); // initialize both in parallel
+            if (arr == null || arr.Result.Any(n => n == false)) return false;
 
             return true;
         }
 
-        // Initialize our class variables with values from LatestPromotions.exe.config. Returns true if all values 
+        // Initialize our class variables with values from LatestOverlaps.exe.config. Returns true if all values 
         // successfully read and class variables initialized, false otherwise. ConfigurationErrorsException caught 
-        // and logged in %LOCALAPPDATA%\AcTools\Logs\LatestPromotions-YYYY-MM-DD.log on initialization failure.
+        // and logged in %LOCALAPPDATA%\AcTools\Logs\LatestOverlaps-YYYY-MM-DD.log on initialization failure.
         private static bool initAppConfigData()
         {
             bool ret = true; // assume success
@@ -292,15 +328,6 @@ namespace LatestPromotions
                 }
                 else
                     _selDepots = depotsConfigSection.Depots;
-
-                StreamsSection streamsConfigSection = ConfigurationManager.GetSection("Streams") as StreamsSection;
-                if (streamsConfigSection == null)
-                {
-                    AcDebug.Log("Error in Program.initAppConfigData creating StreamsSection");
-                    ret = false;
-                }
-                else
-                    _selStreams = streamsConfigSection.Streams;
             }
 
             catch (ConfigurationErrorsException exc)

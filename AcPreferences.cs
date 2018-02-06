@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -160,7 +160,7 @@ namespace AcUtils
         /// The caller is responsible for deleting the file.</returns>
         /*! \getpref_  \c getpref */
         /*! \accunote_ When using the AccuRev GUI client, changes in <em>User Preferences</em> do not always persist. 
-            As a workaround, use [setpref](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setpref.html):
+            As a workaround, use [setpref](https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setpref.html):
  -# Exit the AccuRev client.
  -# Put the setting\(s\) needed in a file named <tt>set_pref.xml</tt>
  -# Open a command window and cd to the folder where the file is located.

@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2016 Verizon. All Rights Reserved.
+<!-- Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -217,11 +217,12 @@ List all dynamic streams in the repository.
 Show the groups that have promotion rights on \e streams.
 \sa [AcLocks constructor](@ref AcUtils#AcLocks#AcLocks), <a href="_lock_streams_8cs-example.html">LockStreams.cs</a>
 
+\par PromotionRights.exe.config
 \code
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Streams>
     <streams>
@@ -239,11 +240,13 @@ Show the groups that have promotion rights on \e streams.
 
 /*! \example ActiveWSpaces.cs
 For \e depots show workspaces that have a default group and "DEV3" in their name.
+
+\par ActiveWSpaces.exe.config
 \code
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -293,7 +296,7 @@ Stranded elements are members of the default group yet they are not returned wit
 active elements of the workspace or stream; you must use the <tt>-i</tt> option instead. They are purposely left out of the list retrieved 
 with the <tt>-d</tt> option to ensure they are not accidentally promoted. Salesforce 00042864, 00035837, RFE 13692.
 
-\sa [Handling Stranded Elements in AccuRev Technical Notes](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/handling_stranded.html)
+\sa [Handling Stranded Elements in AccuRev Technical Notes](https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/handling_stranded.html)
 
 Optionally include a list of depot names in \c Stranded.exe.config that should be ignored, i.e. PlayGround depots, obsolete depots, etc.
 
@@ -310,7 +313,7 @@ the file without the need to recompile the program, however it must be relaunche
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <Depots>
     <depots>
@@ -347,7 +350,7 @@ name and location are added to the depot in disparate streams, when promoted up 
 <em>"evil twins"</em>. The error message indicates there are two elements with the same name and location but with different EID's. To fix evil twins:
 
 -# Since you must clear the namespace in one of the streams so the <em>"good twin"</em> prevails, you must decide which twin you want to keep. Use AccuRev's 
-<a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/online_help_F08_1.html">Version Browser</a> 
+<a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/online_help_F08_1.html">Version Browser</a> 
 to view the history of each twin as this could impact your decision. For example, if one of the elements has gone to production and the other has not, you would want to make 
 the production version the good twin and the other the evil twin.
 -# If the element is a file, do a \c diff on the twins to make sure the good twin (the one that will prevail) has the correct content. Edit as needed.
@@ -359,7 +362,7 @@ example ".OBSOLETE".
   -# When the bad twin was renamed, the good twin was inherited immediately and appeared in your workspace as <tt>(missing)</tt>. Right-click on the missing element, 
 select \c Populate and select \e Ok to bring it into your workspace.
  -# If the good twin does not exist higher up in the stream hierarchy:
-  -# Use the <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/Change_Palette.html">Change Palette</a> 
+  -# Use the <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/Change_Palette.html">Change Palette</a> 
 to cross promote the good twin to your workspace.
 
 \note You CAN \c promote an element into a stream with the same name as another element as long as the element in the stream has <tt>(defunct)(member)</tt> status. 
@@ -413,7 +416,7 @@ some other name, otherwise the program will malfunction.)
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -456,15 +459,18 @@ some other name, otherwise the program will malfunction.)
 
 /*! \example LatestPromotions.cs
 Creates an HTML file with the promote transactions that occurred in specific streams in select depots within the past specified number of hours.
+
+\par LatestPromotions.exe.config
 \code
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
+    <!-- contact your company LDAP administrator for these values -->
     <domains>
       <add host="xyzdc.yourcorp.com" path="DC=OMIT1,DC=ad,DC=yourcorp,DC=com"/>
       <add host="abcdc.yourcorp.com" path="DC=OMIT2,DC=yourcorp,DC=com"/>
@@ -482,9 +488,11 @@ Creates an HTML file with the promote transactions that occurred in specific str
   </Depots>
   <Streams>
     <streams>
+      <add stream="MARS_DEV3"/>
       <add stream="MARS_DEV4"/>
+      <add stream="JUPITER_DEV3"/>
       <add stream="JUPITER_DEV4"/>
-      <add stream="NEPTUNE_DEV4"/>
+      <add stream="NEPTUNE_MAINT1"/>
     </streams>
   </Streams>
   <appSettings>
@@ -507,17 +515,21 @@ Creates an HTML file with the promote transactions that occurred in specific str
   </startup>
 </configuration>
 \endcode
+
+\sa [AcUsers constructor](@ref AcUtils#AcUsers#AcUsers), [Stat.getElement](@ref AcUtils#Stat#getElement), <a href="_latest_overlaps_8cs-example.html">LatestOverlaps.cs</a>
 */
 
 /*! \example UserChanges.cs
-Show the changes made by a user in all depots during a time period. 
-Demonstrates AcUtils (\c AcUtils.dll) object instantiation and enumeration, [LINQ to XML](https://msdn.microsoft.com/en-us/library/bb387098.aspx), 
-and how results from one AccuRev command (\c hist) can be used as parameters for the next (\c annotate) for in-depth analysis.
+Show the changes made by a user in all depots during a time period. Demonstrates how results from one AccuRev command (\c hist) can be used 
+as parameters for the next (\c annotate) for powerful in-depth analysis.
 */
 
 /*! \example StreamWkspaceMismatch.cs
 Show all workspaces whose names do not match their corresponding stream name. Aids in troubleshooting a scenario that exists where 
-\c chws can complete without its corresponding \c chstream completing successfully. AccuRev defects 22175 and 27372.
+\c chws can complete without its corresponding \c chstream completing successfully. The fix is to run 
+<tt>accurev chws -s \<workspace name from the output\> \<stream name from the output\></tt>. Run the program again to confirm. If still found, 
+run the \c chws command again with the new output; occasionally it must be run twice. Ignore any messages or warnings that appear. 
+AccuRev defects 22175 and 27372.
 */
 
 /*! \example LockStreams.cs
@@ -525,11 +537,12 @@ Lock promotions to select streams across multiple depots for all except those in
 \warning Be careful with this one since it changes the repository!
 \sa [AcLocks constructor](@ref AcUtils#AcLocks#AcLocks), <a href="_promotion_rights_8cs-example.html">PromotionRights.cs</a>
 
+\par LockStreams.exe.config
 \code
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -557,16 +570,18 @@ List all dynamic streams in the repository that have elements with (\e underlap)
 /*! \example ShowPermissions.cs
 For a select group of users, list the depots each has permission to access based on their group memberships and ACL's. 
 Built-in types \b anyuser and \b authuser are unsupported.
-\sa [AcDepots.canViewAsync](@ref AcUtils#AcDepots#canViewAsync)
+\sa [AcDepots.canViewAsync](@ref AcUtils#AcDepots#canViewAsync), [AcUser.initFromADAsync](@ref AcUtils#AcUser#initFromADAsync)
 
+\par ShowPermissions.exe.config
 \code
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <activeDir>
     <domains>
+      <!-- contact your company LDAP administrator for these values -->
       <add host="xyzdc.mycorp.com" path="DC=XYZ,DC=xy,DC=zcorp,DC=com"/>
       <add host="abcdc.mycorp.com" path="DC=ABC,DC=ab,DC=com"/>
     </domains>
@@ -603,6 +618,114 @@ List triggers created with the \c mktrig command for all depots in the repositor
   </startup>
 </configuration>
 \endcode
+*/
+
+/*! \example WSpaceTransLevel.cs
+For workspaces in select depots, show the depot's latest transaction the last time the workspace was successfully updated. 
+Flags workspaces that are in an inconsistent state (update cancellation/failure) by displaying their 
+{[update](@ref AcUtils#AcWorkspace#UpdateLevel) - [target](@ref AcUtils#AcWorkspace#TargetLevel)} levels.
+
+<small>
+\verbatim
+The last time MARS_DEV2_robert off MARS_DEV2 was successfully updated,
+the latest transaction 257508 in depot MARS occurred on 12/17/2017 5:43:19 PM
+The last time MARS_DEV2_barnyrd off MARS_DEV2 was successfully updated,
+the latest transaction 257441 in depot MARS occurred on 12/17/2017 2:24:36 PM
+The last time MARS_DEV2_madhuri off MARS_DEV2 was successfully updated,
+the latest transaction 257427 in depot MARS occurred on 12/17/2017 1:52:18 PM, {257427 - 259343}
+The last time NEPTUNE_DEV1_thomas off NEPTUNE_DEV1 was successfully updated,
+the latest transaction 74932 in depot NEPTUNE occurred on 12/18/2017 9:42:25 AM
+The last time NEPTUNE_DEV1_mugwoco off NEPTUNE_DEV1 was successfully updated,
+the latest transaction 74931 in depot NEPTUNE occurred on 12/18/2017 8:57:44 AM
+...
+\endverbatim
+</small>
+
+\sa [update command](https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_update.html), [The Update Algorithm](https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/the_update_algorithm.html)
+
+\par WSpaceTransLevel.exe.config
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+  </configSections>
+  <Depots>
+    <depots>
+      <!-- depots whose workspaces should be included in the report -->
+      <add depot="MARS" />
+      <add depot="JUPITER" />
+      <add depot="NEPTUNE" />
+    </depots>
+  </Depots>
+  <system.diagnostics>
+    <assert assertuienabled="false"/>
+    <sources>
+      <source name="WSpaceTransLevel">
+        <listeners>
+          <remove name="Default"/>
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+        </listeners>
+      </source>
+    </sources>
+  </system.diagnostics>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+  </startup>
+</configuration>\endcode
+*/
+
+/*! \example LatestOverlaps.cs
+Creates an HTML file with promotions to streams in select depots within the past specified number of hours that have one or more versions with overlap status.
+
+\par LatestOverlaps.exe.config
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+  </configSections>
+  <activeDir>
+    <!-- contact your company LDAP administrator for these values -->
+    <domains>
+      <add host="xyzdc.yourcorp.com" path="DC=OMIT1,DC=ad,DC=yourcorp,DC=com"/>
+      <add host="abcdc.yourcorp.com" path="DC=OMIT2,DC=yourcorp,DC=com"/>
+    </domains>
+    <properties>
+      <add field="mobile" title="Mobile"/>
+    </properties>
+  </activeDir>
+  <Depots>
+    <depots>
+      <!-- depots to scan for versions with overlap status -->
+      <add depot="MARS"/>
+      <add depot="JUPITER"/>
+      <add depot="NEPTUNE"/>
+    </depots>
+  </Depots>
+  <appSettings>
+    <add key="FromHoursAgo" value="24"/>
+    <add key="OutputFile" value="C:\Temp\LatestOverlaps.html"/>
+  </appSettings>
+  <system.diagnostics>
+    <assert assertuienabled="false"/>
+    <sources>
+      <source name="LatestOverlaps">
+        <listeners>
+          <remove name="Default"/>
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+        </listeners>
+      </source>
+    </sources>
+  </system.diagnostics>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+  </startup>
+</configuration>
+\endcode
+
+\sa [AcUsers constructor](@ref AcUtils#AcUsers#AcUsers), [Stat.getElement](@ref AcUtils#Stat#getElement), <a href="_latest_promotions_8cs-example.html">LatestPromotions.cs</a>
 */
 
 /*! \example LatestTransactions.cs
@@ -935,7 +1058,7 @@ AcUtils requires .NET Framework 4.6 or higher.
 
 /*! \page requirements AcUtils Requirements
 - AcUtils requires <a href="https://www.microsoft.com/en-us/download/details.aspx?id=48130">.NET Framework 4.6</a> or higher.
-- The user or service\\build account must be logged into [AccuRev](http://www.borland.com/en-GB/Products/Change-Management/AccuRev) 
+- The user or service\\build account must be logged into [AccuRev](https://www.microfocus.com/products/change-management/accurev/) 
 and have <tt>\\AccuRev\\bin</tt> in their \e Path environment variable.
 - AccuRev 5.6 was used during the development of AcUtils but the library should function well with other versions too, 
 albeit without the support for some newer features in later versions. When using AccuRev command processing functions 

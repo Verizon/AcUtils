@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ namespace AcUtils
         <?xml version="1.0" encoding="utf-8"?>
         <configuration>
           <configSections>
-            <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+            <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
             ...
           </configSections>
           <Streams>

@@ -1,5 +1,5 @@
 ﻿/*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,11 +15,30 @@ limitations under the License.
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace AcUtils
 {
+    #region enums
+    /*! \ingroup acenum */
+    ///@{
+    /// <summary>
+    /// Use to specify real or virtual values.
+    /// </summary>
+    public enum RealVirtual
+    {
+        /*! \var Real
+        Real value(s). */
+        Real,
+        /*! \var Virtual
+        Virtual value(s). */
+        Virtual
+    };
+    ///@}
+    #endregion
+
     /// <summary>
     /// Custom query operators for use when using [LINQ to XML](https://msdn.microsoft.com/en-us/library/bb387098.aspx).
     /// </summary>
@@ -27,14 +46,16 @@ namespace AcUtils
     public static class Extensions
     {
         /// <summary>
-        /// Convert \e element's Epoch time \e name attribute value to a .NET DateTime object.
+        /// Convert \e element's Epoch time \e name XML attribute value to a .NET DateTime object.
         /// </summary>
         /// <param name="element">The element with the \e name attribute value to convert.</param>
-        /// <param name="name">The name of the attribute, e.g. \b "time", \b "mtime", etc.</param>
+        /// <param name="name">The name of the XML attribute, e.g. \b "time", \b "mtime", etc. emitted by the \c hist command.</param>
         /// <returns>On success a DateTime object with the converted value, otherwise \e null.</returns>
         /*! \code
-            DateTime? mtime = v.acxTime("mtime"); // version's last modified time
+            DateTime? mtime = version.acxTime("mtime"); // get version's last modified time
             \endcode */
+        /*! \pre When querying \e version elements include both \c -e: <em>(\"expanded\")</em> and \c -v: <em>(\"verbose\")</em> 
+             format directives in the \c hist command (i.e. \c -fevx) so the \b mtime attribute is included in the XML result. */
         public static DateTime? acxTime(this XElement element, XName name)
         {
             DateTime? dt = null;
@@ -232,6 +253,72 @@ namespace AcUtils
             if (xe != null && xe.Name == "comment")
                 comment = (string)xe;
             return comment;
+        }
+
+        /// <summary>
+        /// Get the workspace name for \e version.
+        /// </summary>
+        /// <param name="version">The version to query.</param>
+        /// <returns>Name of the workspace.</returns>
+        public static string acxWSpaceName(this XElement version)
+        {
+            Debug.Assert(version.Name == "version", @"version.Name == ""version""");
+            string temp = (string)version.Attribute("realNamedVersion");
+            string name = temp.Substring(0, temp.IndexOf('/'));
+            return name;
+        }
+
+        /// <summary>
+        /// Get the workspace owner's principal name for \e version.
+        /// </summary>
+        /// <param name="version">The version to query.</param>
+        /// <returns>Name of the principal that owns the workspace, otherwise \e null if not found.</returns>
+        public static string acxWSpaceOwner(this XElement version)
+        {
+            Debug.Assert(version.Name == "version", @"version.Name == ""version""");
+            string prncpl = null;
+            string wspace = version.acxWSpaceName();
+            int ii = wspace.LastIndexOf('_');
+            if (ii != -1) prncpl = wspace.Substring(++ii);
+            return prncpl;
+        }
+
+        /// <summary>
+        /// Get the real or virtual stream and version numbers for \e version.
+        /// </summary>
+        /// <param name="version">The version to query.</param>
+        /// <param name="request">Whether real or virtual values should be returned.</param>
+        /// <returns>An array initialized as <tt>int[]={[real|virtual]StreamNumber, [real|virtual]VersionNumber}</tt> 
+        /// as per \e request on success, otherwise \e null on error.</returns>
+        /*! \sa [Stat.getElement](@ref AcUtils#Stat#getElement) */
+        public static int[] acxStreamVersion(this XElement version, RealVirtual request)
+        {
+            Debug.Assert(version.Name == "version", @"version.Name == ""version""");
+            string temp = (request == RealVirtual.Real) ? (string)version.Attribute("real") :
+                (string)version.Attribute("virtual");
+            if (temp == null) return null;
+            string[] val = temp.Split('/');
+            int[] arr = new int[2];
+            if (!Int32.TryParse(val[0], NumberStyles.Integer, null, out arr[0])) return null;
+            if (!Int32.TryParse(val[1], NumberStyles.Integer, null, out arr[1])) return null;
+            return arr;
+        }
+
+        /// <summary>
+        /// Get the real or virtual stream name for \e version.
+        /// </summary>
+        /// <param name="version">The version to query.</param>
+        /// <param name="request">Whether the real or virtual stream name should be returned.</param>
+        /// <returns>The stream name as per \e request on success, otherwise \e null on error.</returns>
+        /*! \sa [Stat.getElement](@ref AcUtils#Stat#getElement) */
+        public static string acxStreamName(this XElement version, RealVirtual request)
+        {
+            Debug.Assert(version.Name == "version", @"version.Name == ""version""");
+            string temp = (request == RealVirtual.Real) ? (string)version.Attribute("realNamedVersion") :
+                (string)version.Attribute("virtualNamedVersion");
+            if (temp == null) return null;
+            string stream = temp.Substring(0, temp.IndexOf('/'));
+            return stream;
         }
     }
 }

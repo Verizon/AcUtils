@@ -1,4 +1,4 @@
-﻿/* Copyright (C) 2017 Verizon. All Rights Reserved.
+﻿/* Copyright (C) 2017-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -43,55 +43,55 @@ namespace LatestTransactions
             // general program initialization
             if (!init()) return 1;
 
-            _depots = AcQuery.getDepotNameListAsync().Result;
-            if (_depots == null) return 1;
-
             _transactions = new List<XElement>(_depots.Count);
             if (initTransListAsync().Result == false) return 1;
 
             return report() ? 0 : 1;
         }
 
-        // Initialize our transaction list with the latest transactions for all depots in the repository.
+        // Initialize our transactions list with the latest transactions for all depots in the repository.
         // Returns true if initialization succeeded, otherwise false.
         private static async Task<bool> initTransListAsync()
         {
-            List<Task<XElement>> tasks = new List<Task<XElement>>(_depots.Count);
+            List<Task<bool>> tasks = new List<Task<bool>>(_depots.Count);
             foreach (string depot in _depots)
                 tasks.Add(initLastTransAsync(depot));
 
-            XElement[] arr = await Task.WhenAll(tasks); // finish running all in parallel
-            return (arr != null && arr.All(n => n != null)); // true if all succeeded
+            bool[] arr = await Task.WhenAll(tasks); // finish running all in parallel
+            return (arr != null && arr.All(n => n == true)); // true if all succeeded
         }
 
-        // Run the hist command for depot and add the results to our transactions list. Returns the 
-        // latest transaction in depot on success, otherwise null. AcUtilsException caught and logged 
-        // in %LOCALAPPDATA%\AcTools\Logs\LatestTransactions-YYYY-MM-DD.log on hist command failure.
-        private async static Task<XElement> initLastTransAsync(string depot)
+        // Run the hist command for depot and add the results to our transactions list. Returns 
+        // true if operation succeeds, otherwise false. AcUtilsException caught and logged in 
+        // %LOCALAPPDATA%\AcTools\Logs\LatestTransactions-YYYY-MM-DD.log on hist command failure.
+        // Exception caught and logged in same for a range of exceptions.
+        private async static Task<bool> initLastTransAsync(string depot)
         {
-            XElement trans = null; // assume failure
+            bool ret = false; // assume failure
             try
             {
-                string cmd = String.Format(@"hist -p ""{0}"" -t now -fx", depot);
-                AcResult result = await AcCommand.runAsync(cmd);
-                if (result != null && result.RetVal == 0)
+                AcResult r = await AcCommand.runAsync($@"hist -p ""{depot}"" -t now -fx");
+                if (r != null && r.RetVal == 0)
                 {
-                    XElement xml = XElement.Parse(result.CmdResult);
-                    XElement temp = xml.Element("transaction");
-                    temp.AddAnnotation(depot); // add depot since it's not in the XML
-                    lock (_locker) { _transactions.Add(temp); }
-                    trans = temp;
+                    XElement xml = XElement.Parse(r.CmdResult);
+                    XElement trans = xml.Element("transaction");
+                    trans.AddAnnotation(depot); // add depot since it's not in the XML
+                    lock (_locker) { _transactions.Add(trans); }
+                    ret = true;
                 }
             }
 
             catch (AcUtilsException exc)
             {
-                string msg = String.Format("AcUtilsException caught and logged in Program.initLastTransAsync{0}{1}",
-                    Environment.NewLine, exc.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in Program.initLastTransAsync{Environment.NewLine}{exc.Message}");
             }
 
-            return trans;
+            catch (Exception ecx)
+            {
+                AcDebug.Log($"Exception caught and logged in Program.initLastTransAsync{Environment.NewLine}{ecx.Message}");
+            }
+
+            return ret;
         }
 
         // Generate an Excel worksheet with the results in reverse chronological order so the most 
@@ -103,7 +103,7 @@ namespace LatestTransactions
             Excel.Application excel = new Excel.Application();
             if (excel == null)
             {
-                MessageBox.Show("Excel installation not found.", "LatestTransactions", 
+                MessageBox.Show("Excel installation not found.", "LatestTransactions",
                     MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 return false;
             }
@@ -171,8 +171,8 @@ namespace LatestTransactions
 
             if (ret)
             {
-                string msg = String.Format("Latest transactions saved to {0}", file);
-                MessageBox.Show(msg, "LatestTransactions", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Latest transactions saved to {file}", "LatestTransactions",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             return ret;
@@ -195,14 +195,16 @@ namespace LatestTransactions
             Task<string> prncpl = AcQuery.getPrincipalAsync();
             if (String.IsNullOrEmpty(prncpl.Result))
             {
-                string msg = String.Format("Not logged into AccuRev.{0}Please login and try again.",
-                    Environment.NewLine);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Not logged into AccuRev.{Environment.NewLine}Please login and try again.");
                 return false;
             }
 
             // initialize our class variables from LatestTransactions.exe.config
             if (!initAppConfigData()) return false;
+
+            // list of all depot names in the repository
+            _depots = AcQuery.getDepotNameListAsync().Result;
+            if (_depots == null) return false;
 
             return true;
         }
@@ -223,10 +225,7 @@ namespace LatestTransactions
             {
                 Process currentProcess = Process.GetCurrentProcess();
                 ProcessModule pm = currentProcess.MainModule;
-                string exeFile = pm.ModuleName;
-                string msg = String.Format("Invalid data in {1}.config{0}{2}",
-                    Environment.NewLine, exeFile, exc.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Invalid data in {pm.ModuleName}.config{Environment.NewLine}{exc.Message}");
                 ret = false;
             }
 

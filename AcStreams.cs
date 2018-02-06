@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,17 +29,17 @@ namespace AcUtils
     /// </summary>
     /*! \accunote_ AccuRev is not consistent in its designation of stream types. The <tt>show streams</tt> command returns 
     \b passthrough and \b normal while the server_admin_trig receives \b passthru and \b regular and the server_master_trig 
-    receives /b dynamic. We cover them all here in one enum. */
+    receives \b dynamic. We cover them all here in one enum. */
     public enum StreamType {
         /*! \var unknown
         A defect where \"<b>* unknown *</b>\" is sent. */
         unknown,
-        /*! \var dynamic
-        A dynamic stream. */
-        dynamic,
         /*! \var normal
         A dynamic stream. */
         normal,
+        /*! \var dynamic
+        A dynamic stream. */
+        dynamic,
         /*! \var regular
         A dynamic stream. */
         regular,
@@ -80,7 +80,7 @@ namespace AcUtils
         private int _basisID; // basis stream ID number
         private AcDepot _depot; // depot where the stream resides
         private bool _isDynamic; // false in the case of workspace, snapshot and passthrough, true if normal
-        private StreamType _type; // unknown, normal, regular, workspace, snapshot, passthru, passthrough
+        private StreamType _type; // unknown, normal, dynamic, regular, workspace, snapshot, passthru, passthrough, gated, staging
         private DateTime? _time;  // basis time; XML attribute "time" only exists for snapshot streams (creation date) or when a dynamic stream has a time basis
         // note, the result of specifying 'As transaction #' in the GUI results in a time basis set on the stream
         private DateTime _startTime; // time the stream was created
@@ -228,8 +228,8 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// The kind of stream: \e unknown, \e normal, \e regular, \e workspace, 
-        /// \e snapshot, \e passthru, or \e passthrough.
+        /// The kind of stream: \e unknown, \e normal, \e dynamic, \e regular, \e workspace, 
+        /// \e snapshot, \e passthru, \e passthrough, \e gated or \e staging.
         /// </summary>
         public StreamType Type
         {
@@ -299,7 +299,7 @@ namespace AcUtils
         /// \arg \c G Stream name. Default when not using a format specifier.
         /// \arg \c LV Long version (verbose).
         /// \arg \c I Stream ID number.
-        /// \arg \c T [Stream type](@ref AcUtils#StreamType):  \e unknown, \e normal, \e regular, \e workspace, \e snapshot, \e passthru, or \e passthrough.
+        /// \arg \c T [Stream type](@ref AcUtils#StreamType): \e unknown, \e normal, \e dynamic, \e regular, \e workspace, \e snapshot, \e passthru, \e passthrough, \e gated or \e staging.
         /// \arg \c BT Stream's basis time: snapshot stream creation or dynamic stream time basis.
         /// \arg \c C Time the stream was created.
         /// \arg \c BN Basis stream name.
@@ -333,7 +333,7 @@ namespace AcUtils
                 }
                 case "I": // stream's ID number
                     return ID.ToString();
-                case "T": // type of stream: unknown, normal, regular, dynamic, workspace, snapshot, passthru, or passthrough
+                case "T": // type of stream: unknown, normal, dynamic, regular, workspace, snapshot, passthru, passthrough, gated, staging
                     return Type.ToString();
                 case "BT": // stream's time basis
                     return Time.ToString();
@@ -419,7 +419,7 @@ namespace AcUtils
         /// </summary>
         /// <param name="depot">The depot for which streams will be created.</param>
         /// <param name="listfile">List file <tt>\%APPDATA\%\\AcTools\\<prog_name\>\\<depot_name\>.streams</tt> for the 
-        /// <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a> 
+        /// <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a> 
         /// command if found, otherwise \e null.<br>
         /// Example: <tt>"C:\Users\barnyrd\AppData\Roaming\AcTools\FooApp\NEPTUNE.streams"</tt>.</param>
         /// <returns>\e true if initialization succeeded, \e false otherwise.</returns>

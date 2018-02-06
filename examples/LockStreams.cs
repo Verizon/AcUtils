@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Verizon. All Rights Reserved.
+/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ namespace LockStreams
             AcPrincipal group = groups.getPrincipal("DEV_LEAD");
             if (group == null) return false;
 
-            AcDepots depots = new AcDepots(true); // true for dynamic streams only
+            AcDepots depots = new AcDepots(dynamicOnly: true); // dynamic streams only in select depots
             if (!(await depots.initAsync(_selDepots))) return false;
             foreach (AcDepot depot in depots.OrderBy(n => n)) // use default sort ordering
             {
@@ -63,8 +63,7 @@ namespace LockStreams
                 foreach (AcStream stream in filter.OrderBy(n => n)) // ..
                 {
                     bool ret = await locks.lockAsync(stream.Name, "Authorized users only", LockKind.to, group);
-                    string msg = String.Format(@"{0} ""{1}"" lock {2}", stream, LockKind.to, ret ? "succeeded" : "failed");
-                    Console.WriteLine(msg);
+                    Console.WriteLine($@"{stream} ""{LockKind.to}"" lock {(ret ? "succeeded" : "failed")}");
                 }
             }
 

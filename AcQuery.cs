@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -181,8 +181,7 @@ namespace AcUtils
                     {
                         XPathDocument doc = new XPathDocument(reader);
                         XPathNavigator nav = doc.CreateNavigator();
-                        string xpathQuery = String.Format(@"AcResponse/Element/Change/Stream2");
-                        XPathNodeIterator iter1 = nav.Select(xpathQuery);
+                        XPathNodeIterator iter1 = nav.Select(@"AcResponse/Element/Change/Stream2");
                         foreach (XPathNavigator iter2 in iter1)
                         {
                             string temp = iter2.GetAttribute("Version", String.Empty);
@@ -242,8 +241,7 @@ namespace AcUtils
                     {
                         XPathDocument doc = new XPathDocument(reader);
                         XPathNavigator nav = doc.CreateNavigator();
-                        string xpathQuery = String.Format(@"AcResponse/element");
-                        XPathNodeIterator iter1 = nav.Select(xpathQuery);
+                        XPathNodeIterator iter1 = nav.Select(@"AcResponse/element");
                         foreach (XPathNavigator iter2 in iter1)
                         {
                             string location = iter2.GetAttribute("location", String.Empty);

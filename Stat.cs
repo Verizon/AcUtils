@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -187,7 +187,7 @@ namespace AcUtils
         /// <summary>
         /// UNIX/Linux systems only: \e true if the executable bit is set, \e false if cleared.
         /// </summary>
-        /*! \sa [AccuRev chmode command](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_chmod.html) */
+        /*! \sa [AccuRev chmode command](https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_chmod.html) */
         public bool Executable
         {
             get { return _executable; }
@@ -434,9 +434,9 @@ namespace AcUtils
         try {
             AcResult result = await AcCommand.runAsync(@"stat -foix -B -d -s ""NEPTUNE_DEV2_barnyrd""");
             if (result == null || result.RetVal != 0) return false; // error occurred, check log file
-            Stat.init(result.CmdResult); // populate list using XML from the stat command
-            foreach (Element elem in Stat.Elements.OrderBy(n => n.Location).ThenByDescending(n => n.ModTime))
-                Console.WriteLine(elem.ToString("LV"));
+            if (Stat.init(result.CmdResult)) // populate list using XML from the stat command
+                foreach (Element elem in Stat.Elements.OrderBy(n => n.Location).ThenByDescending(n => n.ModTime))
+                    Console.WriteLine(elem.ToString("LV"));
         }
 
         catch (AcUtilsException ecx)
@@ -476,7 +476,7 @@ namespace AcUtils
 
         /// <summary>
         /// Populate this list with elements from the XML emitted by the 
-        /// [stat](https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_stat.html) command.
+        /// [stat](https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_stat.html) command.
         /// </summary>
         /// <param name="xml">XML from the AccuRev \c stat command.</param>
         /// <returns>\e true if parsing was successful, \e false otherwise.</returns>
@@ -546,35 +546,44 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Get the list of elements that correspond to the \e version in a [transaction](@ref AcUtils#Transaction) from the \c hist command.
+        /// Get the \c stat command's Element object from this list that corresponds to the \e version element in a transaction from the \c hist command.
         /// </summary>
-        /// <remarks>A Version and Element object match when their respective virtual-real stream/version numbers match and the 
-        /// Element.NamedVersion stream name portion (minus numbers) match the Version.Stream or Version.Workspace.</remarks>
-        /// <param name="version">The Version object to query.</param>
-        /// <returns>The list of elements that match the \e version if found, otherwise \e null.</returns>
+        /// <param name="version">The version element to query.</param>
         /*! \code
-        public bool initRows(AcUtils.Version version)
-        {
-            bool ret = false; // assume failure
-            try
-            {
-                IList<Element> list = Stat.getElement(version);
-                IEnumerable<Element> filter = list.Where(e => e.NamedVersion.StartsWith(version.Stream));
-                Element element = filter.SingleOrDefault();
-                ...
+            <version path="\.\foo.java" eid="65" virtual="11/8" real="19/5" virtualNamedVersion="MARS_DEV2/8" realNamedVersion="MARS_DEV2_barnyrd/5" elem_type="text" dir="no" />
             \endcode */
-        /*! \deprecated
-            Prefer using LINQ to XML and custom query operators from the Extensions class.
+        /// <returns>The Element object that corresponds to the \e version element if found, otherwise \e null.</returns>
+        /*! 
+        The Element object and \e version element relate when all of the following conditions are true:
+        - Their element ID's match.
+        - Their respective virtual and real stream/version numbers match.
+        - The Element.NamedVersion stream name matches the version's \e virtualNamedVersion or \e realNamedVersion stream name.
         */
-        public static IList<Element> getElement(Version version)
+        /*! \sa <a href="_latest_promotions_8cs-example.html">LatestPromotions.cs</a>, <a href="_latest_overlaps_8cs-example.html">LatestOverlaps.cs</a> */
+        public static Element getElement(XElement version)
         {
-            IEnumerable<Element> filter = from e in _elements
-                                          where e.EID == version.EID &&
-                                          e.VirStreamNumber == version.VirStreamNumber && e.VirVersionNumber == version.VirVersionNumber &&
-                                          e.RealStreamNumber == version.RealStreamNumber && e.RealVersionNumber == version.RealVersionNumber &&
-                                          (e.NamedVersion.StartsWith(version.Stream) || e.NamedVersion.StartsWith(version.Workspace))
-                                          select e;
-            return filter.ToList();
+            Debug.Assert(version.Name == "version", @"version.Name == ""version""");
+            int? virEID = (int?)version.Attribute("eid");
+            if (virEID == null) return null;
+
+            int[] virStreamVersion = version.acxStreamVersion(RealVirtual.Virtual);
+            if (virStreamVersion == null) return null;
+            int[] realStreamVersion = version.acxStreamVersion(RealVirtual.Real);
+            if (realStreamVersion == null) return null;
+
+            string virStream = version.acxStreamName(RealVirtual.Virtual);
+            if (virStream == null) return null;
+            string realStream = version.acxStreamName(RealVirtual.Real);
+            if (realStream == null) return null;
+
+            IEnumerable<Element> query = (from e in _elements
+                                          where e.EID == virEID &&
+                                          e.VirStreamNumber == virStreamVersion[0] && e.VirVersionNumber == virStreamVersion[1] &&
+                                          e.RealStreamNumber == realStreamVersion[0] && e.RealVersionNumber == realStreamVersion[1] &&
+                                          (e.NamedVersion.StartsWith(virStream) || e.NamedVersion.StartsWith(realStream))
+                                          select e).Distinct();
+            return query.SingleOrDefault();
         }
     }
 }
+

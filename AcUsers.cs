@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -237,6 +237,7 @@ namespace AcUtils
         /// </remarks>
         /*! \code
             <activeDir>
+              <!-- contact your company LDAP administrator for these values -->
               <domains>
                 <add host="xyzdc.mycorp.com" path="DC=XYZ,DC=xy,DC=zcorp,DC=com"/>
                 <add host="abcdc.mycorp.com" path="DC=ABC,DC=ab,DC=com"/>

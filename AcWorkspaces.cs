@@ -1,5 +1,5 @@
 /*! \file
-Copyright (C) 2016 Verizon. All Rights Reserved.
+Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ namespace AcUtils
     /// Workspace type the user created. These numeric values are passed by AccuRev and converted to our enum type.
     /// </summary>
     public enum WsType {
-        /*! \var Workspace
-        1: A workspace. */
-        Workspace = 1,
+        /*! \var Standard
+        1: A standard workspace. */
+        Standard = 1,
         /*! \var RefTree
         3: A reference tree. */
         RefTree = 3,
@@ -82,7 +82,7 @@ namespace AcUtils
         private AcDepot _depot; // depot the workspace is located in
         private int _targetLevel; // how up-to-date the workspace should be
         private int _updateLevel; // how up-to-date the workspace actually is
-        private DateTime? _lastUpdate; // time the workspace was last updated
+        private DateTime? _fileModTime; // time of the oldest non-member file in the workspace with modified status, otherwise time the update command was issued
         private WsType _type; // 1 (standard workspace), 3 (reference tree), 9 (exclusive-file locking), 17 (anchor-required)
         private WsEOL _eol; // 0 (platform-appropriate), 1 (Unix/Linux style:NL), 2 (Windows style: CR-LF)
         private AcPrincipal _principal = new AcPrincipal(); // principal who owns the workspace
@@ -293,12 +293,15 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Time the workspace was last updated.
+        /// This property value is used in AccuRev's [update algorithm](https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/the_update_algorithm.html) 
+        /// while processing the \c update command. The value is stored and updated internally by AccuRev when the \c update operation succeeds. 
+        /// It is the date and time of the oldest \e non-member file in the workspace with (\e modified) status. If no such file exists, 
+        /// it is the date and time the \c update command was issued.
         /// </summary>
-        public DateTime? LastUpdate
+        public DateTime? FileModTime
         {
-            get { return _lastUpdate; }
-            internal set { _lastUpdate = value; }
+            get { return _fileModTime; }
+            internal set { _fileModTime = value; }
         }
 
         /// <summary>
@@ -357,7 +360,7 @@ namespace AcUtils
         /// \arg \c D Depot name.
         /// \arg \c TL [Target level](@ref AcUtils#AcWorkspace#TargetLevel): how up-to-date the workspace should be.
         /// \arg \c UL [Update level](@ref AcUtils#AcWorkspace#UpdateLevel): how up-to-date the workspace actually is.
-        /// \arg \c U Time the workspace was last updated.
+        /// \arg \c U Time of the oldest non-member file in the workspace with (\e modified) status, otherwise the time the \c update command was issued.
         /// \arg \c T [Workspace type](@ref AcUtils#WsType): standard, exclusive-file locking, anchor-required, or reference tree.
         /// \arg \c E [End-of-line character](@ref AcUtils#WsEOL) in use by the workspace: platform-appropriate, Unix/Linux style, or Windows style.
         /// \arg \c PI Workspace owner's principal ID number.
@@ -380,8 +383,8 @@ namespace AcUtils
                     return Name; // general format should be short since it can be called by anything
                 case "LV": // long version (verbose)
                 {
-                    string text = String.Format(@"{1} ({2}) {{{3}}}, Updated {4}{0}Location: ""{5}"", Storage: ""{6}""{0}Host: {7}, ULevel-Target [{8}:{9}]{10}{0}Depot: {11}, EOL: {12}, Hidden: {13}{0}",
-                        Environment.NewLine, Name, ID, Type, LastUpdate, Location, Storage, Host, UpdateLevel, TargetLevel, (TargetLevel != UpdateLevel) ? " (incomplete)" : "", Depot, EOL, Hidden);
+                    string text = String.Format(@"{1} ({2}) {{{3}}}{0}Location: ""{4}"", Storage: ""{5}""{0}Host: {6}, ULevel-Target [{7}:{8}]{9}{0}Depot: {10}, EOL: {11}, Hidden: {12}{0}",
+                        Environment.NewLine, Name, ID, Type, Location, Storage, Host, UpdateLevel, TargetLevel, (TargetLevel != UpdateLevel) ? " (incomplete)" : "", Depot, EOL, Hidden);
                     return text;
                 }
                 case "I": // workspace ID number
@@ -400,8 +403,8 @@ namespace AcUtils
                     return TargetLevel.ToString();
                 case "UL": // how up-to-date the workspace actually is
                     return UpdateLevel.ToString();
-                case "U": // time the workspace was last updated
-                    return LastUpdate.ToString();
+                case "U": // time of the oldest non-member file in the workspace with modified status, otherwise time the update command was issued
+                    return FileModTime.ToString();
                 case "T": // type of workspace: standard, exclusive-file locking, anchor-required, or reference tree
                     return Type.ToString();
                 case "E": // end-of-line character in use by the workspace: platform-appropriate, Unix/Linux style, or Windows style
@@ -649,7 +652,7 @@ namespace AcUtils
                     ws.TargetLevel = (int)e.Attribute("Target_trans");
                     ws.UpdateLevel = (int)e.Attribute("Trans");
                     string filemod = (string)e.Attribute("fileModTime");
-                    ws.LastUpdate = AcDateTime.AcDate2DateTime(filemod);
+                    ws.FileModTime = AcDateTime.AcDate2DateTime(filemod);
                     int type = (int)e.Attribute("Type");
                     ws.Type = (WsType)type;
                     int eol = (int)e.Attribute("EOL");

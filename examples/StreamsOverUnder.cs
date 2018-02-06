@@ -1,4 +1,4 @@
-﻿/* Copyright (C) 2016 Verizon. All Rights Reserved.
+﻿/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -60,22 +60,15 @@ namespace StreamsOverUnder
         // Initialize Stat with all versions in the repository with overlap or underlap status.
         private static async Task<bool> initStatAsync()
         {
-            AcDepots depots = new AcDepots(true); // true for dynamic streams only
+            AcDepots depots = new AcDepots(dynamicOnly: true); // dynamic streams only
             if (!(await depots.initAsync())) return false;
 
             List<Task<bool>> tasks = new List<Task<bool>>();
-            string cmd = String.Empty;
             foreach (AcDepot depot in depots)
-            {
                 foreach (AcStream stream in depot.Streams.Where(n => n.HasDefaultGroup))
-                {
-                    cmd = String.Format(@"stat -s ""{0}"" -o -B -fx", stream);
-                    tasks.Add(runStatCommandAsync(cmd));
-                }
-            }
+                    tasks.Add(runStatCommandAsync($@"stat -s ""{stream}"" -o -B -fx"));
 
-            // asynchronously await multiple asynchronous operations.. fast!
-            bool[] arr = await Task.WhenAll(tasks);
+            bool[] arr = await Task.WhenAll(tasks); // continue running stat commands in parallel
             return (arr != null && arr.All(n => n == true)); // true if all succeeded
         }
 
@@ -92,9 +85,7 @@ namespace StreamsOverUnder
 
             catch (AcUtilsException exc)
             {
-                string msg = String.Format("AcUtilsException caught in runStatCommandAsync{0}{1}", 
-                    Environment.NewLine, exc.Message);
-                Console.WriteLine(msg);
+                Console.WriteLine($"AcUtilsException caught in runStatCommandAsync{Environment.NewLine}{exc.Message}");
             }
 
             return (ret && Stat.init(result.CmdResult));

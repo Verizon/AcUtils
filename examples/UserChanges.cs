@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Verizon. All Rights Reserved.
+/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
-// Required references: System, System.Xml.Linq, AcUtils.dll
+// Required references: AcUtils.dll, System.Xml.Linq, 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,37 +35,35 @@ namespace UserChanges
 
         public static async Task<bool> userChangesAsync(string user, string startTime, string endTime)
         {
-            Console.WriteLine(@"User: {0}, ""{1} - {2}""{3}", user, startTime, endTime, Environment.NewLine);
+            Console.WriteLine($@"User: {user}, ""{startTime} - {endTime}""{Environment.NewLine}");
             List<string> depots = await AcQuery.getDepotNameListAsync();
             if (depots == null) return false; // operation failed, check log file
             foreach (string depot in depots)
             {
                 // start-end times reversed as workaround for AccuRev issue 15780
-                string time = String.Format("{0} - {1}", endTime, startTime);
-                string hist = String.Format(@"hist -p ""{0}"" -t ""{1}"" -u ""{2}"" -k keep -fx", depot, time, user);
-                AcResult r1 = await AcCommand.runAsync(hist);
-                if (r1 == null || r1.RetVal != 0) return false; // operation failed, check log file
+                string time = $"{endTime} - {startTime}";
+                AcResult r1 = await AcCommand.runAsync($@"hist -p ""{depot}"" -t ""{time}"" -u ""{user}"" -k keep -fx");
+                if (r1 == null || r1.RetVal != 0) return false; // operation failed
 
                 XElement x1 = XElement.Parse(r1.CmdResult);
                 foreach (XElement t in x1.Elements("transaction"))
                 {
                     int transID = (int)t.Attribute("id");
                     string tcomment = t.acxComment();
-                    Console.WriteLine("Depot: {0}, {{{1}}} {2}{3}", depot, transID, (DateTime)t.acxTime("time"),
-                        String.IsNullOrEmpty(tcomment) ? String.Empty : ", " + tcomment);
+                    Console.WriteLine($"Depot: {depot}, {{{transID}}} {(DateTime)t.acxTime("time")}" +
+                        $"{(String.IsNullOrEmpty(tcomment) ? String.Empty : ", " + tcomment)}");
 
                     foreach (XElement v in t.Elements("version"))
                     {
                         string path = (string)v.Attribute("path");
-                        Console.WriteLine("\tEID: {0} {1} ({2})", (int)v.Attribute("eid"), path, (string)v.Attribute("real"));
+                        Console.WriteLine($"\tEID: {(int)v.Attribute("eid")} {path} ({(string)v.Attribute("real")})");
                         string mergedAgainstNamed = v.acxMergedAgainstNamed();
-                        Console.WriteLine("\tReal: {0}, Ancestor: {1}{2}", v.acxRealNamed(), v.acxAncestorNamed(),
-                            String.IsNullOrEmpty(mergedAgainstNamed) ? String.Empty : ", Merged against: " + mergedAgainstNamed);
+                        Console.WriteLine($"\tReal: {v.acxRealNamed()}, Ancestor: {v.acxAncestorNamed()}" +
+                            $"{(String.IsNullOrEmpty(mergedAgainstNamed) ? String.Empty : ", Merged against: " + mergedAgainstNamed)}");
 
                         string realNamed = (string)v.Attribute("realNamedVersion");
-                        string anno = String.Format(@"annotate -v ""{0}"" -fxtu ""{1}""", realNamed, path);
-                        AcResult r2 = await AcCommand.runAsync(anno);
-                        if (r2 == null || r2.RetVal != 0) return false; // operation failed, check log file
+                        AcResult r2 = await AcCommand.runAsync($@"annotate -v ""{realNamed}"" -fxtu ""{path}""");
+                        if (r2 == null || r2.RetVal != 0) return false; // operation failed
 
                         // get this transaction from the annotate results
                         XElement x2 = XElement.Parse(r2.CmdResult);
@@ -78,10 +76,7 @@ namespace UserChanges
                         {
                             XElement diff = trans.Parent; // get diff element for this transaction from annotate results
                             foreach (XElement ln in diff.Elements("line")) // line elements are transaction element siblings
-                            {
-                                Console.WriteLine("\tLine number: {0} \"{1}\" {{{2}}}, {3}", (int)ln.Attribute("number"),
-                                    (string)ln.Attribute("type"), (int)ln.Attribute("trans"), (string)ln);
-                            }
+                                Console.WriteLine($"\tLine number: {(int)ln.Attribute("number")} \"{(string)ln.Attribute("type")}\" {{{(int)ln.Attribute("trans")}}}, {(string)ln}");
                         }
 
                         Console.WriteLine();
@@ -93,4 +88,3 @@ namespace UserChanges
         }
     }
 }
-

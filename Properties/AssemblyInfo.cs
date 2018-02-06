@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Verizon. All Rights Reserved.
+/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Verizon")]
 [assembly: AssemblyProduct("AcUtils")]
-[assembly: AssemblyCopyright("Copyright (C) 2016 Verizon. All Rights Reserved.")]
+[assembly: AssemblyCopyright("Copyright (C) 2016-2018 Verizon. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -44,7 +44,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.6.0.0")]
-[assembly: AssemblyFileVersion("1.6.0.0")]
+[assembly: AssemblyVersion("1.6.1.0")]
+[assembly: AssemblyFileVersion("1.6.1.0")]
 
 [assembly: System.CLSCompliant(true)]

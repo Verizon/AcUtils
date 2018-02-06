@@ -1,4 +1,4 @@
-﻿/* Copyright (C) 2017 Verizon. All Rights Reserved.
+﻿/* Copyright (C) 2017-2018 Verizon. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -50,12 +50,10 @@ namespace Stranded
             if (ret)
             {
                 report();
-                string endMsg = String.Format("Total stranded elements: {0}", _totalStranded);
-                log(endMsg);
+                log($"Total stranded elements: {_totalStranded}");
 #if DEBUG
                 AcDuration ts = stopWatch.Elapsed;
-                string execTime = String.Format("{0} to complete execution", ts.ToString());
-                log(execTime);
+                log($"{ts.ToString()} to complete execution");
 #endif
             }
 
@@ -70,7 +68,7 @@ namespace Stranded
             bool ret = false; // assume failure
             try
             {
-                AcDepots depots = new AcDepots(true); // true for dynamic streams only
+                AcDepots depots = new AcDepots(dynamicOnly: true); // dynamic streams only
                 if (!(await depots.initAsync())) return false;
 
                 List<Task<bool>> tasks = new List<Task<bool>>();
@@ -89,24 +87,22 @@ namespace Stranded
 
             catch (Exception ecx)
             {
-                string msg = String.Format("Exception caught and logged in Program.getStrandedAsync{0}{1}",
-                    Environment.NewLine, ecx.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in Program.getStrandedAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
         }
 
-        // Run the AccuRev stat command for the stream param and initialize our class dictionary variable _map 
-        // with the results. Returns true if the operation succeeded, false otherwise. AcUtilsException caught 
-        // and logged in %LOCALAPPDATA%\AcTools\Logs\Stranded-YYYY-MM-DD.log on stat command failure.
+        // Run the AccuRev stat command for the stream and initialize our _map class variable with the results. 
+        // Returns true if the operation succeeded, false otherwise. AcUtilsException caught and logged in 
+        // %LOCALAPPDATA%\AcTools\Logs\Stranded-YYYY-MM-DD.log on stat command failure. Exception caught and 
+        // logged in same for a range of exceptions.
         private static async Task<bool> runStatCommandAsync(AcStream stream)
         {
             bool ret = false; // assume failure
             try
             {
-                string cmd = String.Format(@"stat -fx -s ""{0}"" -i", stream);
-                AcResult result = await AcCommand.runAsync(cmd);
+                AcResult result = await AcCommand.runAsync($@"stat -fx -s ""{stream}"" -i");
                 if (result != null && result.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(result.CmdResult);
@@ -120,17 +116,19 @@ namespace Stranded
 
             catch (AcUtilsException exc)
             {
-                string msg = String.Format("AcUtilsException caught and logged in Program.runStatCommandAsync{0}{1}", 
-                    Environment.NewLine, exc.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"AcUtilsException caught and logged in Program.runStatCommandAsync{Environment.NewLine}{exc.Message}");
+            }
+
+            catch (Exception ecx)
+            {
+                AcDebug.Log($"Exception caught and logged in Program.runStatCommandAsync{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
         }
 
-        // Helper function for the runStatCommandAsync method. Used to initialize the value portion of class dictionary 
-        // variable _map that associates each stream with their stranded elements info; the list of status types found 
-        // and their count.
+        // Helper function for the runStatCommandAsync method. Used to initialize the value portion of our _map class variable 
+        // that associates each stream with their stranded elements info; the list of status types found and their count.
         private static SortedList<string, int> initVal(XElement xml)
         {
             SortedList<string, int> status = new SortedList<string, int>();
@@ -161,11 +159,7 @@ namespace Stranded
                 log(ii.Key.Name); // stream name
                 SortedList<string, int> sc = ii.Value; // status type and count
                 foreach (KeyValuePair<string, int> jj in sc)
-                {
-                    string line = String.Format("{0} {{{1}}}", jj.Key, jj.Value);
-                    log(line);
-                }
-
+                    log($"{jj.Key} {{{jj.Value}}}");
                 log("");
             }
         }
@@ -188,9 +182,7 @@ namespace Stranded
             Task<string> prncpl = AcQuery.getPrincipalAsync();
             if (String.IsNullOrEmpty(prncpl.Result))
             {
-                string msg = String.Format("Not logged into AccuRev.{0}Please login and try again.",
-                    Environment.NewLine);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Not logged into AccuRev.{Environment.NewLine}Please login and try again.");
                 return false;
             }
 
@@ -225,10 +217,7 @@ namespace Stranded
             {
                 Process currentProcess = Process.GetCurrentProcess();
                 ProcessModule pm = currentProcess.MainModule;
-                string exeFile = pm.ModuleName;
-                string msg = String.Format("Invalid data in {1}.config{0}{2}",
-                    Environment.NewLine, exeFile, exc.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Invalid data in {pm.ModuleName}.config{Environment.NewLine}{exc.Message}");
                 ret = false;
             }
 
@@ -259,9 +248,7 @@ namespace Stranded
 
             catch (Exception exc)
             {
-                string msg = String.Format("Exception caught and logged in Program.initStrandedFoundLogging{0}{1}",
-                    Environment.NewLine, exc.Message);
-                AcDebug.Log(msg);
+                AcDebug.Log($"Exception caught and logged in Program.initStrandedFoundLogging{Environment.NewLine}{exc.Message}");
             }
 
             return ret;
