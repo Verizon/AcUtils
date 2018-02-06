@@ -378,7 +378,7 @@ Order comparison</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>User's group membership list as an ordered formatted comma-delimited string, otherwise <em>null</em> if not found.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_groups.html#a8eace483fcda41d2fc8d95ebd4473788">AcGroups.isMember</a>, <a class="el" href="class_ac_utils_1_1_ac_groups.html#a5a98d1a9471739bbb7aefabf4d61a19b">AcGroups.getMembers</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00481">481</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00482">482</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
 </div>
 </div>
@@ -460,9 +460,9 @@ Order comparison</h2></td></tr>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_domain_collection.html" title="The list of Active Directory domain host-path pairs from <prog_name>.exe.config. ">DomainCollection</a>, <a class="el" href="class_ac_utils_1_1_prop_collection.html" title="The list of Active Directory user property field-title pairs from <prog_name>.exe.config. These are user properties not in the regular default set. ">PropCollection</a>, <a class="el" href="class_ac_utils_1_1_ac_user.html#aeb59f13025e9857aa580ed98d781045b" title="Additional Active Directory user properties not in the regular default set. ">Other</a></dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>User properties require that AccuRev principal names match login names stored on the LDAP server. </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00366">366</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00367">367</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_users_8cs_source.html#l00630">AcUtils.AcUsers.initUserPropsAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_users_8cs_source.html#l00631">AcUtils.AcUsers.initUserPropsAsync()</a>.</p>
 
 </div>
 </div>
@@ -501,9 +501,9 @@ Order comparison</h2></td></tr>
 <dl class="shows_"><dt><b><a class="el" href="shows_.html#_shows_000018">show command:</a></b></dt><dd><code>show -fx -u &lt;user&gt; groups</code> </dd></dl>
 <dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000014">AccuNote:</a></b></dt><dd>Unlike the <code>show</code> command used here, its <code>show -fx -g &lt;group&gt; members</code> counterpart does not include memberships resulting from indirect (implicit) membership. </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00439">439</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00440">440</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_users_8cs_source.html#l00630">AcUtils.AcUsers.initUserPropsAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_users_8cs_source.html#l00631">AcUtils.AcUsers.initUserPropsAsync()</a>.</p>
 
 </div>
 </div>
@@ -571,7 +571,7 @@ Order comparison</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00288">288</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00289">289</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
 </div>
 </div>
@@ -767,6 +767,7 @@ Order comparison</h2></td></tr>
 <p>Additional Active Directory user properties not in the regular <a href="class_ac_utils_1_1_ac_user.html#properties">default set</a>. </p>
 <p>Optionally initialized during <a class="el" href="class_ac_utils_1_1_ac_users.html#ab9d6d159b5de4c3ef7ec201c6fde60bf">list construction</a> for user properties beyond the <a href="class_ac_utils_1_1_ac_user.html#properties">default set</a>. Elements are [<em>title</em>,<em>value</em>] pairs: <em>title</em> from the <a class="el" href="class_ac_utils_1_1_prop_collection.html">properties section</a> in <code>&lt;prog_name&gt;.exe.config</code> and its value from Active Directory. </p>
 <div class="fragment"><div class="line">&lt;activeDir&gt;</div>
+<div class="line">  &lt;!-- contact your company LDAP administrator <span class="keywordflow">for</span> these values --&gt;</div>
 <div class="line">  &lt;domains&gt;</div>
 <div class="line">    &lt;add host=<span class="stringliteral">&quot;xyzdc.mycorp.com&quot;</span> path=<span class="stringliteral">&quot;DC=XYZ,DC=xy,DC=zcorp,DC=com&quot;</span>/&gt;</div>
 <div class="line">    &lt;add host=<span class="stringliteral">&quot;abcdc.mycorp.com&quot;</span> path=<span class="stringliteral">&quot;DC=ABC,DC=ab,DC=com&quot;</span>/&gt;</div>
@@ -778,17 +779,17 @@ Order comparison</h2></td></tr>
 <div class="line">  &lt;/properties&gt;</div>
 <div class="line">&lt;/activeDir&gt;</div>
 <div class="line">...</div>
-<div class="line">row[<span class="stringliteral">&quot;GivenName&quot;</span>] = user.GivenName;</div>
-<div class="line">row[<span class="stringliteral">&quot;Surname&quot;</span>] = user.Surname;</div>
-<div class="line">row[<span class="stringliteral">&quot;Mobile&quot;</span>] = user.Other.ContainsKey(<span class="stringliteral">&quot;Mobile&quot;</span>) ? user.Other[<span class="stringliteral">&quot;Mobile&quot;</span>] : String.Empty;</div>
-<div class="line">row[<span class="stringliteral">&quot;EmailAddress&quot;</span>] = user.EmailAddress;</div>
-<div class="line">row[<span class="stringliteral">&quot;Manager&quot;</span>] = user.Other.ContainsKey(<span class="stringliteral">&quot;Manager&quot;</span>) ? getManager((<span class="keywordtype">string</span>)user.Other[<span class="stringliteral">&quot;Manager&quot;</span>]) : String.Empty;</div>
-<div class="line">row[<span class="stringliteral">&quot;Department&quot;</span>] = user.Other.ContainsKey(<span class="stringliteral">&quot;Department&quot;</span>) ? user.Other[<span class="stringliteral">&quot;Department&quot;</span>] : String.Empty;</div>
-<div class="line">row[<span class="stringliteral">&quot;Description&quot;</span>] = user.Description;</div>
+<div class="line">row[<span class="stringliteral">&quot;GivenName&quot;</span>] = <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>.GivenName;</div>
+<div class="line">row[<span class="stringliteral">&quot;Surname&quot;</span>] = <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>.Surname;</div>
+<div class="line">row[<span class="stringliteral">&quot;Mobile&quot;</span>] = <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>.Other.ContainsKey(<span class="stringliteral">&quot;Mobile&quot;</span>) ? <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>.Other[<span class="stringliteral">&quot;Mobile&quot;</span>] : String.Empty;</div>
+<div class="line">row[<span class="stringliteral">&quot;EmailAddress&quot;</span>] = <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>.EmailAddress;</div>
+<div class="line">row[<span class="stringliteral">&quot;Manager&quot;</span>] = <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>.Other.ContainsKey(<span class="stringliteral">&quot;Manager&quot;</span>) ? getManager((<span class="keywordtype">string</span>)<a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>.Other[<span class="stringliteral">&quot;Manager&quot;</span>]) : String.Empty;</div>
+<div class="line">row[<span class="stringliteral">&quot;Department&quot;</span>] = <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>.Other.ContainsKey(<span class="stringliteral">&quot;Department&quot;</span>) ? <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>.Other[<span class="stringliteral">&quot;Department&quot;</span>] : String.Empty;</div>
+<div class="line">row[<span class="stringliteral">&quot;Description&quot;</span>] = <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>.Description;</div>
 <div class="line">...</div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_prop_collection.html" title="The list of Active Directory user property field-title pairs from <prog_name>.exe.config. These are user properties not in the regular default set. ">PropCollection</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00262">262</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00263">263</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
 </div>
 </div>
@@ -814,7 +815,7 @@ Order comparison</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00157">157</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_depots_8cs_source.html#l00821">AcUtils.AcDepots.canViewAsync()</a>, <a class="el" href="_ac_users_8cs_source.html#l00119">AcUtils.AcUser.CompareTo()</a>, <a class="el" href="_ac_users_8cs_source.html#l00481">AcUtils.AcUser.getGroups()</a>, <a class="el" href="_ac_users_8cs_source.html#l00102">AcUtils.AcUser.GetHashCode()</a>, <a class="el" href="_ac_users_8cs_source.html#l00366">AcUtils.AcUser.initFromADAsync()</a>, and <a class="el" href="_ac_users_8cs_source.html#l00439">AcUtils.AcUser.initGroupsListAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_depots_8cs_source.html#l00821">AcUtils.AcDepots.canViewAsync()</a>, <a class="el" href="_ac_users_8cs_source.html#l00119">AcUtils.AcUser.CompareTo()</a>, <a class="el" href="_ac_users_8cs_source.html#l00482">AcUtils.AcUser.getGroups()</a>, <a class="el" href="_ac_users_8cs_source.html#l00102">AcUtils.AcUser.GetHashCode()</a>, <a class="el" href="_ac_users_8cs_source.html#l00367">AcUtils.AcUser.initFromADAsync()</a>, and <a class="el" href="_ac_users_8cs_source.html#l00440">AcUtils.AcUser.initGroupsListAsync()</a>.</p>
 
 </div>
 </div>
@@ -845,7 +846,7 @@ Order comparison</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

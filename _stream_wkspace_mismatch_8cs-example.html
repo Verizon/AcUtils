@@ -45,8 +45,8 @@
 <div class="title">StreamWkspaceMismatch.cs</div>  </div>
 </div><!--header-->
 <div class="contents">
-<p>Show all workspaces whose names do not match their corresponding stream name. Aids in troubleshooting a scenario that exists where <code>chws</code> can complete without its corresponding <code>chstream</code> completing successfully. AccuRev defects 22175 and 27372.</p>
-<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016 Verizon. All Rights Reserved.</span></div>
+<p>Show all workspaces whose names do not match their corresponding stream name. Aids in troubleshooting a scenario that exists where <code>chws</code> can complete without its corresponding <code>chstream</code> completing successfully. The fix is to run <code>accurev chws -s &lt;workspace name from the output&gt; &lt;stream name from the output&gt;</code>. Run the program again to confirm. If still found, run the <code>chws</code> command again with the new output; occasionally it must be run twice. Ignore any messages or warnings that appear. AccuRev defects 22175 and 27372.</p>
+<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.</span></div>
 <div class="line"><span class="comment"></span></div>
 <div class="line"><span class="comment">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment">you may not use this file except in compliance with the License.</span></div>
@@ -59,7 +59,7 @@
 <div class="line"><span class="comment">See the License for the specific language governing permissions and</span></div>
 <div class="line"><span class="comment">limitations under the License. */</span></div>
 <div class="line"></div>
-<div class="line"><span class="comment">// Required references: AcUtils.dll, System.configuration</span></div>
+<div class="line"><span class="comment">// Required references: AcUtils.dll</span></div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Linq;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.<a class="code" href="namespace_system_1_1_threading.html">Threading</a>.<a class="code" href="namespace_system_1_1_threading_1_1_tasks.html">Tasks</a>;</div>
@@ -80,12 +80,12 @@
 <div class="line">            <span class="keywordtype">bool</span> ret = <span class="keyword">false</span>; <span class="comment">// assume failure</span></div>
 <div class="line">            <span class="keywordflow">try</span></div>
 <div class="line">            {</div>
-<div class="line">                <span class="comment">// false for all streams and not just dynamic, true to include hidden streams</span></div>
-<div class="line">                AcDepots depots = <span class="keyword">new</span> AcDepots(<span class="keyword">false</span>, <span class="keyword">true</span>);</div>
+<div class="line">                <span class="comment">// all streams and not just dynamic, include hidden streams</span></div>
+<div class="line">                AcDepots depots = <span class="keyword">new</span> AcDepots(dynamicOnly: <span class="keyword">false</span>, includeHidden: <span class="keyword">true</span>);</div>
 <div class="line">                <span class="keywordflow">if</span> (!(await depots.initAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
-<div class="line">                <span class="comment">// true for all workspaces (not just the script user), true to include hidden workspaces</span></div>
-<div class="line">                AcWorkspaces wkspaces = <span class="keyword">new</span> AcWorkspaces(depots, <span class="keyword">true</span>, <span class="keyword">true</span>);</div>
+<div class="line">                <span class="comment">// all workspaces (not just the script user), include hidden workspaces</span></div>
+<div class="line">                AcWorkspaces wkspaces = <span class="keyword">new</span> AcWorkspaces(depots, allWSpaces: <span class="keyword">true</span>, includeHidden: <span class="keyword">true</span>);</div>
 <div class="line">                <span class="keywordflow">if</span> (!(await wkspaces.initAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
 <div class="line">                <span class="keywordflow">foreach</span> (AcDepot <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> depots.OrderBy(n =&gt; n))</div>
@@ -102,11 +102,7 @@
 <div class="line">                                };</div>
 <div class="line"></div>
 <div class="line">                    <span class="keywordflow">foreach</span> (var f <span class="keywordflow">in</span> query)</div>
-<div class="line">                    {</div>
-<div class="line">                        <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;{0} wspace: {1}, stream: {2}&quot;</span>, f.Hidden ? <span class="stringliteral">&quot;Hidden&quot;</span> : <span class="stringliteral">&quot;Visible&quot;</span>,</div>
-<div class="line">                            f.WorkspaceName, f.StreamName);</div>
-<div class="line">                        Console.WriteLine(msg);</div>
-<div class="line">                    }</div>
+<div class="line">                        Console.WriteLine($<span class="stringliteral">&quot;{(f.Hidden ? &quot;</span>Hidden<span class="stringliteral">&quot; : &quot;</span>Visible<span class="stringliteral">&quot;)} wspace: {f.WorkspaceName}, stream: {f.StreamName}&quot;</span>);</div>
 <div class="line">                }</div>
 <div class="line"></div>
 <div class="line">                ret = <span class="keyword">true</span>; <span class="comment">// operation succeeded</span></div>
@@ -114,9 +110,7 @@
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (Exception ecx)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Exception caught and logged in Program.streamWkspaceMismatchAsync{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, ecx.Message);</div>
-<div class="line">                Console.WriteLine(msg);</div>
+<div class="line">                Console.WriteLine($<span class="stringliteral">&quot;Exception caught and logged in Program.streamWkspaceMismatchAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> ret;</div>
@@ -126,7 +120,7 @@
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

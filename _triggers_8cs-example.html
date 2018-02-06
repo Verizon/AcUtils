@@ -64,7 +64,7 @@
 <div class="line">  &lt;/startup&gt;</div>
 <div class="line">&lt;/configuration&gt;</div>
 </div><!-- fragment --></dd></dl>
-<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2017 Verizon. All Rights Reserved.</span></div>
+<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2017-2018 Verizon. All Rights Reserved.</span></div>
 <div class="line"><span class="comment"></span></div>
 <div class="line"><span class="comment">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment">you may not use this file except in compliance with the License.</span></div>
@@ -77,7 +77,7 @@
 <div class="line"><span class="comment">See the License for the specific language governing permissions and</span></div>
 <div class="line"><span class="comment">limitations under the License. */</span></div>
 <div class="line"></div>
-<div class="line"><span class="comment">// Required references: AcUtils.dll, System, System.Xml.Linq</span></div>
+<div class="line"><span class="comment">// Required references: AcUtils.dll, System.Xml.Linq</span></div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Collections.Generic;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Linq;</div>
@@ -98,7 +98,7 @@
 <div class="line">            Task&lt;Triggers&gt; t = getTriggersAsync();</div>
 <div class="line">            Triggers triggers = t.Result;</div>
 <div class="line">            <span class="keywordflow">if</span> (triggers == null) <span class="keywordflow">return</span> 1;</div>
-<div class="line">            Console.WriteLine(triggers.ToString());</div>
+<div class="line">            Console.WriteLine(triggers);</div>
 <div class="line">            <span class="keywordflow">return</span> 0;</div>
 <div class="line">        }</div>
 <div class="line"></div>
@@ -130,9 +130,7 @@
 <div class="line">            Task&lt;string&gt; prncpl = AcQuery.getPrincipalAsync();</div>
 <div class="line">            <span class="keywordflow">if</span> (String.IsNullOrEmpty(prncpl.Result))</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Not logged into AccuRev.{0}Please login and try again.&quot;</span>,</div>
-<div class="line">                    Environment.NewLine);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Not logged into AccuRev.{Environment.NewLine}Please login and try again.&quot;</span>);</div>
 <div class="line">                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line">            }</div>
 <div class="line"></div>
@@ -143,8 +141,10 @@
 <div class="line">    <span class="comment">// List of depots and their triggers created by the mktrig command.</span></div>
 <div class="line">    <span class="keyword">public</span> sealed <span class="keyword">class </span>Triggers : List&lt;XElement&gt;</div>
 <div class="line">    {</div>
-<div class="line">        <span class="keyword">private</span> List&lt;string&gt; _depots = null; <span class="comment">// depots to include in this list</span></div>
+<div class="line"><span class="preprocessor">        #region class variables</span></div>
+<div class="line">        <span class="keyword">private</span> List&lt;string&gt; _depots; <span class="comment">// depots to include in this list</span></div>
 <div class="line">        <span class="keyword">private</span> readonly <span class="keywordtype">object</span> _locker = <span class="keyword">new</span> object();  <span class="comment">// token for lock keyword scope</span></div>
+<div class="line"><span class="preprocessor">        #endregion</span></div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Constructor and list of depots to include in this list.</span></div>
 <div class="line">        <span class="keyword">public</span> Triggers(List&lt;string&gt; depots) { _depots = depots; }</div>
@@ -164,13 +164,13 @@
 <div class="line">        <span class="comment">// Run the show triggers command for depot and add the results to our list. Returns true </span></div>
 <div class="line">        <span class="comment">// if the operation succeeded, false otherwise. AcUtilsException caught and logged in </span></div>
 <div class="line">        <span class="comment">// %LOCALAPPDATA%\AcTools\Logs\Triggers-YYYY-MM-DD.log on show command failure.</span></div>
+<div class="line">        <span class="comment">// Exception caught and logged in same for a range of exceptions.</span></div>
 <div class="line">        <span class="keyword">private</span> async Task&lt;bool&gt; initListAsync(<span class="keywordtype">string</span> depot)</div>
 <div class="line">        {</div>
 <div class="line">            <span class="keywordtype">bool</span> ret = <span class="keyword">false</span>; <span class="comment">// assume failure</span></div>
 <div class="line">            <span class="keywordflow">try</span></div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> cmd = String.Format(<span class="stringliteral">@&quot;show -p &quot;&quot;{0}&quot;&quot; -fx triggers&quot;</span>, depot);</div>
-<div class="line">                AcResult result = await AcCommand.runAsync(cmd);</div>
+<div class="line">                AcResult result = await AcCommand.runAsync($<span class="stringliteral">@&quot;show -p &quot;&quot;{depot}&quot;&quot; -fx triggers&quot;</span>);</div>
 <div class="line">                <span class="keywordflow">if</span> (result != null &amp;&amp; result.RetVal == 0)</div>
 <div class="line">                {</div>
 <div class="line">                    XElement xml = XElement.Parse(result.CmdResult);</div>
@@ -182,9 +182,12 @@
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (AcUtilsException exc)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;AcUtilsException caught and logged in Program.initListAsync{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, exc.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;AcUtilsException caught and logged in Program.initListAsync{Environment.NewLine}{exc.Message}&quot;</span>);</div>
+<div class="line">            }</div>
+<div class="line"></div>
+<div class="line">            <span class="keywordflow">catch</span> (Exception ecx)</div>
+<div class="line">            {</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.initListAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> ret;</div>
@@ -194,17 +197,13 @@
 <div class="line">        <span class="comment">// with the current date/time at the top of the list.</span></div>
 <div class="line">        <span class="keyword">public</span> <span class="keyword">override</span> <span class="keywordtype">string</span> ToString()</div>
 <div class="line">        {</div>
-<div class="line">            <span class="keywordtype">string</span> asof = String.Format(<span class="stringliteral">&quot;As of {0}{1}&quot;</span>, DateTime.Now.ToString(), Environment.NewLine);</div>
-<div class="line">            StringBuilder sb = <span class="keyword">new</span> StringBuilder(asof);</div>
+<div class="line">            StringBuilder sb = <span class="keyword">new</span> StringBuilder($<span class="stringliteral">&quot;As of {DateTime.Now.ToString()}{Environment.NewLine}&quot;</span>);</div>
 <div class="line">            <span class="keywordflow">foreach</span> (XElement e <span class="keywordflow">in</span> this.OrderBy(n =&gt; n.Annotation&lt;<span class="keywordtype">string</span>&gt;())) <span class="comment">// order by depot name</span></div>
 <div class="line">            {</div>
 <div class="line">                <span class="keywordtype">string</span> depot = e.Annotation&lt;<span class="keywordtype">string</span>&gt;();</div>
 <div class="line">                sb.AppendLine(depot);</div>
 <div class="line">                <span class="keywordflow">foreach</span> (XElement t <span class="keywordflow">in</span> e.Elements(<span class="stringliteral">&quot;Element&quot;</span>).OrderBy(n =&gt; (<span class="keywordtype">string</span>)n.Attribute(<span class="stringliteral">&quot;Type&quot;</span>))) <span class="comment">// order by trigger name</span></div>
-<div class="line">                {</div>
-<div class="line">                    <span class="keywordtype">string</span> trigger = String.Format(<span class="stringliteral">&quot;\t{0}: {1}&quot;</span>, (<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;Type&quot;</span>), (string)t.Attribute(<span class="stringliteral">&quot;Name&quot;</span>));</div>
-<div class="line">                    sb.AppendLine(trigger);</div>
-<div class="line">                }</div>
+<div class="line">                    sb.AppendLine($<span class="stringliteral">&quot;\t{(string)t.Attribute(&quot;</span>Type<span class="stringliteral">&quot;)}: {(string)t.Attribute(&quot;</span>Name<span class="stringliteral">&quot;)}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> sb.ToString();</div>
@@ -214,7 +213,7 @@
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

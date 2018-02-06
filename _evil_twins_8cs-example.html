@@ -48,7 +48,7 @@
 <p>When promoting elements to a stream, the error message <b><em>"...name already exists in backing stream..."</em></b> appears. What does this mean?</p>
 <p>An element ID (EID) is an immutable unique identifier (number) assigned to the element when it is added to AccuRev. It allows AccuRev to keep track of the entire history of the element from the time it was first added to the depot should it undergo a name or location change, or made defunct. When two elements with the same name and location are added to the depot in disparate streams, when promoted up the stream hierarchy they will eventually collide. This situation is referred to as <em>"evil twins"</em>. The error message indicates there are two elements with the same name and location but with different EID's. To fix evil twins:</p>
 <ol type="1">
-<li>Since you must clear the namespace in one of the streams so the <em>"good twin"</em> prevails, you must decide which twin you want to keep. Use AccuRev's <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/online_help_F08_1.html">Version Browser</a> to view the history of each twin as this could impact your decision. For example, if one of the elements has gone to production and the other has not, you would want to make the production version the good twin and the other the evil twin.</li>
+<li>Since you must clear the namespace in one of the streams so the <em>"good twin"</em> prevails, you must decide which twin you want to keep. Use AccuRev's <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/online_help_F08_1.html">Version Browser</a> to view the history of each twin as this could impact your decision. For example, if one of the elements has gone to production and the other has not, you would want to make the production version the good twin and the other the evil twin.</li>
 <li>If the element is a file, do a <code>diff</code> on the twins to make sure the good twin (the one that will prevail) has the correct content. Edit as needed.</li>
 <li>Rename (<code>move</code>) the evil element and then <code>defunct</code> it. Note that as a best practice, renaming should always be done before making an element defunct, even in cases that are not evil twins (see Note below). In the case of evil twins, rename the evil twin with the ".EVIL" extension. Otherwise add a descriptive extension to the element, for example ".OBSOLETE".</li>
 <li><code>Promote</code> the renamed-defunct evil twin. Then do one of the following steps, based on <em>a</em> or <em>b:</em> <ol type="a">
@@ -57,7 +57,7 @@
 </ol>
 </li>
 <li>If the good twin does not exist higher up in the stream hierarchy:<ol type="i">
-<li>Use the <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/Change_Palette.html">Change Palette</a> to cross promote the good twin to your workspace.</li>
+<li>Use the <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/Change_Palette.html">Change Palette</a> to cross promote the good twin to your workspace.</li>
 </ol>
 </li>
 </ol>
@@ -91,7 +91,7 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <dl class="section user"><dt>EvilTwins.exe.config</dt><dd><div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;utf-8&quot;</span>?&gt;</div>
 <div class="line">&lt;configuration&gt;</div>
 <div class="line">  &lt;configSections&gt;</div>
-<div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span> /&gt;</div>
+<div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span> /&gt;</div>
 <div class="line">  &lt;/configSections&gt;</div>
 <div class="line">  &lt;Depots&gt;</div>
 <div class="line">    &lt;depots&gt;</div>
@@ -126,7 +126,7 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 \.\src\bar.c
 ...
 </pre><p> </small></p>
-<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2017 Verizon. All Rights Reserved.</span></div>
+<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2017-2018 Verizon. All Rights Reserved.</span></div>
 <div class="line"><span class="comment"></span></div>
 <div class="line"><span class="comment">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment">you may not use this file except in compliance with the License.</span></div>
@@ -200,23 +200,21 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line">            {</div>
 <div class="line">                <span class="keywordflow">if</span> (!File.Exists(_twinsExcludeFile))</div>
 <div class="line">                {</div>
-<div class="line">                    <span class="keywordtype">string</span> err = String.Format(<span class="stringliteral">&quot;TwinsExcludeFile {0} specified in EvilTwins.exe.config not found&quot;</span>, _twinsExcludeFile);</div>
-<div class="line">                    AcDebug.Log(err);</div>
+<div class="line">                    AcDebug.Log($<span class="stringliteral">&quot;TwinsExcludeFile {_twinsExcludeFile} specified in EvilTwins.exe.config not found&quot;</span>);</div>
 <div class="line">                    <span class="keywordflow">return</span> 1;</div>
 <div class="line">                }</div>
 <div class="line">                <span class="keywordflow">else</span></div>
 <div class="line">                    _excludeList = getTwinsExcludeList();</div>
 <div class="line">            }</div>
 <div class="line"></div>
-<div class="line">            <span class="comment">// false for all stream types in order to include workspace streams</span></div>
-<div class="line">            <span class="comment">// true to include hidden (removed) streams</span></div>
-<div class="line">            AcDepots depots = <span class="keyword">new</span> AcDepots(<span class="keyword">false</span>, <span class="keyword">true</span>);</div>
+<div class="line">            <span class="comment">// all stream types in order to include workspace streams, include hidden (removed) streams</span></div>
+<div class="line">            AcDepots depots = <span class="keyword">new</span> AcDepots(dynamicOnly: <span class="keyword">false</span>, includeHidden: <span class="keyword">true</span>);</div>
 <div class="line">            Task&lt;bool&gt; dini = depots.initAsync(_selDepots);</div>
 <div class="line">            <span class="keywordflow">if</span> (!dini.Result) <span class="keywordflow">return</span> 1;</div>
 <div class="line"></div>
 <div class="line">            _tcompare = <span class="keyword">new</span> TwinEqualityComparer();</div>
 <div class="line">            _map = <span class="keyword">new</span> Dictionary&lt;AcDepot, HashSet&lt;Tuple&lt;string, int&gt;&gt;&gt;();</div>
-<div class="line">            List&lt;Task&lt;bool&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;bool&gt;&gt;();</div>
+<div class="line">            List&lt;Task&lt;bool&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;bool&gt;&gt;(depots.Count);</div>
 <div class="line">            <span class="keywordflow">foreach</span> (AcDepot <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> depots)</div>
 <div class="line">                tasks.Add(initMapAsync(depot));</div>
 <div class="line"></div>
@@ -227,7 +225,7 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line">            <span class="keywordflow">return</span> (r.Result) ? 0 : 1;</div>
 <div class="line">        }</div>
 <div class="line"></div>
-<div class="line">        <span class="comment">// Initialize our dictionary class variable with [element, EID] for all elements in all dynamic streams in depot param. </span></div>
+<div class="line">        <span class="comment">// Initialize our dictionary class variable with [element, EID] for all elements in all dynamic streams in depot. </span></div>
 <div class="line">        <span class="comment">// AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on stat command failure. </span></div>
 <div class="line">        <span class="comment">// Exception caught and logged in same for a range of exceptions.</span></div>
 <div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> async Task&lt;bool&gt; initMapAsync(AcDepot depot)</div>
@@ -235,12 +233,12 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line">            <span class="keywordtype">bool</span> ret = <span class="keyword">false</span>; <span class="comment">// assume failure</span></div>
 <div class="line">            <span class="keywordflow">try</span></div>
 <div class="line">            {</div>
-<div class="line">                List&lt;Task&lt;AcResult&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;AcResult&gt;&gt;();</div>
-<div class="line">                <span class="keywordflow">foreach</span> (AcStream <a name="a0"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> depot.Streams.Where(n =&gt; n.IsDynamic &amp;&amp; !n.Hidden))</div>
-<div class="line">                {</div>
-<div class="line">                    <span class="keywordtype">string</span> cmd = String.Format(<span class="stringliteral">@&quot;stat -a -s &quot;&quot;{0}&quot;&quot; -fx&quot;</span>, stream); <span class="comment">// -a for all elements in stream</span></div>
-<div class="line">                    tasks.Add(AcCommand.runAsync(cmd));</div>
-<div class="line">                }</div>
+<div class="line">                IEnumerable&lt;AcStream&gt; filter = <a name="a0"></a><a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> n in depot.Streams</div>
+<div class="line">                                               where n.IsDynamic &amp;&amp; !n.Hidden</div>
+<div class="line">                                               select n;</div>
+<div class="line">                List&lt;Task&lt;AcResult&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;AcResult&gt;&gt;(filter.Count());</div>
+<div class="line">                <span class="keywordflow">foreach</span> (AcStream <a name="a1"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> filter)</div>
+<div class="line">                    tasks.Add(AcCommand.runAsync($<span class="stringliteral">@&quot;stat -a -s &quot;&quot;{stream}&quot;&quot; -fx&quot;</span>)); <span class="comment">// -a for all elements in stream</span></div>
 <div class="line"></div>
 <div class="line">                AcResult[] arr = await Task.WhenAll(tasks); <span class="comment">// finish running stat commands in parallel</span></div>
 <div class="line">                <span class="keywordflow">if</span> (arr != null &amp;&amp; arr.All(n =&gt; n.RetVal == 0)) <span class="comment">// true if all initialized successfully</span></div>
@@ -266,16 +264,12 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (AcUtilsException ecx)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;AcUtilsException caught and logged in Program.initMapAsync{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, ecx.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;AcUtilsException caught and logged in Program.initMapAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (Exception ecx)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Exception caught and logged in Program.initMapAsync{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, ecx.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.initMapAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> ret;</div>
@@ -302,8 +296,11 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line">                            <span class="keywordflow">continue</span>; <span class="comment">// ignore if in TwinsExcludeFile</span></div>
 <div class="line"></div>
 <div class="line">                        log(element);</div>
-<div class="line">                        List&lt;Task&lt;XElement&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;XElement&gt;&gt;();</div>
-<div class="line">                        <span class="keywordflow">foreach</span> (AcStream <a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> depot.Streams.Where(n =&gt; n.IsDynamic &amp;&amp; !n.Hidden))</div>
+<div class="line">                        IEnumerable&lt;AcStream&gt; filter = <a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> n in depot.Streams</div>
+<div class="line">                                                       where n.IsDynamic &amp;&amp; !n.Hidden</div>
+<div class="line">                                                       select n;</div>
+<div class="line">                        List&lt;Task&lt;XElement&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;XElement&gt;&gt;(filter.Count());</div>
+<div class="line">                        <span class="keywordflow">foreach</span> (AcStream <a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> filter)</div>
 <div class="line">                            tasks.Add(getElementInfoAsync(stream, element));</div>
 <div class="line"></div>
 <div class="line">                        XElement[] arr = await Task.WhenAll(tasks); <span class="comment">// finish running stat commands in parallel</span></div>
@@ -312,26 +309,24 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line">                            <span class="keywordflow">foreach</span> (Tuple&lt;string, int&gt; jj <span class="keywordflow">in</span> ii.OrderBy(n =&gt; n.Item2)) <span class="comment">// order twins by EID</span></div>
 <div class="line">                            {</div>
 <div class="line">                                <span class="keywordtype">int</span> eid = jj.Item2;</div>
-<div class="line">                                <span class="keywordtype">string</span> hdr = String.Format(<span class="stringliteral">&quot;\tEID: {0} on {1}&quot;</span>, eid, DateTime.Now.ToString(<span class="stringliteral">&quot;ddd MMM d h:mm tt&quot;</span>));</div>
-<div class="line">                                log(hdr);</div>
-<div class="line">                                <span class="comment">// C# language short-circuit: the id value test isn&#39;t evaluated if &quot;no such elem&quot; is true, </span></div>
+<div class="line">                                log($<span class="stringliteral">&quot;\tEID: {eid} on {DateTime.Now.ToString(&quot;</span>ddd MMM d h:mm tt<span class="stringliteral">&quot;)}&quot;</span>);</div>
+<div class="line">                                <span class="comment">// C# language short-circuit: the test for id equals eid isn&#39;t evaluated if status equals &quot;(no such elem)&quot;, </span></div>
 <div class="line">                                <span class="comment">// otherwise an exception would be thrown since the id attribute doesn&#39;t exist in this case</span></div>
 <div class="line">                                <span class="keywordflow">foreach</span> (XElement e <span class="keywordflow">in</span> arr.Where(n =&gt; (<span class="keywordtype">string</span>)n.Attribute(<span class="stringliteral">&quot;status&quot;</span>) != <span class="stringliteral">&quot;(no such elem)&quot;</span> &amp;&amp;</div>
 <div class="line">                                    (int)n.Attribute(<span class="stringliteral">&quot;id&quot;</span>) == eid).OrderBy(n =&gt; n.Annotation&lt;AcStream&gt;()))</div>
 <div class="line">                                {</div>
-<div class="line">                                    <span class="keywordtype">string</span> stream = String.Format(<span class="stringliteral">&quot;\t\t{0} {1}&quot;</span>, e.Annotation&lt;AcStream&gt;(), (<span class="keywordtype">string</span>)e.Attribute(<span class="stringliteral">&quot;status&quot;</span>));</div>
-<div class="line">                                    log(stream);</div>
+<div class="line">                                    log($<span class="stringliteral">&quot;\t\t{e.Annotation&lt;AcStream&gt;()} {(string)e.Attribute(&quot;</span>status<span class="stringliteral">&quot;)}&quot;</span>);</div>
 <div class="line">                                    <span class="keywordtype">string</span> namedVersion = (string)e.Attribute(<span class="stringliteral">&quot;namedVersion&quot;</span>); <span class="comment">// virtual stream name and version number</span></div>
 <div class="line">                                    <span class="keywordtype">string</span> temp = (string)e.Attribute(<span class="stringliteral">&quot;Real&quot;</span>);</div>
 <div class="line">                                    <span class="keywordtype">string</span>[] real = temp.Split(<span class="charliteral">&#39;\\&#39;</span>); <span class="comment">// workspace stream and version numbers</span></div>
 <div class="line">                                    AcStream wkspace = depot.getStream(<span class="keywordtype">int</span>.Parse(real[0])); <span class="comment">// workspace stream</span></div>
-<div class="line">                                    <a name="a1"></a><a class="code" href="group__acenum.html#ga3164dabd0d78a5482aea218fa9154669">ElementType</a> elemType = e.acxType(<span class="stringliteral">&quot;elemType&quot;</span>);</div>
+<div class="line">                                    <a name="a2"></a><a class="code" href="group__acenum.html#ga3164dabd0d78a5482aea218fa9154669">ElementType</a> elemType = e.acxType(<span class="stringliteral">&quot;elemType&quot;</span>);</div>
 <div class="line">                                    <span class="keywordtype">string</span> twin;</div>
 <div class="line">                                    <span class="keywordflow">if</span> ((<span class="keywordtype">long</span>?)e.Attribute(<span class="stringliteral">&quot;size&quot;</span>) != null)</div>
-<div class="line">                                        twin = String.Format(<span class="stringliteral">&quot;\t\t\tSize: {1}, ModTime: {2} {{{3}}}{0}\t\t\tReal: {4}\\{5}, Virtual: {6}&quot;</span>, Environment.NewLine,</div>
-<div class="line">                                            (<span class="keywordtype">long</span>)e.Attribute(<span class="stringliteral">&quot;size&quot;</span>), e.acxTime(<span class="stringliteral">&quot;modTime&quot;</span>), elemType, wkspace, real[1], namedVersion);</div>
+<div class="line">                                        twin = $<span class="stringliteral">&quot;\t\t\tSize: {(long)e.Attribute(&quot;</span>size<span class="stringliteral">&quot;)}, ModTime: {e.acxTime(&quot;</span>modTime<span class="stringliteral">&quot;)} {{{elemType}}}&quot;</span> +</div>
+<div class="line">                                            $<span class="stringliteral">&quot;{Environment.NewLine}\t\t\tReal: {wkspace}\\{real[1]}, Virtual: {namedVersion}&quot;</span>;</div>
 <div class="line">                                    <span class="keywordflow">else</span> <span class="comment">// a folder or link</span></div>
-<div class="line">                                        twin = String.Format(<span class="stringliteral">&quot;\t\t\tReal: {0}\\{1}, Virtual: {2} {{{3}}}&quot;</span>, wkspace, real[1], namedVersion, elemType);</div>
+<div class="line">                                        twin = $<span class="stringliteral">&quot;\t\t\tReal: {wkspace}\\{real[1]}, Virtual: {namedVersion} {{{elemType}}}&quot;</span>;</div>
 <div class="line"></div>
 <div class="line">                                    log(twin);</div>
 <div class="line">                                }</div>
@@ -347,23 +342,21 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (Exception ecx)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Exception caught and logged in Program.reportAsync{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, ecx.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.reportAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> ret;</div>
 <div class="line">        }</div>
 <div class="line"></div>
-<div class="line">        <span class="comment">// Returns the attributes for the element param in stream param if the query succeeded, otherwise null. </span></div>
-<div class="line">        <span class="comment">// AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on stat command failure.</span></div>
+<div class="line">        <span class="comment">// Returns the attributes for the element in stream if the query succeeded, otherwise null. </span></div>
+<div class="line">        <span class="comment">// AcUtilsException caught and logged in %LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log on stat command failure. </span></div>
+<div class="line">        <span class="comment">// Exception caught and logged in same for a range of exceptions.</span></div>
 <div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> async Task&lt;XElement&gt; getElementInfoAsync(AcStream <a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a>, <span class="keywordtype">string</span> element)</div>
 <div class="line">        {</div>
 <div class="line">            XElement e = null;</div>
 <div class="line">            <span class="keywordflow">try</span></div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> cmd = String.Format(<span class="stringliteral">@&quot;stat -fx -s &quot;&quot;{0}&quot;&quot; &quot;&quot;{1}&quot;&quot;&quot;</span>, stream, element);</div>
-<div class="line">                AcResult r = await AcCommand.runAsync(cmd);</div>
+<div class="line">                AcResult r = await AcCommand.runAsync($<span class="stringliteral">@&quot;stat -fx -s &quot;&quot;{stream}&quot;&quot; &quot;&quot;{element}&quot;&quot;&quot;</span>);</div>
 <div class="line">                <span class="keywordflow">if</span> (r != null &amp;&amp; r.RetVal == 0)</div>
 <div class="line">                {</div>
 <div class="line">                    XElement xml = XElement.Parse(r.CmdResult);</div>
@@ -374,9 +367,12 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (AcUtilsException ecx)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;AcUtilsException caught and logged in Program.getElementInfoAsync{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, ecx.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;AcUtilsException caught and logged in Program.getElementInfoAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
+<div class="line">            }</div>
+<div class="line"></div>
+<div class="line">            <span class="keywordflow">catch</span> (Exception ecx)</div>
+<div class="line">            {</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.getElementInfoAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> e;</div>
@@ -408,9 +404,7 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (Exception ecx)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Exception caught and logged in Program.getTwinsExcludeList{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, ecx.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.getTwinsExcludeList{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">finally</span> <span class="comment">// avoids CA2202: Do not dispose objects multiple times</span></div>
@@ -439,9 +433,7 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line">            Task&lt;string&gt; prncpl = AcQuery.getPrincipalAsync();</div>
 <div class="line">            <span class="keywordflow">if</span> (String.IsNullOrEmpty(prncpl.Result))</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Not logged into AccuRev.{0}Please login and try again.&quot;</span>,</div>
-<div class="line">                    Environment.NewLine);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Not logged into AccuRev.{Environment.NewLine}Please login and try again.&quot;</span>);</div>
 <div class="line">                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line">            }</div>
 <div class="line"></div>
@@ -477,10 +469,7 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line">            {</div>
 <div class="line">                Process currentProcess = Process.GetCurrentProcess();</div>
 <div class="line">                ProcessModule pm = currentProcess.MainModule;</div>
-<div class="line">                <span class="keywordtype">string</span> exeFile = pm.ModuleName;</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Invalid data in {1}.config{0}{2}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, exeFile, exc.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Invalid data in {pm.ModuleName}.config{Environment.NewLine}{exc.Message}&quot;</span>);</div>
 <div class="line">                ret = <span class="keyword">false</span>;</div>
 <div class="line">            }</div>
 <div class="line"></div>
@@ -511,16 +500,14 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (Exception exc)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Exception caught and logged in Program.initEvilTwinsLogging{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, exc.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.initEvilTwinsLogging{Environment.NewLine}{exc.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> ret;</div>
 <div class="line">        }</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Write text to the EvilTwinsFound-YYYY-MM-DD.log daily log file located in the same folder where EvilTwins.exe resides.</span></div>
-<div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keywordtype">void</span> log(<span class="keywordtype">string</span> <a name="a2"></a><a class="code" href="group__acenum.html#gga3164dabd0d78a5482aea218fa9154669a1cb251ec0d568de6a929b520c4aed8d1">text</a>)</div>
+<div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keywordtype">void</span> log(<span class="keywordtype">string</span> <a name="a3"></a><a class="code" href="group__acenum.html#gga3164dabd0d78a5482aea218fa9154669a1cb251ec0d568de6a929b520c4aed8d1">text</a>)</div>
 <div class="line">        {</div>
 <div class="line">            <span class="keywordflow">if</span> (_tl != null)</div>
 <div class="line">                _tl.WriteLine(text);</div>
@@ -530,7 +517,7 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

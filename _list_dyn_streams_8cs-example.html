@@ -46,7 +46,7 @@
 </div><!--header-->
 <div class="contents">
 <p>List all dynamic streams in the repository. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_depots.html#a047429104b79c593e9880442ffe6863b">AcDepots constructor</a></dd></dl>
-<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016 Verizon. All Rights Reserved.</span></div>
+<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.</span></div>
 <div class="line"><span class="comment"></span></div>
 <div class="line"><span class="comment">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment">you may not use this file except in compliance with the License.</span></div>
@@ -59,7 +59,7 @@
 <div class="line"><span class="comment">See the License for the specific language governing permissions and</span></div>
 <div class="line"><span class="comment">limitations under the License. */</span></div>
 <div class="line"></div>
-<div class="line"><span class="comment">// Required references: AcUtils.dll, System.configuration</span></div>
+<div class="line"><span class="comment">// Required references: AcUtils.dll</span></div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Linq;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.<a class="code" href="namespace_system_1_1_threading.html">Threading</a>.<a class="code" href="namespace_system_1_1_threading_1_1_tasks.html">Tasks</a>;</div>
@@ -78,9 +78,9 @@
 <div class="line">        <span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; listDynStreamsAsync()</div>
 <div class="line">        {</div>
 <div class="line">            <span class="comment">// true for dynamic streams only</span></div>
-<div class="line">            AcDepots depots = <span class="keyword">new</span> AcDepots(<span class="keyword">true</span>); <span class="comment">// two-part object construction</span></div>
+<div class="line">            AcDepots depots = <span class="keyword">new</span> AcDepots(dynamicOnly: <span class="keyword">true</span>); <span class="comment">// typical two-part object construction</span></div>
 <div class="line">            <span class="keywordflow">if</span> (!(await depots.initAsync())) <span class="comment">// ..</span></div>
-<div class="line">                <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// initialization failure, check log file</span></div>
+<div class="line">                <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// initialization failure</span></div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">foreach</span> (AcDepot <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> depots.OrderBy(d =&gt; d)) <span class="comment">// default comparer orders by depot name</span></div>
 <div class="line">                <span class="keywordflow">foreach</span> (AcStream <a name="a0"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> in depot.Streams.OrderBy(s =&gt; s)) <span class="comment">// .. orders by stream name</span></div>
@@ -93,7 +93,7 @@
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

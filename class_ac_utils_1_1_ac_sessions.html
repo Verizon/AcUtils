@@ -80,7 +80,7 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A container for <a class="el" href="class_ac_utils_1_1_ac_session.html" title="Holds the attributes for an AccuRev user session: principal name, host machine IP address...">AcSession</a> objects that define AccuRev user sessions. </p>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00218">218</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00222">222</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a0796ef3f27384c14e71dd8b7e4a73695"></a>
 <div class="memitem">
@@ -104,25 +104,22 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>A container for <a class="el" href="class_ac_utils_1_1_ac_session.html" title="Holds the attributes for an AccuRev user session: principal name, host machine IP address...">AcSession</a> objects that define AccuRev user sessions. </p>
-<div class="fragment"><div class="line"><span class="comment">// returns true if operation was successful, false on error</span></div>
-<div class="line"><span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; showSessionsAsync()</div>
+<div class="fragment"><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; showSessionsAsync()</div>
 <div class="line">{</div>
-<div class="line">    <a class="code" href="class_ac_utils_1_1_ac_sessions.html#a0796ef3f27384c14e71dd8b7e4a73695">AcSessions</a> sessions = <span class="keyword">new</span> <a class="code" href="class_ac_utils_1_1_ac_sessions.html#a0796ef3f27384c14e71dd8b7e4a73695">AcSessions</a>(); <span class="comment">// two-part object construction</span></div>
-<div class="line">    <span class="keywordflow">if</span> (!(await sessions.initAsync()))  <span class="comment">// ..</span></div>
-<div class="line">        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line">    <a class="code" href="class_ac_utils_1_1_ac_sessions.html#a0796ef3f27384c14e71dd8b7e4a73695">AcSessions</a> sessions = <span class="keyword">new</span> <a class="code" href="class_ac_utils_1_1_ac_sessions.html#a0796ef3f27384c14e71dd8b7e4a73695">AcSessions</a>();</div>
+<div class="line">    <span class="keywordflow">if</span> (!(await sessions.initAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
-<div class="line">    <span class="keywordflow">foreach</span> (AcSession session <span class="keywordflow">in</span> sessions.OrderBy(n =&gt; n)) <span class="comment">// use default comparer</span></div>
+<div class="line">    <span class="keywordflow">foreach</span> (AcSession session <span class="keywordflow">in</span> sessions</div>
+<div class="line">        .Where(n =&gt; n.Duration != TimeSpan.Zero).OrderBy(n =&gt; n))</div>
 <div class="line">    {</div>
-<div class="line">        TimeSpan span = session.Duration;</div>
-<div class="line">        <span class="keywordflow">if</span> (span != TimeSpan.Zero)</div>
-<div class="line">            Console.WriteLine(session);</div>
+<div class="line">        Console.WriteLine(session);</div>
 <div class="line">    }</div>
 <div class="line"></div>
 <div class="line">    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">}</div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_sessions.html#adb023f8ee45b94c7df188649456d510a" title="Populate this container with AcSession objects, the currently active login sessions. ">initAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_session.html#a68d27f9c43b012263fb217551d0779d3">default comparer</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00249">249</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00250">250</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
 </div>
 </div>
@@ -159,14 +156,14 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="shows_"><dt><b><a class="el" href="shows_.html#_shows_000016">show command:</a></b></dt><dd><code>show -fx sessions</code> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00259">259</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00260">260</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

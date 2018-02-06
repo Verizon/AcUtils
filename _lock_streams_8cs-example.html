@@ -47,10 +47,10 @@
 <div class="contents">
 <p>Lock promotions to select streams across multiple depots for all except those in the specified group. </p><dl class="section warning"><dt>Warning</dt><dd>Be careful with this one since it changes the repository! </dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_locks.html#a3f4d18f5b3f087d1853ee676ce8252b1">AcLocks constructor</a>, <a href="_promotion_rights_8cs-example.html">PromotionRights.cs</a></dd></dl>
-<div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;utf-8&quot;</span> ?&gt;</div>
+<dl class="section user"><dt>LockStreams.exe.config</dt><dd><div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;utf-8&quot;</span> ?&gt;</div>
 <div class="line">&lt;configuration&gt;</div>
 <div class="line">  &lt;configSections&gt;</div>
-<div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span> /&gt;</div>
+<div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span> /&gt;</div>
 <div class="line">  &lt;/configSections&gt;</div>
 <div class="line">  &lt;Depots&gt;</div>
 <div class="line">    &lt;depots&gt;</div>
@@ -64,7 +64,8 @@
 <div class="line">    &lt;supportedRuntime version=<span class="stringliteral">&quot;v4.0&quot;</span> sku=<span class="stringliteral">&quot;.NETFramework,Version=v4.6&quot;</span> /&gt;</div>
 <div class="line">  &lt;/startup&gt;</div>
 <div class="line">&lt;/configuration&gt;</div>
-</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016 Verizon. All Rights Reserved.</span></div>
+</div><!-- fragment --></dd></dl>
+<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.</span></div>
 <div class="line"><span class="comment"></span></div>
 <div class="line"><span class="comment">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment">you may not use this file except in compliance with the License.</span></div>
@@ -118,7 +119,7 @@
 <div class="line">            AcPrincipal <a name="a0"></a><a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631badb0f6f37ebeb6ea09489124345af2a45">group</a> = groups.getPrincipal(<span class="stringliteral">&quot;DEV_LEAD&quot;</span>);</div>
 <div class="line">            <span class="keywordflow">if</span> (group == null) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
-<div class="line">            AcDepots depots = <span class="keyword">new</span> AcDepots(<span class="keyword">true</span>); <span class="comment">// true for dynamic streams only</span></div>
+<div class="line">            AcDepots depots = <span class="keyword">new</span> AcDepots(dynamicOnly: <span class="keyword">true</span>); <span class="comment">// dynamic streams only in select depots</span></div>
 <div class="line">            <span class="keywordflow">if</span> (!(await depots.initAsync(_selDepots))) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line">            <span class="keywordflow">foreach</span> (AcDepot <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> depots.OrderBy(n =&gt; n)) <span class="comment">// use default sort ordering</span></div>
 <div class="line">            {</div>
@@ -129,8 +130,7 @@
 <div class="line">                <span class="keywordflow">foreach</span> (AcStream <a name="a1"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> filter.OrderBy(n =&gt; n)) <span class="comment">// ..</span></div>
 <div class="line">                {</div>
 <div class="line">                    <span class="keywordtype">bool</span> ret = await locks.lockAsync(stream.Name, <span class="stringliteral">&quot;Authorized users only&quot;</span>, <a name="a2"></a><a class="code" href="group__acenum.html#ga2149004df4de6f7f8763b1c46d4ade17">LockKind</a>.to, <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631badb0f6f37ebeb6ea09489124345af2a45">group</a>);</div>
-<div class="line">                    <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">@&quot;{0} &quot;&quot;{1}&quot;&quot; lock {2}&quot;</span>, stream, <a class="code" href="group__acenum.html#ga2149004df4de6f7f8763b1c46d4ade17">LockKind</a>.to, ret ? <span class="stringliteral">&quot;succeeded&quot;</span> : <span class="stringliteral">&quot;failed&quot;</span>);</div>
-<div class="line">                    Console.WriteLine(msg);</div>
+<div class="line">                    Console.WriteLine($<span class="stringliteral">@&quot;{stream} &quot;&quot;{LockKind.to}&quot;&quot; lock {(ret ? &quot;</span>succeeded<span class="stringliteral">&quot; : &quot;</span>failed<span class="stringliteral">&quot;)}&quot;</span>);</div>
 <div class="line">                }</div>
 <div class="line">            }</div>
 <div class="line"></div>
@@ -141,7 +141,7 @@
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

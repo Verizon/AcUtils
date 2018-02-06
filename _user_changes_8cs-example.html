@@ -45,8 +45,8 @@
 <div class="title">UserChanges.cs</div>  </div>
 </div><!--header-->
 <div class="contents">
-<p>Show the changes made by a user in all depots during a time period. Demonstrates <a class="el" href="namespace_ac_utils.html">AcUtils</a> (<code>AcUtils.dll</code>) object instantiation and enumeration, <a href="https://msdn.microsoft.com/en-us/library/bb387098.aspx">LINQ to XML</a>, and how results from one AccuRev command (<code>hist</code>) can be used as parameters for the next (<code>annotate</code>) for in-depth analysis.</p>
-<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016 Verizon. All Rights Reserved.</span></div>
+<p>Show the changes made by a user in all depots during a time period. Demonstrates how results from one AccuRev command (<code>hist</code>) can be used as parameters for the next (<code>annotate</code>) for powerful in-depth analysis.</p>
+<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.</span></div>
 <div class="line"><span class="comment"></span></div>
 <div class="line"><span class="comment">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment">you may not use this file except in compliance with the License.</span></div>
@@ -59,7 +59,7 @@
 <div class="line"><span class="comment">See the License for the specific language governing permissions and</span></div>
 <div class="line"><span class="comment">limitations under the License. */</span></div>
 <div class="line"></div>
-<div class="line"><span class="comment">// Required references: System, System.Xml.Linq, AcUtils.dll</span></div>
+<div class="line"><span class="comment">// Required references: AcUtils.dll, System.Xml.Linq, </span></div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Collections.Generic;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Linq;</div>
@@ -83,37 +83,35 @@
 <div class="line"></div>
 <div class="line">        <span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; userChangesAsync(<span class="keywordtype">string</span> <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>, <span class="keywordtype">string</span> startTime, <span class="keywordtype">string</span> endTime)</div>
 <div class="line">        {</div>
-<div class="line">            Console.WriteLine(<span class="stringliteral">@&quot;User: {0}, &quot;&quot;{1} - {2}&quot;&quot;{3}&quot;</span>, user, startTime, endTime, Environment.NewLine);</div>
+<div class="line">            Console.WriteLine($<span class="stringliteral">@&quot;User: {user}, &quot;&quot;{startTime} - {endTime}&quot;&quot;{Environment.NewLine}&quot;</span>);</div>
 <div class="line">            List&lt;string&gt; depots = await AcQuery.getDepotNameListAsync();</div>
 <div class="line">            <span class="keywordflow">if</span> (depots == null) <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// operation failed, check log file</span></div>
 <div class="line">            <span class="keywordflow">foreach</span> (<span class="keywordtype">string</span> <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> depots)</div>
 <div class="line">            {</div>
 <div class="line">                <span class="comment">// start-end times reversed as workaround for AccuRev issue 15780</span></div>
-<div class="line">                <span class="keywordtype">string</span> time = String.Format(<span class="stringliteral">&quot;{0} - {1}&quot;</span>, endTime, startTime);</div>
-<div class="line">                <span class="keywordtype">string</span> hist = String.Format(<span class="stringliteral">@&quot;hist -p &quot;&quot;{0}&quot;&quot; -t &quot;&quot;{1}&quot;&quot; -u &quot;&quot;{2}&quot;&quot; -k keep -fx&quot;</span>, depot, time, user);</div>
-<div class="line">                AcResult r1 = await AcCommand.runAsync(hist);</div>
-<div class="line">                <span class="keywordflow">if</span> (r1 == null || r1.RetVal != 0) <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// operation failed, check log file</span></div>
+<div class="line">                <span class="keywordtype">string</span> time = $<span class="stringliteral">&quot;{endTime} - {startTime}&quot;</span>;</div>
+<div class="line">                AcResult r1 = await AcCommand.runAsync($<span class="stringliteral">@&quot;hist -p &quot;&quot;{depot}&quot;&quot; -t &quot;&quot;{time}&quot;&quot; -u &quot;&quot;{user}&quot;&quot; -k keep -fx&quot;</span>);</div>
+<div class="line">                <span class="keywordflow">if</span> (r1 == null || r1.RetVal != 0) <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// operation failed</span></div>
 <div class="line"></div>
 <div class="line">                XElement x1 = XElement.Parse(r1.CmdResult);</div>
 <div class="line">                <span class="keywordflow">foreach</span> (XElement t <span class="keywordflow">in</span> x1.Elements(<span class="stringliteral">&quot;transaction&quot;</span>))</div>
 <div class="line">                {</div>
 <div class="line">                    <span class="keywordtype">int</span> transID = (int)t.Attribute(<span class="stringliteral">&quot;id&quot;</span>);</div>
 <div class="line">                    <span class="keywordtype">string</span> tcomment = t.acxComment();</div>
-<div class="line">                    Console.WriteLine(<span class="stringliteral">&quot;Depot: {0}, {{{1}}} {2}{3}&quot;</span>, depot, transID, (DateTime)t.acxTime(<span class="stringliteral">&quot;time&quot;</span>),</div>
-<div class="line">                        String.IsNullOrEmpty(tcomment) ? String.Empty : <span class="stringliteral">&quot;, &quot;</span> + tcomment);</div>
+<div class="line">                    Console.WriteLine($<span class="stringliteral">&quot;Depot: {depot}, {{{transID}}} {(DateTime)t.acxTime(&quot;</span>time<span class="stringliteral">&quot;)}&quot;</span> +</div>
+<div class="line">                        $<span class="stringliteral">&quot;{(String.IsNullOrEmpty(tcomment) ? String.Empty : &quot;</span>, <span class="stringliteral">&quot; + tcomment)}&quot;</span>);</div>
 <div class="line"></div>
 <div class="line">                    <span class="keywordflow">foreach</span> (XElement v <span class="keywordflow">in</span> t.Elements(<span class="stringliteral">&quot;version&quot;</span>))</div>
 <div class="line">                    {</div>
 <div class="line">                        <span class="keywordtype">string</span> path = (string)v.Attribute(<span class="stringliteral">&quot;path&quot;</span>);</div>
-<div class="line">                        Console.WriteLine(<span class="stringliteral">&quot;\tEID: {0} {1} ({2})&quot;</span>, (<span class="keywordtype">int</span>)v.Attribute(<span class="stringliteral">&quot;eid&quot;</span>), path, (string)v.Attribute(<span class="stringliteral">&quot;real&quot;</span>));</div>
+<div class="line">                        Console.WriteLine($<span class="stringliteral">&quot;\tEID: {(int)v.Attribute(&quot;</span>eid<span class="stringliteral">&quot;)} {path} ({(string)v.Attribute(&quot;</span>real<span class="stringliteral">&quot;)})&quot;</span>);</div>
 <div class="line">                        <span class="keywordtype">string</span> mergedAgainstNamed = v.acxMergedAgainstNamed();</div>
-<div class="line">                        Console.WriteLine(<span class="stringliteral">&quot;\tReal: {0}, Ancestor: {1}{2}&quot;</span>, v.acxRealNamed(), v.acxAncestorNamed(),</div>
-<div class="line">                            String.IsNullOrEmpty(mergedAgainstNamed) ? String.Empty : <span class="stringliteral">&quot;, Merged against: &quot;</span> + mergedAgainstNamed);</div>
+<div class="line">                        Console.WriteLine($<span class="stringliteral">&quot;\tReal: {v.acxRealNamed()}, Ancestor: {v.acxAncestorNamed()}&quot;</span> +</div>
+<div class="line">                            $<span class="stringliteral">&quot;{(String.IsNullOrEmpty(mergedAgainstNamed) ? String.Empty : &quot;</span>, Merged against: <span class="stringliteral">&quot; + mergedAgainstNamed)}&quot;</span>);</div>
 <div class="line"></div>
 <div class="line">                        <span class="keywordtype">string</span> realNamed = (string)v.Attribute(<span class="stringliteral">&quot;realNamedVersion&quot;</span>);</div>
-<div class="line">                        <span class="keywordtype">string</span> anno = String.Format(<span class="stringliteral">@&quot;annotate -v &quot;&quot;{0}&quot;&quot; -fxtu &quot;&quot;{1}&quot;&quot;&quot;</span>, realNamed, path);</div>
-<div class="line">                        AcResult r2 = await AcCommand.runAsync(anno);</div>
-<div class="line">                        <span class="keywordflow">if</span> (r2 == null || r2.RetVal != 0) <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// operation failed, check log file</span></div>
+<div class="line">                        AcResult r2 = await AcCommand.runAsync($<span class="stringliteral">@&quot;annotate -v &quot;&quot;{realNamed}&quot;&quot; -fxtu &quot;&quot;{path}&quot;&quot;&quot;</span>);</div>
+<div class="line">                        <span class="keywordflow">if</span> (r2 == null || r2.RetVal != 0) <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// operation failed</span></div>
 <div class="line"></div>
 <div class="line">                        <span class="comment">// get this transaction from the annotate results</span></div>
 <div class="line">                        XElement x2 = XElement.Parse(r2.CmdResult);</div>
@@ -126,10 +124,7 @@
 <div class="line">                        {</div>
 <div class="line">                            XElement diff = trans.Parent; <span class="comment">// get diff element for this transaction from annotate results</span></div>
 <div class="line">                            <span class="keywordflow">foreach</span> (XElement ln <span class="keywordflow">in</span> diff.Elements(<span class="stringliteral">&quot;line&quot;</span>)) <span class="comment">// line elements are transaction element siblings</span></div>
-<div class="line">                            {</div>
-<div class="line">                                Console.WriteLine(<span class="stringliteral">&quot;\tLine number: {0} \&quot;{1}\&quot; {{{2}}}, {3}&quot;</span>, (<span class="keywordtype">int</span>)ln.Attribute(<span class="stringliteral">&quot;number&quot;</span>),</div>
-<div class="line">                                    (string)ln.Attribute(<span class="stringliteral">&quot;type&quot;</span>), (int)ln.Attribute(<span class="stringliteral">&quot;trans&quot;</span>), (string)ln);</div>
-<div class="line">                            }</div>
+<div class="line">                                Console.WriteLine($<span class="stringliteral">&quot;\tLine number: {(int)ln.Attribute(&quot;</span>number<span class="stringliteral">&quot;)} \&quot;{(string)ln.Attribute(&quot;</span>type<span class="stringliteral">&quot;)}\&quot; {{{(int)ln.Attribute(&quot;</span>trans<span class="stringliteral">&quot;)}}}, {(string)ln}&quot;</span>);</div>
 <div class="line">                        }</div>
 <div class="line"></div>
 <div class="line">                        Console.WriteLine();</div>
@@ -141,11 +136,10 @@
 <div class="line">        }</div>
 <div class="line">    }</div>
 <div class="line">}</div>
-<div class="line"></div>
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

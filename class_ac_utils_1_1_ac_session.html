@@ -69,7 +69,7 @@ Collaboration diagram for AcUtils.AcSession:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_ac_utils_1_1_ac_session__coll__graph.png" border="0" usemap="#_ac_utils_8_ac_session_coll__map" alt="Collaboration graph"/></div>
 <map name="_ac_utils_8_ac_session_coll__map" id="_ac_utils_8_ac_session_coll__map">
-<area shape="rect" id="node6" href="struct_ac_utils_1_1_ac_duration.html" title="Wrapper around TimeSpan so we can return our own formatted elapsed time string and still sort correct..." alt="" coords="262,208,394,235"/></map>
+<area shape="rect" id="node6" href="class_ac_utils_1_1_ac_duration.html" title="Wrapper around TimeSpan so we can return our own formatted elapsed time string and still sort correct..." alt="" coords="262,129,394,156"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -102,7 +102,7 @@ Properties</h2></td></tr>
 <tr class="memitem:a7a9c0a3f0de8c02288a176b41ca13029"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_session.html#a7a9c0a3f0de8c02288a176b41ca13029">Host</a><code> [get, set]</code></td></tr>
 <tr class="memdesc:a7a9c0a3f0de8c02288a176b41ca13029"><td class="mdescLeft">&#160;</td><td class="mdescRight">IP address of the host machine.  <a href="#a7a9c0a3f0de8c02288a176b41ca13029">More...</a><br /></td></tr>
 <tr class="separator:a7a9c0a3f0de8c02288a176b41ca13029"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21e44dbaa4e13334152c5fd1f2a5aa90"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_ac_utils_1_1_ac_duration.html">AcDuration</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_session.html#a21e44dbaa4e13334152c5fd1f2a5aa90">Duration</a><code> [get, set]</code></td></tr>
+<tr class="memitem:a21e44dbaa4e13334152c5fd1f2a5aa90"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_ac_utils_1_1_ac_duration.html">AcDuration</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_session.html#a21e44dbaa4e13334152c5fd1f2a5aa90">Duration</a><code> [get, set]</code></td></tr>
 <tr class="memdesc:a21e44dbaa4e13334152c5fd1f2a5aa90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length of time the user has been logged on.  <a href="#a21e44dbaa4e13334152c5fd1f2a5aa90">More...</a><br /></td></tr>
 <tr class="separator:a21e44dbaa4e13334152c5fd1f2a5aa90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -119,7 +119,7 @@ Order comparison</h2></td></tr>
 <div class="textblock"><p>Holds the attributes for an AccuRev user session: principal name, host machine IP address, and length of time logged in. <a class="el" href="class_ac_utils_1_1_ac_session.html" title="Holds the attributes for an AccuRev user session: principal name, host machine IP address...">AcSession</a> objects are instantiated during <a class="el" href="class_ac_utils_1_1_ac_sessions.html" title="A container for AcSession objects that define AccuRev user sessions. ">AcSessions</a> construction. </p>
 <dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000011">AccuNote:</a></b></dt><dd>A server IP address change requires renewing the session token for the service account that runs the AccuRev service, otherwise trigger operations will fail. To do so, reissue the persistent login command <code>login -n</code> for the service account. </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00032">32</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00034">34</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a618e5cb596b5122d779ce8a0bbd89526"></a>
 <div class="memitem">
@@ -144,9 +144,9 @@ Order comparison</h2></td></tr>
 
 <p>Constructor used during <a class="el" href="class_ac_utils_1_1_ac_sessions.html" title="A container for AcSession objects that define AccuRev user sessions. ">AcSessions</a> list construction. It is called internally and not by user code. </p>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00043">43</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00045">45</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00118">AcUtils.AcSession.CompareTo()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00121">AcUtils.AcSession.CompareTo()</a>.</p>
 
 </div>
 </div>
@@ -183,9 +183,9 @@ Order comparison</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Value indicating the relative order of the <a class="el" href="class_ac_utils_1_1_ac_session.html" title="Holds the attributes for an AccuRev user session: principal name, host machine IP address...">AcSession</a> objects being compared.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_sessions.html#a0796ef3f27384c14e71dd8b7e4a73695">AcSessions example</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00096">96</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00099">99</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00118">AcUtils.AcSession.CompareTo()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00121">AcUtils.AcSession.CompareTo()</a>.</p>
 
 </div>
 </div>
@@ -226,7 +226,7 @@ Order comparison</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00118">118</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00121">121</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
 </div>
 </div>
@@ -261,9 +261,9 @@ Order comparison</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><em>true</em> if <a class="el" href="class_ac_utils_1_1_ac_session.html" title="Holds the attributes for an AccuRev user session: principal name, host machine IP address...">AcSession</a> <em>other</em> is the same, <em>false</em> otherwise.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00054">54</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00056">56</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00067">AcUtils.AcSession.Equals()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00069">AcUtils.AcSession.Equals()</a>.</p>
 
 </div>
 </div>
@@ -292,7 +292,7 @@ Order comparison</h2></td></tr>
 <p>Overridden to determine equality. </p>
 <dl class="section return"><dt>Returns</dt><dd>Return value of generic <a class="el" href="class_ac_utils_1_1_ac_session.html#ab5ae107f209e8eb32715c816bb7c0fa3">Equals(AcSession)</a> version.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00067">67</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00069">69</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
 </div>
 </div>
@@ -320,7 +320,7 @@ Order comparison</h2></td></tr>
 <p>Override appropriate for type <a class="el" href="class_ac_utils_1_1_ac_session.html" title="Holds the attributes for an AccuRev user session: principal name, host machine IP address...">AcSession</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>Hash of AccuRev principal name and IP address of the host machine.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00079">79</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00081">81</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
 </div>
 </div>
@@ -379,7 +379,7 @@ Order comparison</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00170">170</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00174">174</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
 </div>
 </div>
@@ -392,7 +392,7 @@ Order comparison</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct_ac_utils_1_1_ac_duration.html">AcDuration</a> AcUtils.AcSession.Duration</td>
+          <td class="memname"><a class="el" href="class_ac_utils_1_1_ac_duration.html">AcDuration</a> AcUtils.AcSession.Duration</td>
         </tr>
       </table>
   </td>
@@ -403,11 +403,11 @@ Order comparison</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Length of time the user has been logged on. </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="struct_ac_utils_1_1_ac_duration.html#a99a8d64ea3c773e1f4fe2e08ab3ea012">AcDuration.ToString</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_duration.html#a59e23045f289daea78b2fddb3b8ad943">AcDuration.ToString</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00151">151</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00154">154</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00096">AcUtils.AcSession.CompareTo()</a>, and <a class="el" href="_ac_sessions_8cs_source.html#l00259">AcUtils.AcSessions.initAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00099">AcUtils.AcSession.CompareTo()</a>, and <a class="el" href="_ac_sessions_8cs_source.html#l00260">AcUtils.AcSessions.initAsync()</a>.</p>
 
 </div>
 </div>
@@ -431,9 +431,9 @@ Order comparison</h2></td></tr>
 
 <p>IP address of the host machine. </p>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00141">141</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00144">144</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00079">AcUtils.AcSession.GetHashCode()</a>, and <a class="el" href="_ac_sessions_8cs_source.html#l00259">AcUtils.AcSessions.initAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00081">AcUtils.AcSession.GetHashCode()</a>, and <a class="el" href="_ac_sessions_8cs_source.html#l00260">AcUtils.AcSessions.initAsync()</a>.</p>
 
 </div>
 </div>
@@ -457,16 +457,16 @@ Order comparison</h2></td></tr>
 
 <p>User's AccuRev principal name. </p>
 
-<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00132">132</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_sessions_8cs_source.html#l00135">135</a> of file <a class="el" href="_ac_sessions_8cs_source.html">AcSessions.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00096">AcUtils.AcSession.CompareTo()</a>, <a class="el" href="_ac_sessions_8cs_source.html#l00079">AcUtils.AcSession.GetHashCode()</a>, and <a class="el" href="_ac_sessions_8cs_source.html#l00259">AcUtils.AcSessions.initAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_sessions_8cs_source.html#l00099">AcUtils.AcSession.CompareTo()</a>, <a class="el" href="_ac_sessions_8cs_source.html#l00081">AcUtils.AcSession.GetHashCode()</a>, and <a class="el" href="_ac_sessions_8cs_source.html#l00260">AcUtils.AcSessions.initAsync()</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

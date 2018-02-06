@@ -123,29 +123,23 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<div class="fragment"><div class="line"><span class="comment">// show rules user set on their workspaces in the MARS depot</span></div>
-<div class="line"><span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; showRulesAsync(AcUser <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>)</div>
+<div class="fragment"><div class="line"><span class="comment">// show rules explicitly set on dynamic streams in depot name</span></div>
+<div class="line"><span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; showRulesAsync(<span class="keywordtype">string</span> name)</div>
 <div class="line">{</div>
-<div class="line">    var progress = <span class="keyword">new</span> Progress&lt;int&gt;(n =&gt;</div>
-<div class="line">    {</div>
-<div class="line">        <span class="keywordflow">if</span> ((n % 10) == 0)</div>
-<div class="line">            Console.WriteLine(<span class="stringliteral">&quot;Loading rules: &quot;</span> + n);</div>
-<div class="line">    });</div>
-<div class="line"></div>
-<div class="line">    AcDepot depot = <span class="keyword">new</span> AcDepot(<span class="stringliteral">&quot;MARS&quot;</span>); <span class="comment">// includes workspaces</span></div>
-<div class="line">    <span class="keywordflow">if</span> (!(await depot.initAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// initialization failure, check log file</span></div>
+<div class="line">    AcDepot depot = <span class="keyword">new</span> AcDepot(name, dynamicOnly: <span class="keyword">true</span>); <span class="comment">// dynamic streams only</span></div>
+<div class="line">    <span class="keywordflow">if</span> (!(await depot.initAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
 <div class="line">    <a class="code" href="class_ac_utils_1_1_ac_rules.html#a2ebca769daea273ac912caac515cefe0">AcRules</a> rules = <span class="keyword">new</span> <a class="code" href="class_ac_utils_1_1_ac_rules.html#a2ebca769daea273ac912caac515cefe0">AcRules</a>(explicitOnly: <span class="keyword">true</span>); <span class="comment">// exclude rules inherited from higher-level streams</span></div>
-<div class="line">    <span class="keywordflow">if</span> (!(await rules.initAsync(depot, progress))) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line">    <span class="keywordflow">if</span> (!(await rules.initAsync(depot))) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
-<div class="line">    <span class="keywordflow">foreach</span> (AcRule rule <span class="keywordflow">in</span> rules.Where(n =&gt; n.SetInStream.EndsWith(user.Principal.Name)).OrderBy(n =&gt; n))</div>
+<div class="line">    <span class="keywordflow">foreach</span>(AcRule rule <span class="keywordflow">in</span> rules.OrderBy(n =&gt; n))</div>
 <div class="line">        Console.WriteLine(rule);</div>
 <div class="line"></div>
 <div class="line">    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">}</div>
-</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_rule.html#ad488745e050b9453b6cea6f6247a97a0">Default comparer</a> </dd></dl>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_rule.html#ad488745e050b9453b6cea6f6247a97a0">Default comparer</a>, <a href="_show_rules_8cs-example.html">ShowRules.cs</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00318">318</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00312">312</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
 
 </div>
 </div>
@@ -209,9 +203,9 @@ Public Member Functions</h2></td></tr>
 <div class="line"><span class="stringliteral">    options=&quot;</span>1<span class="stringliteral">&quot;/&gt;</span></div>
 <div class="line"><span class="stringliteral">&lt;/AcResponse&gt;</span></div>
 </div><!-- fragment --> 
-<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00355">355</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00349">349</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_rules_8cs_source.html#l00405">AcUtils.AcRules.initAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_rules_8cs_source.html#l00399">AcUtils.AcRules.initAsync()</a>.</p>
 
 </div>
 </div>
@@ -263,7 +257,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00405">405</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00399">399</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
 
 </div>
 </div>
@@ -315,7 +309,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00446">446</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00440">440</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
 
 </div>
 </div>
@@ -367,14 +361,14 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00501">501</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_rules_8cs_source.html#l00495">495</a> of file <a class="el" href="_ac_rules_8cs_source.html">AcRules.cs</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

@@ -126,9 +126,9 @@ Properties</h2></td></tr>
 <tr class="memitem:a1d37c96f3217bf5160ecade53f5d6fe2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_workspace.html#a1d37c96f3217bf5160ecade53f5d6fe2">UpdateLevel</a><code> [get, set]</code></td></tr>
 <tr class="memdesc:a1d37c96f3217bf5160ecade53f5d6fe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current update level of the workspace. Also known as the <em>workspace transaction level</em> or <em>x-action</em>.  <a href="#a1d37c96f3217bf5160ecade53f5d6fe2">More...</a><br /></td></tr>
 <tr class="separator:a1d37c96f3217bf5160ecade53f5d6fe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b89db6fd682ca4c5c4a1b3fde61c383"><td class="memItemLeft" align="right" valign="top">DateTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_workspace.html#a2b89db6fd682ca4c5c4a1b3fde61c383">LastUpdate</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:a2b89db6fd682ca4c5c4a1b3fde61c383"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time the workspace was last updated.  <a href="#a2b89db6fd682ca4c5c4a1b3fde61c383">More...</a><br /></td></tr>
-<tr class="separator:a2b89db6fd682ca4c5c4a1b3fde61c383"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10c6b4c375ec2682c95a23b24c6c111f"><td class="memItemLeft" align="right" valign="top">DateTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_workspace.html#a10c6b4c375ec2682c95a23b24c6c111f">FileModTime</a><code> [get, set]</code></td></tr>
+<tr class="memdesc:a10c6b4c375ec2682c95a23b24c6c111f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This property value is used in AccuRev's <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/the_update_algorithm.html">update algorithm</a> while processing the <code>update</code> command. The value is stored and updated internally by AccuRev when the <code>update</code> operation succeeds. It is the date and time of the oldest <em>non-member</em> file in the workspace with (<em>modified</em>) status. If no such file exists, it is the date and time the <code>update</code> command was issued.  <a href="#a10c6b4c375ec2682c95a23b24c6c111f">More...</a><br /></td></tr>
+<tr class="separator:a10c6b4c375ec2682c95a23b24c6c111f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83ed528b79cd9fa916f93953a63d0310"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acenum.html#ga369fe7c71f46eebf4c863e362d24b583">WsType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_workspace.html#a83ed528b79cd9fa916f93953a63d0310">Type</a><code> [get, set]</code></td></tr>
 <tr class="memdesc:a83ed528b79cd9fa916f93953a63d0310"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of workspace: standard, exclusive-file locking, anchor-required, or reference tree.  <a href="#a83ed528b79cd9fa916f93953a63d0310">More...</a><br /></td></tr>
 <tr class="separator:a83ed528b79cd9fa916f93953a63d0310"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -353,7 +353,7 @@ Order comparison</h2></td></tr>
 <p>Get the basis (parent) stream for this workspace. </p>
 <dl class="section return"><dt>Returns</dt><dd>Basis <a class="el" href="class_ac_utils_1_1_ac_stream.html" title="A stream object that defines the attributes of an AccuRev stream. AcStream objects are instantiated d...">AcStream</a> object for this workspace or <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00335">335</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00338">338</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
 </div>
 </div>
@@ -443,7 +443,7 @@ Order comparison</h2></td></tr>
 <li><code>D</code> Depot name. </li>
 <li><code>TL</code> <a class="el" href="class_ac_utils_1_1_ac_workspace.html#a0f317380aef147983d8046c340e2c0e1">Target level</a>: how up-to-date the workspace should be. </li>
 <li><code>UL</code> <a class="el" href="class_ac_utils_1_1_ac_workspace.html#a1d37c96f3217bf5160ecade53f5d6fe2">Update level</a>: how up-to-date the workspace actually is. </li>
-<li><code>U</code> Time the workspace was last updated. </li>
+<li><code>U</code> Time of the oldest non-member file in the workspace with (<em>modified</em>) status, otherwise the time the <code>update</code> command was issued. </li>
 <li><code>T</code> <a class="el" href="group__acenum.html#ga369fe7c71f46eebf4c863e362d24b583">Workspace type</a>: standard, exclusive-file locking, anchor-required, or reference tree. </li>
 <li><code>E</code> <a class="el" href="group__acenum.html#ga7ef385e6b8a36e0def0b897e99751903">End-of-line character</a> in use by the workspace: platform-appropriate, Unix/Linux style, or Windows style. </li>
 <li><code>PI</code> Workspace owner's principal ID number. </li>
@@ -451,7 +451,7 @@ Order comparison</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00365">365</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00368">368</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
 </div>
 </div>
@@ -478,7 +478,7 @@ Order comparison</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00260">260</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00147">AcUtils.AcWorkspace.CompareTo()</a>, <a class="el" href="_ac_workspaces_8cs_source.html#l00678">AcUtils.AcWorkspaces.getDepot()</a>, <a class="el" href="_ac_workspaces_8cs_source.html#l00130">AcUtils.AcWorkspace.GetHashCode()</a>, and <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00147">AcUtils.AcWorkspace.CompareTo()</a>, <a class="el" href="_ac_workspaces_8cs_source.html#l00681">AcUtils.AcWorkspaces.getDepot()</a>, <a class="el" href="_ac_workspaces_8cs_source.html#l00130">AcUtils.AcWorkspace.GetHashCode()</a>, and <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -502,9 +502,35 @@ Order comparison</h2></td></tr>
 
 <p>End-of-line character in use by the workspace: platform-appropriate, Unix/Linux style, or Windows style. </p>
 
-<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00317">317</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00320">320</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a10c6b4c375ec2682c95a23b24c6c111f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DateTime AcUtils.AcWorkspace.FileModTime</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span><span class="mlabel">set</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>This property value is used in AccuRev's <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/the_update_algorithm.html">update algorithm</a> while processing the <code>update</code> command. The value is stored and updated internally by AccuRev when the <code>update</code> operation succeeds. It is the date and time of the oldest <em>non-member</em> file in the workspace with (<em>modified</em>) status. If no such file exists, it is the date and time the <code>update</code> command was issued. </p>
+
+<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00302">302</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
+
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -530,7 +556,7 @@ Order comparison</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00191">191</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -557,7 +583,7 @@ Order comparison</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00242">242</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -583,33 +609,7 @@ Order comparison</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00251">251</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00130">AcUtils.AcWorkspace.GetHashCode()</a>, and <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a2b89db6fd682ca4c5c4a1b3fde61c383"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">DateTime AcUtils.AcWorkspace.LastUpdate</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">get</span><span class="mlabel">set</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Time the workspace was last updated. </p>
-
-<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00299">299</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
-
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00130">AcUtils.AcWorkspace.GetHashCode()</a>, and <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -653,7 +653,7 @@ Order comparison</h2></td></tr>
 </div><!-- fragment --> 
 <p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00222">222</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -679,7 +679,7 @@ Order comparison</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00182">182</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00147">AcUtils.AcWorkspace.CompareTo()</a>, <a class="el" href="_ac_workspaces_8cs_source.html#l00678">AcUtils.AcWorkspaces.getDepot()</a>, and <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00147">AcUtils.AcWorkspace.CompareTo()</a>, <a class="el" href="_ac_workspaces_8cs_source.html#l00681">AcUtils.AcWorkspaces.getDepot()</a>, and <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -703,9 +703,9 @@ Order comparison</h2></td></tr>
 
 <p>AccuRev principal who owns the workspace. </p>
 
-<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00326">326</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00329">329</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -732,7 +732,7 @@ Order comparison</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00232">232</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -759,7 +759,7 @@ Order comparison</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00274">274</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -783,9 +783,9 @@ Order comparison</h2></td></tr>
 
 <p>Type of workspace: standard, exclusive-file locking, anchor-required, or reference tree. </p>
 
-<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00308">308</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00311">311</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
@@ -812,14 +812,14 @@ Order comparison</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_ac_workspaces_8cs_source.html#l00290">290</a> of file <a class="el" href="_ac_workspaces_8cs_source.html">AcWorkspaces.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00618">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_workspaces_8cs_source.html#l00621">AcUtils.AcWorkspaces.storeWSpaces()</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

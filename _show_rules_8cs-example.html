@@ -46,7 +46,7 @@
 </div><!--header-->
 <div class="contents">
 <p>Show the rules a user set on his workspaces in all depots. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_rules.html#a2ebca769daea273ac912caac515cefe0">AcRules constructor</a></dd></dl>
-<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016 Verizon. All Rights Reserved.</span></div>
+<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.</span></div>
 <div class="line"><span class="comment"></span></div>
 <div class="line"><span class="comment">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment">you may not use this file except in compliance with the License.</span></div>
@@ -59,7 +59,7 @@
 <div class="line"><span class="comment">See the License for the specific language governing permissions and</span></div>
 <div class="line"><span class="comment">limitations under the License. */</span></div>
 <div class="line"></div>
-<div class="line"><span class="comment">// Required references: AcUtils.dll, System.configuration</span></div>
+<div class="line"><span class="comment">// Required references: AcUtils.dll</span></div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Collections.Generic;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Linq;</div>
@@ -72,36 +72,49 @@
 <div class="line">    {</div>
 <div class="line">        <span class="keyword">static</span> <span class="keywordtype">int</span> Main()</div>
 <div class="line">        {</div>
-<div class="line">            Task&lt;bool&gt; rini = showRulesAsync();</div>
+<div class="line">            <span class="comment">// show the rules barnyrd set on his workspaces throughout the repository</span></div>
+<div class="line">            Task&lt;bool&gt; rini = showRulesAsync(<span class="stringliteral">&quot;barnyrd&quot;</span>);</div>
 <div class="line">            <span class="keywordflow">return</span> (rini.Result) ? 0 : 1;</div>
 <div class="line">        }</div>
 <div class="line"></div>
-<div class="line">        <span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; showRulesAsync()</div>
+<div class="line">        <span class="keyword">public</span> <span class="keyword">static</span> async Task&lt;bool&gt; showRulesAsync(<span class="keywordtype">string</span> <a name="a0"></a><a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a>)</div>
 <div class="line">        {</div>
-<div class="line">            <span class="comment">// show the rules barnyrd set on his workspaces throughout the repository</span></div>
 <div class="line">            AcDepots depots = <span class="keyword">new</span> AcDepots();</div>
 <div class="line">            <span class="keywordflow">if</span> (!(await depots.initAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
 <div class="line">            List&lt;Task&lt;bool&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;bool&gt;&gt;();</div>
-<div class="line">            List&lt;AcRules&gt; list = <span class="keyword">new</span> List&lt;AcRules&gt;();</div>
-<div class="line">            <span class="keywordflow">foreach</span> (AcDepot <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> depots.OrderBy(n =&gt; n)) <span class="comment">// use default comparer</span></div>
+<div class="line">            Dictionary&lt;AcDepot, List&lt;AcRules&gt;&gt; map = <span class="keyword">new</span> Dictionary&lt;AcDepot, List&lt;AcRules&gt;&gt;(depots.Count);</div>
+<div class="line"></div>
+<div class="line">            <span class="keywordflow">foreach</span> (AcDepot <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> depots)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordflow">foreach</span> (AcStream <a name="a0"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> depot.Streams.Where(n =&gt; n.Type == <a name="a1"></a><a class="code" href="group__acenum.html#ga0a9d168d367dad9bab253eafa49aae77">StreamType</a>.workspace &amp;&amp;</div>
-<div class="line">                    n.Name.EndsWith(<span class="stringliteral">&quot;barnyrd&quot;</span>)).OrderBy(n =&gt; n)) <span class="comment">// workspace names always have principal name appended</span></div>
+<div class="line">                IEnumerable&lt;AcStream&gt; filter = depot.Streams.Where(n =&gt; n.Type == <a name="a1"></a><a class="code" href="group__acenum.html#ga0a9d168d367dad9bab253eafa49aae77">StreamType</a>.workspace &amp;&amp;</div>
+<div class="line">                    !n.Hidden &amp;&amp; n.Name.EndsWith(user)); <span class="comment">// workspace names have principal name appended</span></div>
+<div class="line">                <span class="keywordtype">int</span> num = filter.Count();</div>
+<div class="line">                List&lt;Task&lt;bool&gt;&gt; tlist = <span class="keyword">new</span> List&lt;Task&lt;bool&gt;&gt;(num);</div>
+<div class="line">                List&lt;AcRules&gt; rlist = <span class="keyword">new</span> List&lt;AcRules&gt;(num);</div>
+<div class="line"></div>
+<div class="line">                <span class="keywordflow">foreach</span> (AcStream <a name="a2"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> filter)</div>
 <div class="line">                {</div>
-<div class="line">                    AcRules r = <span class="keyword">new</span> AcRules(<span class="keyword">true</span>); <span class="comment">// true for explicitly-set rules only</span></div>
-<div class="line">                    tasks.Add(r.initAsync(stream));</div>
-<div class="line">                    list.Add(r);</div>
+<div class="line">                    AcRules rules = <span class="keyword">new</span> AcRules(explicitOnly: <span class="keyword">true</span>); <span class="comment">// explicitly-set rules only</span></div>
+<div class="line">                    tlist.Add(rules.initAsync(stream));</div>
+<div class="line">                    rlist.Add(rules);</div>
 <div class="line">                }</div>
+<div class="line"></div>
+<div class="line">                tasks.AddRange(tlist);</div>
+<div class="line">                map.Add(depot, rlist);</div>
 <div class="line">            }</div>
 <div class="line"></div>
-<div class="line">            <span class="keywordtype">bool</span>[] arr = await Task.WhenAll(tasks); <span class="comment">// asynchronously await multiple asynchronous operations.. fast!</span></div>
+<div class="line">            <span class="keywordtype">bool</span>[] arr = await Task.WhenAll(tasks); <span class="comment">// finish running in parallel</span></div>
 <div class="line">            <span class="keywordflow">if</span> (arr == null || arr.Any(n =&gt; n == <span class="keyword">false</span>)) <span class="comment">// if one or more failed to initialize</span></div>
 <div class="line">                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
-<div class="line">            <span class="keywordflow">foreach</span> (AcRules rules <span class="keywordflow">in</span> list)</div>
-<div class="line">                <span class="keywordflow">foreach</span> (AcRule rule <span class="keywordflow">in</span> rules.OrderBy(n =&gt; n)) <span class="comment">// use default comparer</span></div>
-<div class="line">                    Console.WriteLine(rule);</div>
+<div class="line">            <span class="keywordflow">foreach</span> (KeyValuePair&lt;AcDepot, List&lt;AcRules&gt;&gt; pair <span class="keywordflow">in</span> map.OrderBy(n =&gt; n.Key)) <span class="comment">// order by depot</span></div>
+<div class="line">            {</div>
+<div class="line">                List&lt;AcRules&gt; list = pair.Value;</div>
+<div class="line">                <span class="keywordflow">foreach</span> (AcRules rules <span class="keywordflow">in</span> list)</div>
+<div class="line">                    <span class="keywordflow">foreach</span> (AcRule rule <span class="keywordflow">in</span> rules.OrderBy(n =&gt; n))</div>
+<div class="line">                        Console.WriteLine(rule);</div>
+<div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">        }</div>
@@ -110,7 +123,7 @@
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

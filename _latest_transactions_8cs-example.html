@@ -69,7 +69,7 @@
 <div class="line">  &lt;/startup&gt;</div>
 <div class="line">&lt;/configuration&gt;</div>
 </div><!-- fragment --></dd></dl>
-<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2017 Verizon. All Rights Reserved.</span></div>
+<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2017-2018 Verizon. All Rights Reserved.</span></div>
 <div class="line"><span class="comment"></span></div>
 <div class="line"><span class="comment">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment">you may not use this file except in compliance with the License.</span></div>
@@ -114,55 +114,55 @@
 <div class="line">            <span class="comment">// general program initialization</span></div>
 <div class="line">            <span class="keywordflow">if</span> (!init()) <span class="keywordflow">return</span> 1;</div>
 <div class="line"></div>
-<div class="line">            _depots = AcQuery.getDepotNameListAsync().Result;</div>
-<div class="line">            <span class="keywordflow">if</span> (_depots == null) <span class="keywordflow">return</span> 1;</div>
-<div class="line"></div>
 <div class="line">            _transactions = <span class="keyword">new</span> List&lt;XElement&gt;(_depots.Count);</div>
 <div class="line">            <span class="keywordflow">if</span> (initTransListAsync().Result == <span class="keyword">false</span>) <span class="keywordflow">return</span> 1;</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> report() ? 0 : 1;</div>
 <div class="line">        }</div>
 <div class="line"></div>
-<div class="line">        <span class="comment">// Initialize our transaction list with the latest transactions for all depots in the repository.</span></div>
+<div class="line">        <span class="comment">// Initialize our transactions list with the latest transactions for all depots in the repository.</span></div>
 <div class="line">        <span class="comment">// Returns true if initialization succeeded, otherwise false.</span></div>
 <div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> async Task&lt;bool&gt; initTransListAsync()</div>
 <div class="line">        {</div>
-<div class="line">            List&lt;Task&lt;XElement&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;XElement&gt;&gt;(_depots.Count);</div>
+<div class="line">            List&lt;Task&lt;bool&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;bool&gt;&gt;(_depots.Count);</div>
 <div class="line">            <span class="keywordflow">foreach</span> (<span class="keywordtype">string</span> <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> _depots)</div>
 <div class="line">                tasks.Add(initLastTransAsync(depot));</div>
 <div class="line"></div>
-<div class="line">            XElement[] arr = await Task.WhenAll(tasks); <span class="comment">// finish running all in parallel</span></div>
-<div class="line">            <span class="keywordflow">return</span> (arr != null &amp;&amp; arr.All(n =&gt; n != null)); <span class="comment">// true if all succeeded</span></div>
+<div class="line">            <span class="keywordtype">bool</span>[] arr = await Task.WhenAll(tasks); <span class="comment">// finish running all in parallel</span></div>
+<div class="line">            <span class="keywordflow">return</span> (arr != null &amp;&amp; arr.All(n =&gt; n == <span class="keyword">true</span>)); <span class="comment">// true if all succeeded</span></div>
 <div class="line">        }</div>
 <div class="line"></div>
-<div class="line">        <span class="comment">// Run the hist command for depot and add the results to our transactions list. Returns the </span></div>
-<div class="line">        <span class="comment">// latest transaction in depot on success, otherwise null. AcUtilsException caught and logged </span></div>
-<div class="line">        <span class="comment">// in %LOCALAPPDATA%\AcTools\Logs\LatestTransactions-YYYY-MM-DD.log on hist command failure.</span></div>
-<div class="line">        <span class="keyword">private</span> async <span class="keyword">static</span> Task&lt;XElement&gt; initLastTransAsync(<span class="keywordtype">string</span> depot)</div>
+<div class="line">        <span class="comment">// Run the hist command for depot and add the results to our transactions list. Returns </span></div>
+<div class="line">        <span class="comment">// true if operation succeeds, otherwise false. AcUtilsException caught and logged in </span></div>
+<div class="line">        <span class="comment">// %LOCALAPPDATA%\AcTools\Logs\LatestTransactions-YYYY-MM-DD.log on hist command failure.</span></div>
+<div class="line">        <span class="comment">// Exception caught and logged in same for a range of exceptions.</span></div>
+<div class="line">        <span class="keyword">private</span> async <span class="keyword">static</span> Task&lt;bool&gt; initLastTransAsync(<span class="keywordtype">string</span> depot)</div>
 <div class="line">        {</div>
-<div class="line">            XElement trans = null; <span class="comment">// assume failure</span></div>
+<div class="line">            <span class="keywordtype">bool</span> ret = <span class="keyword">false</span>; <span class="comment">// assume failure</span></div>
 <div class="line">            <span class="keywordflow">try</span></div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> cmd = String.Format(<span class="stringliteral">@&quot;hist -p &quot;&quot;{0}&quot;&quot; -t now -fx&quot;</span>, depot);</div>
-<div class="line">                AcResult result = await AcCommand.runAsync(cmd);</div>
-<div class="line">                <span class="keywordflow">if</span> (result != null &amp;&amp; result.RetVal == 0)</div>
+<div class="line">                AcResult r = await AcCommand.runAsync($<span class="stringliteral">@&quot;hist -p &quot;&quot;{depot}&quot;&quot; -t now -fx&quot;</span>);</div>
+<div class="line">                <span class="keywordflow">if</span> (r != null &amp;&amp; r.RetVal == 0)</div>
 <div class="line">                {</div>
-<div class="line">                    XElement xml = XElement.Parse(result.CmdResult);</div>
-<div class="line">                    XElement temp = xml.Element(<span class="stringliteral">&quot;transaction&quot;</span>);</div>
-<div class="line">                    temp.AddAnnotation(depot); <span class="comment">// add depot since it&#39;s not in the XML</span></div>
-<div class="line">                    lock (_locker) { _transactions.Add(temp); }</div>
-<div class="line">                    trans = temp;</div>
+<div class="line">                    XElement xml = XElement.Parse(r.CmdResult);</div>
+<div class="line">                    XElement trans = xml.Element(<span class="stringliteral">&quot;transaction&quot;</span>);</div>
+<div class="line">                    trans.AddAnnotation(depot); <span class="comment">// add depot since it&#39;s not in the XML</span></div>
+<div class="line">                    lock (_locker) { _transactions.Add(trans); }</div>
+<div class="line">                    ret = <span class="keyword">true</span>;</div>
 <div class="line">                }</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (AcUtilsException exc)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;AcUtilsException caught and logged in Program.initLastTransAsync{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, exc.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;AcUtilsException caught and logged in Program.initLastTransAsync{Environment.NewLine}{exc.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
-<div class="line">            <span class="keywordflow">return</span> trans;</div>
+<div class="line">            <span class="keywordflow">catch</span> (Exception ecx)</div>
+<div class="line">            {</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.initLastTransAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
+<div class="line">            }</div>
+<div class="line"></div>
+<div class="line">            <span class="keywordflow">return</span> ret;</div>
 <div class="line">        }</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Generate an Excel worksheet with the results in reverse chronological order so the most </span></div>
@@ -174,7 +174,7 @@
 <div class="line">            Excel.Application excel = <span class="keyword">new</span> Excel.Application();</div>
 <div class="line">            <span class="keywordflow">if</span> (excel == null)</div>
 <div class="line">            {</div>
-<div class="line">                MessageBox.Show(<span class="stringliteral">&quot;Excel installation not found.&quot;</span>, <span class="stringliteral">&quot;LatestTransactions&quot;</span>, </div>
+<div class="line">                MessageBox.Show(<span class="stringliteral">&quot;Excel installation not found.&quot;</span>, <span class="stringliteral">&quot;LatestTransactions&quot;</span>,</div>
 <div class="line">                    MessageBoxButtons.OK, MessageBoxIcon.Hand);</div>
 <div class="line">                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line">            }</div>
@@ -242,8 +242,8 @@
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">if</span> (ret)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Latest transactions saved to {0}&quot;</span>, file);</div>
-<div class="line">                MessageBox.Show(msg, <span class="stringliteral">&quot;LatestTransactions&quot;</span>, MessageBoxButtons.OK, MessageBoxIcon.Information);</div>
+<div class="line">                MessageBox.Show($<span class="stringliteral">&quot;Latest transactions saved to {file}&quot;</span>, <span class="stringliteral">&quot;LatestTransactions&quot;</span>,</div>
+<div class="line">                    MessageBoxButtons.OK, MessageBoxIcon.Information);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> ret;</div>
@@ -266,14 +266,16 @@
 <div class="line">            Task&lt;string&gt; prncpl = AcQuery.getPrincipalAsync();</div>
 <div class="line">            <span class="keywordflow">if</span> (String.IsNullOrEmpty(prncpl.Result))</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Not logged into AccuRev.{0}Please login and try again.&quot;</span>,</div>
-<div class="line">                    Environment.NewLine);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Not logged into AccuRev.{Environment.NewLine}Please login and try again.&quot;</span>);</div>
 <div class="line">                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="comment">// initialize our class variables from LatestTransactions.exe.config</span></div>
 <div class="line">            <span class="keywordflow">if</span> (!initAppConfigData()) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"></div>
+<div class="line">            <span class="comment">// list of all depot names in the repository</span></div>
+<div class="line">            _depots = AcQuery.getDepotNameListAsync().Result;</div>
+<div class="line">            <span class="keywordflow">if</span> (_depots == null) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">        }</div>
@@ -294,10 +296,7 @@
 <div class="line">            {</div>
 <div class="line">                Process currentProcess = Process.GetCurrentProcess();</div>
 <div class="line">                ProcessModule pm = currentProcess.MainModule;</div>
-<div class="line">                <span class="keywordtype">string</span> exeFile = pm.ModuleName;</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Invalid data in {1}.config{0}{2}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, exeFile, exc.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Invalid data in {pm.ModuleName}.config{Environment.NewLine}{exc.Message}&quot;</span>);</div>
 <div class="line">                ret = <span class="keyword">false</span>;</div>
 <div class="line">            }</div>
 <div class="line"></div>
@@ -308,7 +307,7 @@
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

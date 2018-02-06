@@ -118,7 +118,7 @@ Properties</h2></td></tr>
 <tr class="memdesc:aa6eb46bce0610c3a5786be3038a7dac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the stream is a dynamic stream or not. <em>false</em> in the case of a workspace, snapshot or passthrough stream.  <a href="#aa6eb46bce0610c3a5786be3038a7dac3">More...</a><br /></td></tr>
 <tr class="separator:aa6eb46bce0610c3a5786be3038a7dac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a846da160261ffc6879547453dbde2a76"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acenum.html#ga0a9d168d367dad9bab253eafa49aae77">StreamType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_stream.html#a846da160261ffc6879547453dbde2a76">Type</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:a846da160261ffc6879547453dbde2a76"><td class="mdescLeft">&#160;</td><td class="mdescRight">The kind of stream: <em>unknown</em>, <em>normal</em>, <em>regular</em>, <em>workspace</em>, <em>snapshot</em>, <em>passthru</em>, or <em>passthrough</em>.  <a href="#a846da160261ffc6879547453dbde2a76">More...</a><br /></td></tr>
+<tr class="memdesc:a846da160261ffc6879547453dbde2a76"><td class="mdescLeft">&#160;</td><td class="mdescRight">The kind of stream: <em>unknown</em>, <em>normal</em>, <em>dynamic</em>, <em>regular</em>, <em>workspace</em>, <em>snapshot</em>, <em>passthru</em>, <em>passthrough</em>, <em>gated</em> or <em>staging</em>.  <a href="#a846da160261ffc6879547453dbde2a76">More...</a><br /></td></tr>
 <tr class="separator:a846da160261ffc6879547453dbde2a76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a531dce28aa1c0b5276a99e8150add797"><td class="memItemLeft" align="right" valign="top">DateTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_ac_stream.html#a531dce28aa1c0b5276a99e8150add797">Time</a><code> [get, set]</code></td></tr>
 <tr class="memdesc:a531dce28aa1c0b5276a99e8150add797"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream's time basis or when the snapshot stream was created, otherwise <em>null</em>.  <a href="#a531dce28aa1c0b5276a99e8150add797">More...</a><br /></td></tr>
@@ -429,7 +429,7 @@ Order comparison</h2></td></tr>
 <li><code>G</code> Stream name. Default when not using a format specifier. </li>
 <li><code>LV</code> Long version (verbose). </li>
 <li><code>I</code> Stream ID number. </li>
-<li><code>T</code> <a class="el" href="group__acenum.html#ga0a9d168d367dad9bab253eafa49aae77">Stream type</a>: <em>unknown</em>, <em>normal</em>, <em>regular</em>, <em>workspace</em>, <em>snapshot</em>, <em>passthru</em>, or <em>passthrough</em>. </li>
+<li><code>T</code> <a class="el" href="group__acenum.html#ga0a9d168d367dad9bab253eafa49aae77">Stream type</a>: <em>unknown</em>, <em>normal</em>, <em>dynamic</em>, <em>regular</em>, <em>workspace</em>, <em>snapshot</em>, <em>passthru</em>, <em>passthrough</em>, <em>gated</em> or <em>staging</em>. </li>
 <li><code>BT</code> Stream's basis time: snapshot stream creation or dynamic stream time basis. </li>
 <li><code>C</code> Time the stream was created. </li>
 <li><code>BN</code> Basis stream name. </li>
@@ -726,7 +726,7 @@ Order comparison</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The kind of stream: <em>unknown</em>, <em>normal</em>, <em>regular</em>, <em>workspace</em>, <em>snapshot</em>, <em>passthru</em>, or <em>passthrough</em>. </p>
+<p>The kind of stream: <em>unknown</em>, <em>normal</em>, <em>dynamic</em>, <em>regular</em>, <em>workspace</em>, <em>snapshot</em>, <em>passthru</em>, <em>passthrough</em>, <em>gated</em> or <em>staging</em>. </p>
 
 <p>Definition at line <a class="el" href="_ac_streams_8cs_source.html#l00235">235</a> of file <a class="el" href="_ac_streams_8cs_source.html">AcStreams.cs</a>.</p>
 
@@ -737,7 +737,7 @@ Order comparison</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

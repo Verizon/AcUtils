@@ -66,7 +66,7 @@
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ab9b6ac68240d56da3a48648d652853d6"><td class="memItemLeft" align="right" valign="top">static DateTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_extensions.html#ab9b6ac68240d56da3a48648d652853d6">acxTime</a> (this XElement element, XName name)</td></tr>
-<tr class="memdesc:ab9b6ac68240d56da3a48648d652853d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert <em>element's</em> Epoch time <em>name</em> attribute value to a .NET DateTime object.  <a href="#ab9b6ac68240d56da3a48648d652853d6">More...</a><br /></td></tr>
+<tr class="memdesc:ab9b6ac68240d56da3a48648d652853d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert <em>element's</em> Epoch time <em>name</em> XML attribute value to a .NET DateTime object.  <a href="#ab9b6ac68240d56da3a48648d652853d6">More...</a><br /></td></tr>
 <tr class="separator:ab9b6ac68240d56da3a48648d652853d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a0277b87c5446a46f45d37c5de1e876"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="group__acenum.html#ga3164dabd0d78a5482aea218fa9154669">ElementType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_extensions.html#a3a0277b87c5446a46f45d37c5de1e876">acxType</a> (this XElement element, XName name)</td></tr>
 <tr class="memdesc:a3a0277b87c5446a46f45d37c5de1e876"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert <em>element's</em> type <em>name</em> attribute value to an <a class="el" href="group__acenum.html#ga3164dabd0d78a5482aea218fa9154669" title="Indicates the element&#39;s type. By default, AccuRev determines the element type for a newly created ver...">AcUtils.ElementType</a> enum.  <a href="#a3a0277b87c5446a46f45d37c5de1e876">More...</a><br /></td></tr>
@@ -98,12 +98,24 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a2124d2bb5ac3680561bf6b072199683f"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_extensions.html#a2124d2bb5ac3680561bf6b072199683f">acxComment</a> (this XElement element)</td></tr>
 <tr class="memdesc:a2124d2bb5ac3680561bf6b072199683f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the comment for the transaction or version <em>element</em>.  <a href="#a2124d2bb5ac3680561bf6b072199683f">More...</a><br /></td></tr>
 <tr class="separator:a2124d2bb5ac3680561bf6b072199683f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c57d0b5a1743c8f876555f5bc2fc46b"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_extensions.html#a9c57d0b5a1743c8f876555f5bc2fc46b">acxWSpaceName</a> (this XElement version)</td></tr>
+<tr class="memdesc:a9c57d0b5a1743c8f876555f5bc2fc46b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the workspace name for <em>version</em>.  <a href="#a9c57d0b5a1743c8f876555f5bc2fc46b">More...</a><br /></td></tr>
+<tr class="separator:a9c57d0b5a1743c8f876555f5bc2fc46b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e5540b6808111695139ea2efe7570bf"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_extensions.html#a6e5540b6808111695139ea2efe7570bf">acxWSpaceOwner</a> (this XElement version)</td></tr>
+<tr class="memdesc:a6e5540b6808111695139ea2efe7570bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the workspace owner's principal name for <em>version</em>.  <a href="#a6e5540b6808111695139ea2efe7570bf">More...</a><br /></td></tr>
+<tr class="separator:a6e5540b6808111695139ea2efe7570bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbe8cb6cf466bbe13d51f4d2b1dffd46"><td class="memItemLeft" align="right" valign="top">static int[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_extensions.html#abbe8cb6cf466bbe13d51f4d2b1dffd46">acxStreamVersion</a> (this XElement version, <a class="el" href="group__acenum.html#ga9afc076fea70292f7e26e509a8434333">RealVirtual</a> request)</td></tr>
+<tr class="memdesc:abbe8cb6cf466bbe13d51f4d2b1dffd46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the real or virtual stream and version numbers for <em>version</em>.  <a href="#abbe8cb6cf466bbe13d51f4d2b1dffd46">More...</a><br /></td></tr>
+<tr class="separator:abbe8cb6cf466bbe13d51f4d2b1dffd46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa04af22bda795c34de93ead894f03175"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ac_utils_1_1_extensions.html#aa04af22bda795c34de93ead894f03175">acxStreamName</a> (this XElement version, <a class="el" href="group__acenum.html#ga9afc076fea70292f7e26e509a8434333">RealVirtual</a> request)</td></tr>
+<tr class="memdesc:aa04af22bda795c34de93ead894f03175"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the real or virtual stream name for <em>version</em>.  <a href="#aa04af22bda795c34de93ead894f03175">More...</a><br /></td></tr>
+<tr class="separator:aa04af22bda795c34de93ead894f03175"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Custom query operators for use when using <a href="https://msdn.microsoft.com/en-us/library/bb387098.aspx">LINQ to XML</a>. </p>
 <dl class="section see"><dt>See also</dt><dd><a href="_file_hist_8cs-example.html">FileHist.cs</a>, <a href="_user_changes_8cs-example.html">UserChanges.cs</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00027">27</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00046">46</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a38e9d18488f147e0e91b7c03e9ffb874"></a>
 <div class="memitem">
@@ -136,7 +148,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Formatted ancestor-named version, e.g. <code>NEPTUNE_DEV4_thomas/6 (114/6)</code>, otherwise <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00176">176</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00197">197</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -172,7 +184,7 @@ Static Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The <em>comment</em> element value, e.g. <code>&lt;comment&gt;<b>Fix defect 452.</b>&lt;/comment&gt;</code>, otherwise <em>null</em> if no comment exists or if <em>element</em> is a version element and the first in a <code>promote</code> transaction.</dd></dl>
 <dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000017">AccuNote:</a></b></dt><dd>For <code>promote</code> transactions, the <em>comment</em> element above the first <em>version</em> element listed in the parent <em>transaction</em> is the transaction comment and not the version comment. Therefore in this case, when querying version elements, the first <em>version</em> element in the <em>transaction</em> is ignored and <em>null</em> is returned. </dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00213">213</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00234">234</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -207,7 +219,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Formatted from-stream version, e.g. <code>NEPTUNE_DEV2_thomas/7 (110/7)</code>, otherwise <em>null</em> if <em>transaction</em> was not a <code>promote</code> operation.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00087">87</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00108">108</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -242,7 +254,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><em>true</em> if <em>transaction</em> was a <code>co</code> operation, <em>false</em> otherwise.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00118">118</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00139">139</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -277,7 +289,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><em>true</em> if <em>transaction</em> was a <code>promote</code> operation, <em>false</em> otherwise.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00075">75</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00096">96</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -312,7 +324,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Formatted merged-against-named version, e.g. <code>JUPITER_DEV1_robert/5 (142/5)</code>, otherwise <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00192">192</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00213">213</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -348,7 +360,101 @@ Static Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Formatted real-named version, e.g. <code>MARS_DEV3_barnyrd/2 (17/2)</code>, otherwise <em>null</em> if not found.</dd></dl>
 <dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000016">AccuNote:</a></b></dt><dd>For <code>promote</code> transactions, the <em>realNamedVersion</em> attribute value in the transaction's first <em>version</em> element is the same in the second <em>version</em> element. Therefore, in this case the first <em>version</em> element is ignored and <em>null</em> is returned. </dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00157">157</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00178">178</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa04af22bda795c34de93ead894f03175"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static string AcUtils.Extensions.acxStreamName </td>
+          <td>(</td>
+          <td class="paramtype">this XElement&#160;</td>
+          <td class="paramname"><em>version</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__acenum.html#ga9afc076fea70292f7e26e509a8434333">RealVirtual</a>&#160;</td>
+          <td class="paramname"><em>request</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the real or virtual stream name for <em>version</em>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">version</td><td>The version to query.</td></tr>
+    <tr><td class="paramname">request</td><td>Whether the real or virtual stream name should be returned.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The stream name as per <em>request</em> on success, otherwise <em>null</em> on error.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_stat.html#a36055e2997ebee4102e469dde6d59954">Stat.getElement</a> </dd></dl>
+
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00314">314</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abbe8cb6cf466bbe13d51f4d2b1dffd46"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int [] AcUtils.Extensions.acxStreamVersion </td>
+          <td>(</td>
+          <td class="paramtype">this XElement&#160;</td>
+          <td class="paramname"><em>version</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__acenum.html#ga9afc076fea70292f7e26e509a8434333">RealVirtual</a>&#160;</td>
+          <td class="paramname"><em>request</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the real or virtual stream and version numbers for <em>version</em>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">version</td><td>The version to query.</td></tr>
+    <tr><td class="paramname">request</td><td>Whether real or virtual values should be returned.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An array initialized as <code>int[]={[real|virtual]StreamNumber, [real|virtual]VersionNumber}</code> as per <em>request</em> on success, otherwise <em>null</em> on error.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_stat.html#a36055e2997ebee4102e469dde6d59954">Stat.getElement</a> </dd></dl>
+
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00294">294</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -384,18 +490,19 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Convert <em>element's</em> Epoch time <em>name</em> attribute value to a .NET DateTime object. </p>
+<p>Convert <em>element's</em> Epoch time <em>name</em> XML attribute value to a .NET DateTime object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">element</td><td>The element with the <em>name</em> attribute value to convert.</td></tr>
-    <tr><td class="paramname">name</td><td>The name of the attribute, e.g. <b>"time"</b>, <b>"mtime"</b>, etc.</td></tr>
+    <tr><td class="paramname">name</td><td>The name of the XML attribute, e.g. <b>"time"</b>, <b>"mtime"</b>, etc. emitted by the <code>hist</code> command.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success a DateTime object with the converted value, otherwise <em>null</em>.</dd></dl>
-<div class="fragment"><div class="line">DateTime? mtime = v.acxTime(<span class="stringliteral">&quot;mtime&quot;</span>); <span class="comment">// version&#39;s last modified time</span></div>
-</div><!-- fragment --> 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00038">38</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<div class="fragment"><div class="line">DateTime? mtime = version.acxTime(<span class="stringliteral">&quot;mtime&quot;</span>); <span class="comment">// get version&#39;s last modified time</span></div>
+</div><!-- fragment --><dl class="section pre"><dt>Precondition</dt><dd>When querying <em>version</em> elements include both <code>-e</code>: <em>("expanded")</em> and <code>-v</code>: <em>("verbose")</em> format directives in the <code>hist</code> command (i.e. <code>-fevx</code>) so the <b>mtime</b> attribute is included in the XML result. </dd></dl>
+
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00059">59</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -430,7 +537,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Formatted to-stream version, e.g. <code>NEPTUNE_DEV4/12 (8/12)</code>, otherwise <em>null</em> if <em>transaction</em> was not a <code>promote</code> operation.</dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00103">103</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00124">124</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -477,7 +584,7 @@ Static Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>On success an <a class="el" href="group__acenum.html#ga3164dabd0d78a5482aea218fa9154669" title="Indicates the element&#39;s type. By default, AccuRev determines the element type for a newly created ver...">AcUtils.ElementType</a> enum that is the converted value, otherwise <em>ElementType.unknown</em>.</dd></dl>
 <div class="fragment"><div class="line"><a class="code" href="group__acenum.html#ga3164dabd0d78a5482aea218fa9154669">ElementType</a> type = v.acxType(<span class="stringliteral">&quot;elemType&quot;</span>);</div>
 </div><!-- fragment --> 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00056">56</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00077">77</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
@@ -513,14 +620,84 @@ Static Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Formatted virtual-named version, e.g. <code>MARS_UAT/4 (11/4)</code> for the <code>promote</code> or <code>co</code> <em>transaction</em>, otherwise <em>null</em> if not found.</dd></dl>
 <dl class="accunotes_"><dt><b><a class="el" href="accunotes_.html#_accunotes_000015">AccuNote:</a></b></dt><dd>For <code>promote</code> transactions, the <em>virtualNamedVersion</em> attribute value is correct only in the first <em>version</em> element listed in the parent <em>transaction</em>. In all other <em>version</em> elements, the <em>virtualNamedVersion</em> attribute has the same value as its <em>realNamedVersion</em> attribute sibling. This falls under AccuRev defect 18636, RPI # 1107275. </dd></dl>
 
-<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00134">134</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00155">155</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9c57d0b5a1743c8f876555f5bc2fc46b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static string AcUtils.Extensions.acxWSpaceName </td>
+          <td>(</td>
+          <td class="paramtype">this XElement&#160;</td>
+          <td class="paramname"><em>version</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the workspace name for <em>version</em>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">version</td><td>The version to query.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Name of the workspace.</dd></dl>
+
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00263">263</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a6e5540b6808111695139ea2efe7570bf"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static string AcUtils.Extensions.acxWSpaceOwner </td>
+          <td>(</td>
+          <td class="paramtype">this XElement&#160;</td>
+          <td class="paramname"><em>version</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the workspace owner's principal name for <em>version</em>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">version</td><td>The version to query.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Name of the principal that owns the workspace, otherwise <em>null</em> if not found.</dd></dl>
+
+<p>Definition at line <a class="el" href="_extensions_8cs_source.html#l00276">276</a> of file <a class="el" href="_extensions_8cs_source.html">Extensions.cs</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:19 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

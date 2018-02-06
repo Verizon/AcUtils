@@ -55,7 +55,7 @@
 <dt><a class="anchor" id="_accunotes_000004"></a>Member <a class="el" href="class_ac_utils_1_1_ac_preferences.html#adf040dbaddff4c1fe8b5f95e229a8f6f">AcUtils.AcPreferences.getIgnoreOptionsAsync</a>  ()</dt>
 <dd>Selecting "Ignore Whitespace" and "Ignore Changes in Whitespace" applies to <code>diff</code> only. The <code>merge</code> command does not use these settings and will show all conflicts.  </dd>
 <dt><a class="anchor" id="_accunotes_000005"></a>Member <a class="el" href="class_ac_utils_1_1_ac_preferences.html#a5347d648e0e4ea2a16e3198b132749b4">AcUtils.AcPreferences.getPreferencesAsync</a>  ()</dt>
-<dd>When using the AccuRev GUI client, changes in <em>User Preferences</em> do not always persist. As a workaround, use <a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setpref.html">setpref</a>:<ol type="1">
+<dd>When using the AccuRev GUI client, changes in <em>User Preferences</em> do not always persist. As a workaround, use <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_setpref.html">setpref</a>:<ol type="1">
 <li>Exit the AccuRev client.</li>
 <li>Put the setting(s) needed in a file named <code>set_pref.xml</code></li>
 <li>Open a command window and cd to the folder where the file is located.</li>
@@ -101,12 +101,12 @@
 <dt><a class="anchor" id="_accunotes_000015"></a>Member <a class="el" href="class_ac_utils_1_1_extensions.html#a3b9e3bb9d580c5d21ac130da7b7ed661">AcUtils.Extensions.acxVirtualNamed</a>  (this XElement transaction)</dt>
 <dd>For <code>promote</code> transactions, the <em>virtualNamedVersion</em> attribute value is correct only in the first <em>version</em> element listed in the parent <em>transaction</em>. In all other <em>version</em> elements, the <em>virtualNamedVersion</em> attribute has the same value as its <em>realNamedVersion</em> attribute sibling. This falls under AccuRev defect 18636, RPI # 1107275.  </dd>
 <dt><a class="anchor" id="_accunotes_000012"></a>Member <a class="el" href="group__acenum.html#ga0a9d168d367dad9bab253eafa49aae77">AcUtils.StreamType</a>  </dt>
-<dd>AccuRev is not consistent in its designation of stream types. The <code>show streams</code> command returns <b>passthrough</b> and <b>normal</b> while the server_admin_trig receives <b>passthru</b> and <b>regular</b> and the server_master_trig receives /b dynamic. We cover them all here in one enum. </dd>
+<dd>AccuRev is not consistent in its designation of stream types. The <code>show streams</code> command returns <b>passthrough</b> and <b>normal</b> while the server_admin_trig receives <b>passthru</b> and <b>regular</b> and the server_master_trig receives <b>dynamic</b>. We cover them all here in one enum. </dd>
 </dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

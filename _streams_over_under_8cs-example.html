@@ -46,7 +46,7 @@
 </div><!--header-->
 <div class="contents">
 <p>List all dynamic streams in the repository that have elements with (<em>underlap</em>)(<em>member</em>) or (<em>overlap</em>)(<em>member</em>) status. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_stat.html">Stat</a>, <a class="el" href="find_ovr_under.html">Example XML from stat command</a></dd></dl>
-<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016 Verizon. All Rights Reserved.</span></div>
+<div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2016-2018 Verizon. All Rights Reserved.</span></div>
 <div class="line"><span class="comment"></span></div>
 <div class="line"><span class="comment">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment">you may not use this file except in compliance with the License.</span></div>
@@ -108,22 +108,15 @@
 <div class="line">        <span class="comment">// Initialize Stat with all versions in the repository with overlap or underlap status.</span></div>
 <div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> async Task&lt;bool&gt; initStatAsync()</div>
 <div class="line">        {</div>
-<div class="line">            AcDepots depots = <span class="keyword">new</span> AcDepots(<span class="keyword">true</span>); <span class="comment">// true for dynamic streams only</span></div>
+<div class="line">            AcDepots depots = <span class="keyword">new</span> AcDepots(dynamicOnly: <span class="keyword">true</span>); <span class="comment">// dynamic streams only</span></div>
 <div class="line">            <span class="keywordflow">if</span> (!(await depots.initAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
 <div class="line">            List&lt;Task&lt;bool&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;bool&gt;&gt;();</div>
-<div class="line">            <span class="keywordtype">string</span> cmd = String.Empty;</div>
 <div class="line">            <span class="keywordflow">foreach</span> (AcDepot <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> depots)</div>
-<div class="line">            {</div>
 <div class="line">                <span class="keywordflow">foreach</span> (AcStream <a name="a0"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> depot.Streams.Where(n =&gt; n.HasDefaultGroup))</div>
-<div class="line">                {</div>
-<div class="line">                    cmd = String.Format(<span class="stringliteral">@&quot;stat -s &quot;&quot;{0}&quot;&quot; -o -B -fx&quot;</span>, stream);</div>
-<div class="line">                    tasks.Add(runStatCommandAsync(cmd));</div>
-<div class="line">                }</div>
-<div class="line">            }</div>
+<div class="line">                    tasks.Add(runStatCommandAsync($<span class="stringliteral">@&quot;stat -s &quot;&quot;{stream}&quot;&quot; -o -B -fx&quot;</span>));</div>
 <div class="line"></div>
-<div class="line">            <span class="comment">// asynchronously await multiple asynchronous operations.. fast!</span></div>
-<div class="line">            <span class="keywordtype">bool</span>[] arr = await Task.WhenAll(tasks);</div>
+<div class="line">            <span class="keywordtype">bool</span>[] arr = await Task.WhenAll(tasks); <span class="comment">// continue running stat commands in parallel</span></div>
 <div class="line">            <span class="keywordflow">return</span> (arr != null &amp;&amp; arr.All(n =&gt; n == <span class="keyword">true</span>)); <span class="comment">// true if all succeeded</span></div>
 <div class="line">        }</div>
 <div class="line"></div>
@@ -140,9 +133,7 @@
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (AcUtilsException exc)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;AcUtilsException caught in runStatCommandAsync{0}{1}&quot;</span>, </div>
-<div class="line">                    Environment.NewLine, exc.Message);</div>
-<div class="line">                Console.WriteLine(msg);</div>
+<div class="line">                Console.WriteLine($<span class="stringliteral">&quot;AcUtilsException caught in runStatCommandAsync{Environment.NewLine}{exc.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> (ret &amp;&amp; Stat.init(result.CmdResult));</div>
@@ -152,7 +143,7 @@
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

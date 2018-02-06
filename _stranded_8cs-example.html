@@ -68,14 +68,14 @@ SATURN_DEV1
 ...
 </pre><p> </small></p>
 <p>Stranded elements are members of the default group yet they are not returned with the <code>stat -d</code> option used to select only active elements of the workspace or stream; you must use the <code>-i</code> option instead. They are purposely left out of the list retrieved with the <code>-d</code> option to ensure they are not accidentally promoted. Salesforce 00042864, 00035837, RFE 13692.</p>
-<dl class="section see"><dt>See also</dt><dd><a href="https://supportline.microfocus.com/Documentation/books/AccuRev/AccuRev/7.0.1/webhelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/handling_stranded.html">Handling Stranded Elements in AccuRev Technical Notes</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/handling_stranded.html">Handling Stranded Elements in AccuRev Technical Notes</a></dd></dl>
 <p>Optionally include a list of depot names in <code>Stranded.exe.config</code> that should be ignored, i.e. PlayGround depots, obsolete depots, etc.</p>
 <dl class="section warning"><dt>Warning</dt><dd>Make changes in <code>&lt;progname&gt;.exe.config</code> files only where indicated. Changing other text will cause the program to malfunction.</dd></dl>
 <dl class="section user"><dt>Stranded.exe.config</dt><dd>The .Net framework automatically loads an executable's associated <em>config file</em> when the program is launched. This replaces the need to put configuration data in the Windows registry, a database, in <code>.ini</code> files, or hardcoded in the source code. Each program has its own <code>&lt;program&gt;.exe.config</code> file located in the same folder as the executable. Changes take effect immediately upon saving the file without the need to recompile the program, however it must be relaunched.</dd></dl>
 <div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;utf-8&quot;</span>?&gt;</div>
 <div class="line">&lt;configuration&gt;</div>
 <div class="line">  &lt;configSections&gt;</div>
-<div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.0.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span>/&gt;</div>
+<div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span>/&gt;</div>
 <div class="line">  &lt;/configSections&gt;</div>
 <div class="line">  &lt;Depots&gt;</div>
 <div class="line">    &lt;depots&gt;</div>
@@ -100,7 +100,7 @@ SATURN_DEV1
 <div class="line">    &lt;supportedRuntime version=<span class="stringliteral">&quot;v4.0&quot;</span> sku=<span class="stringliteral">&quot;.NETFramework,Version=v4.6&quot;</span>/&gt;</div>
 <div class="line">  &lt;/startup&gt;</div>
 <div class="line">&lt;/configuration&gt;</div>
-</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2017 Verizon. All Rights Reserved.</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">/* Copyright (C) 2017-2018 Verizon. All Rights Reserved.</span></div>
 <div class="line"><span class="comment"></span></div>
 <div class="line"><span class="comment">Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment">you may not use this file except in compliance with the License.</span></div>
@@ -152,12 +152,10 @@ SATURN_DEV1
 <div class="line">            <span class="keywordflow">if</span> (ret)</div>
 <div class="line">            {</div>
 <div class="line">                report();</div>
-<div class="line">                <span class="keywordtype">string</span> endMsg = String.Format(<span class="stringliteral">&quot;Total stranded elements: {0}&quot;</span>, _totalStranded);</div>
-<div class="line">                log(endMsg);</div>
+<div class="line">                log($<span class="stringliteral">&quot;Total stranded elements: {_totalStranded}&quot;</span>);</div>
 <div class="line"><span class="preprocessor">#if DEBUG</span></div>
 <div class="line">                AcDuration ts = stopWatch.Elapsed;</div>
-<div class="line">                <span class="keywordtype">string</span> execTime = String.Format(<span class="stringliteral">&quot;{0} to complete execution&quot;</span>, ts.ToString());</div>
-<div class="line">                log(execTime);</div>
+<div class="line">                log($<span class="stringliteral">&quot;{ts.ToString()} to complete execution&quot;</span>);</div>
 <div class="line"><span class="preprocessor">#endif</span></div>
 <div class="line">            }</div>
 <div class="line"></div>
@@ -172,7 +170,7 @@ SATURN_DEV1
 <div class="line">            <span class="keywordtype">bool</span> ret = <span class="keyword">false</span>; <span class="comment">// assume failure</span></div>
 <div class="line">            <span class="keywordflow">try</span></div>
 <div class="line">            {</div>
-<div class="line">                AcDepots depots = <span class="keyword">new</span> AcDepots(<span class="keyword">true</span>); <span class="comment">// true for dynamic streams only</span></div>
+<div class="line">                AcDepots depots = <span class="keyword">new</span> AcDepots(dynamicOnly: <span class="keyword">true</span>); <span class="comment">// dynamic streams only</span></div>
 <div class="line">                <span class="keywordflow">if</span> (!(await depots.initAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
 <div class="line">                List&lt;Task&lt;bool&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;bool&gt;&gt;();</div>
@@ -191,24 +189,22 @@ SATURN_DEV1
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (Exception ecx)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Exception caught and logged in Program.getStrandedAsync{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, ecx.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.getStrandedAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> ret;</div>
 <div class="line">        }</div>
 <div class="line"></div>
-<div class="line">        <span class="comment">// Run the AccuRev stat command for the stream param and initialize our class dictionary variable _map </span></div>
-<div class="line">        <span class="comment">// with the results. Returns true if the operation succeeded, false otherwise. AcUtilsException caught </span></div>
-<div class="line">        <span class="comment">// and logged in %LOCALAPPDATA%\AcTools\Logs\Stranded-YYYY-MM-DD.log on stat command failure.</span></div>
+<div class="line">        <span class="comment">// Run the AccuRev stat command for the stream and initialize our _map class variable with the results. </span></div>
+<div class="line">        <span class="comment">// Returns true if the operation succeeded, false otherwise. AcUtilsException caught and logged in </span></div>
+<div class="line">        <span class="comment">// %LOCALAPPDATA%\AcTools\Logs\Stranded-YYYY-MM-DD.log on stat command failure. Exception caught and </span></div>
+<div class="line">        <span class="comment">// logged in same for a range of exceptions.</span></div>
 <div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> async Task&lt;bool&gt; runStatCommandAsync(AcStream <a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a>)</div>
 <div class="line">        {</div>
 <div class="line">            <span class="keywordtype">bool</span> ret = <span class="keyword">false</span>; <span class="comment">// assume failure</span></div>
 <div class="line">            <span class="keywordflow">try</span></div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> cmd = String.Format(<span class="stringliteral">@&quot;stat -fx -s &quot;&quot;{0}&quot;&quot; -i&quot;</span>, stream);</div>
-<div class="line">                AcResult result = await AcCommand.runAsync(cmd);</div>
+<div class="line">                AcResult result = await AcCommand.runAsync($<span class="stringliteral">@&quot;stat -fx -s &quot;&quot;{stream}&quot;&quot; -i&quot;</span>);</div>
 <div class="line">                <span class="keywordflow">if</span> (result != null &amp;&amp; result.RetVal == 0)</div>
 <div class="line">                {</div>
 <div class="line">                    XElement xml = XElement.Parse(result.CmdResult);</div>
@@ -222,17 +218,19 @@ SATURN_DEV1
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (AcUtilsException exc)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;AcUtilsException caught and logged in Program.runStatCommandAsync{0}{1}&quot;</span>, </div>
-<div class="line">                    Environment.NewLine, exc.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;AcUtilsException caught and logged in Program.runStatCommandAsync{Environment.NewLine}{exc.Message}&quot;</span>);</div>
+<div class="line">            }</div>
+<div class="line"></div>
+<div class="line">            <span class="keywordflow">catch</span> (Exception ecx)</div>
+<div class="line">            {</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.runStatCommandAsync{Environment.NewLine}{ecx.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> ret;</div>
 <div class="line">        }</div>
 <div class="line"></div>
-<div class="line">        <span class="comment">// Helper function for the runStatCommandAsync method. Used to initialize the value portion of class dictionary </span></div>
-<div class="line">        <span class="comment">// variable _map that associates each stream with their stranded elements info; the list of status types found </span></div>
-<div class="line">        <span class="comment">// and their count.</span></div>
+<div class="line">        <span class="comment">// Helper function for the runStatCommandAsync method. Used to initialize the value portion of our _map class variable </span></div>
+<div class="line">        <span class="comment">// that associates each stream with their stranded elements info; the list of status types found and their count.</span></div>
 <div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> SortedList&lt;string, int&gt; initVal(XElement xml)</div>
 <div class="line">        {</div>
 <div class="line">            SortedList&lt;string, int&gt; status = <span class="keyword">new</span> SortedList&lt;string, int&gt;();</div>
@@ -263,11 +261,7 @@ SATURN_DEV1
 <div class="line">                log(ii.Key.Name); <span class="comment">// stream name</span></div>
 <div class="line">                SortedList&lt;string, int&gt; sc = ii.Value; <span class="comment">// status type and count</span></div>
 <div class="line">                <span class="keywordflow">foreach</span> (KeyValuePair&lt;string, int&gt; jj <span class="keywordflow">in</span> sc)</div>
-<div class="line">                {</div>
-<div class="line">                    <span class="keywordtype">string</span> line = String.Format(<span class="stringliteral">&quot;{0} {{{1}}}&quot;</span>, jj.Key, jj.Value);</div>
-<div class="line">                    log(line);</div>
-<div class="line">                }</div>
-<div class="line"></div>
+<div class="line">                    log($<span class="stringliteral">&quot;{jj.Key} {{{jj.Value}}}&quot;</span>);</div>
 <div class="line">                log(<span class="stringliteral">&quot;&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line">        }</div>
@@ -290,9 +284,7 @@ SATURN_DEV1
 <div class="line">            Task&lt;string&gt; prncpl = AcQuery.getPrincipalAsync();</div>
 <div class="line">            <span class="keywordflow">if</span> (String.IsNullOrEmpty(prncpl.Result))</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Not logged into AccuRev.{0}Please login and try again.&quot;</span>,</div>
-<div class="line">                    Environment.NewLine);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Not logged into AccuRev.{Environment.NewLine}Please login and try again.&quot;</span>);</div>
 <div class="line">                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line">            }</div>
 <div class="line"></div>
@@ -327,10 +319,7 @@ SATURN_DEV1
 <div class="line">            {</div>
 <div class="line">                Process currentProcess = Process.GetCurrentProcess();</div>
 <div class="line">                ProcessModule pm = currentProcess.MainModule;</div>
-<div class="line">                <span class="keywordtype">string</span> exeFile = pm.ModuleName;</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Invalid data in {1}.config{0}{2}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, exeFile, exc.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Invalid data in {pm.ModuleName}.config{Environment.NewLine}{exc.Message}&quot;</span>);</div>
 <div class="line">                ret = <span class="keyword">false</span>;</div>
 <div class="line">            }</div>
 <div class="line"></div>
@@ -361,9 +350,7 @@ SATURN_DEV1
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">catch</span> (Exception exc)</div>
 <div class="line">            {</div>
-<div class="line">                <span class="keywordtype">string</span> msg = String.Format(<span class="stringliteral">&quot;Exception caught and logged in Program.initStrandedFoundLogging{0}{1}&quot;</span>,</div>
-<div class="line">                    Environment.NewLine, exc.Message);</div>
-<div class="line">                AcDebug.Log(msg);</div>
+<div class="line">                AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.initStrandedFoundLogging{Environment.NewLine}{exc.Message}&quot;</span>);</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> ret;</div>
@@ -380,7 +367,7 @@ SATURN_DEV1
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

@@ -101,7 +101,7 @@ Private Member Functions</h2></td></tr>
 <p>Elements contain user <a class="el" href="class_ac_utils_1_1_ac_principal.html">principal attributes</a> <em>name</em>, <em>ID</em>, and <em>status</em> (active or inactive). In addition, the user's AccuRev group membership list, regular and other <a href="class_ac_utils_1_1_ac_user.html#properties">user properties</a> from Active Directory, and deactivated (removed) users can be included as well. </p>
 <dl class="section attention"><dt>Attention</dt><dd>User properties require that AccuRev principal names match login names stored on the LDAP server. </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00502">502</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00503">503</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ab9d6d159b5de4c3ef7ec201c6fde60bf"></a>
 <div class="memitem">
@@ -168,12 +168,12 @@ Private Member Functions</h2></td></tr>
 <div class="line"><a class="code" href="class_ac_utils_1_1_ac_users.html#ab9d6d159b5de4c3ef7ec201c6fde60bf">AcUsers</a> users = <span class="keyword">new</span> <a class="code" href="class_ac_utils_1_1_ac_users.html#ab9d6d159b5de4c3ef7ec201c6fde60bf">AcUsers</a>(_domains, _pc, includeGroupsList: <span class="keyword">true</span>);</div>
 <div class="line"><span class="keywordflow">if</span> (await users.initAsync(progress)) <span class="comment">// if successful</span></div>
 <div class="line">{</div>
-<div class="line">    <span class="keywordflow">foreach</span> (AcUser user <span class="keywordflow">in</span> users.OrderBy(n =&gt; n)) <span class="comment">// use default comparer</span></div>
+<div class="line">    <span class="keywordflow">foreach</span> (AcUser <a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a> <span class="keywordflow">in</span> users.OrderBy(n =&gt; n)) <span class="comment">// use default comparer</span></div>
 <div class="line">    ...</div>
 </div><!-- fragment --><dl class="section attention"><dt>Attention</dt><dd>User properties require that AccuRev principal names match login names stored on the LDAP server.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_ac_utils_1_1_ac_users.html#abf29062dc23da87e9c8d53b9103d575a" title="Populate this container with AcUser objects as per constructor parameters. ">initAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_user.html#ac2c670328b4ff40371b44cb47090e908">AcUser.initGroupsListAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_user.html#a14e19f72ca911963fbeaf34beb393c02">AcUser.initFromADAsync</a>, <a class="el" href="class_ac_utils_1_1_ac_user.html#a49f7e4ac6c751c80eecc4645b51e65b9">default comparer</a>, <a class="el" href="class_ac_utils_1_1_ac_groups.html#acb74f2f65b4b76d172fe3783390d8df3">AcGroups constructor</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00553">553</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00554">554</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
 </div>
 </div>
@@ -209,9 +209,9 @@ Private Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_ac_utils_1_1_ac_user.html" title="A user&#39;s AccuRev principal attributes name, ID, and status (active or inactive). In addition...">AcUser</a> object for principal <em>name</em> or <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00666">666</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00667">667</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_users_8cs_source.html#l00686">AcUtils.AcUsers.getWorkspaceOwner()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_users_8cs_source.html#l00687">AcUtils.AcUsers.getWorkspaceOwner()</a>.</p>
 
 </div>
 </div>
@@ -246,7 +246,7 @@ Private Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_ac_utils_1_1_ac_user.html" title="A user&#39;s AccuRev principal attributes name, ID, and status (active or inactive). In addition...">AcUser</a> object for principal <em>ID</em> number or <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00676">676</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00677">677</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
 </div>
 </div>
@@ -281,7 +281,7 @@ Private Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_ac_utils_1_1_ac_user.html" title="A user&#39;s AccuRev principal attributes name, ID, and status (active or inactive). In addition...">AcUser</a> object for owner of workspace <em>name</em> or <em>null</em> if not found.</dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00686">686</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00687">687</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
 </div>
 </div>
@@ -324,7 +324,7 @@ Private Member Functions</h2></td></tr>
 </dl>
 <dl class="shows_"><dt><b><a class="el" href="shows_.html#_shows_000019">show command:</a></b></dt><dd><code>show &lt;-fx | -fix&gt; users</code> </dd></dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00570">570</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00571">571</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
 </div>
 </div>
@@ -365,16 +365,16 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00630">630</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
+<p>Definition at line <a class="el" href="_ac_users_8cs_source.html#l00631">631</a> of file <a class="el" href="_ac_users_8cs_source.html">AcUsers.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_ac_users_8cs_source.html#l00570">AcUtils.AcUsers.initAsync()</a>.</p>
+<p>Referenced by <a class="el" href="_ac_users_8cs_source.html#l00571">AcUtils.AcUsers.initAsync()</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 15 2017 07:57:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 6 2018 09:39:18 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>
