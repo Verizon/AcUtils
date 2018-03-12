@@ -74,6 +74,7 @@ namespace AcUtils
         /*! \code
             ElementType type = v.acxType("elemType");
             \endcode */
+        /*! \sa <a href="_x_linked_8cs-example.html">XLinked.cs</a> */
         public static ElementType acxType(this XElement element, XName name)
         {
             ElementType type = ElementType.unknown;

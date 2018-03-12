@@ -15,7 +15,6 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -186,10 +185,7 @@ namespace AcUtils
             switch (format.ToUpperInvariant())
             {
                 case "G": // default when not using a format specifier
-                {
-                    string text = $"{Name}, {Host}, {Duration}";
-                    return text;
-                }
+                    return $"{Name}, {Host}, {Duration}";
                 case "N": // user's AccuRev principal name
                     return Name;
                 case "H": // IP address of the host machine
@@ -266,9 +262,7 @@ namespace AcUtils
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from element in xml.Descendants("Element")
-                                                  select element;
-                    foreach (XElement e in query)
+                    foreach (XElement e in xml.Elements("Element"))
                     {
                         AcSession session = new AcSession();
                         session.Name = (string)e.Attribute("Username");

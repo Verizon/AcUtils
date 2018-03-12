@@ -234,11 +234,16 @@ namespace AcUtils
                 {
                     string text;
                     if (!String.IsNullOrEmpty(_xlinkToStream))
-                        text = String.Format("SetInStream: {1}{0}Cross-link (basis): {2}{0}Location: {3}{0}Rule kind: {4}{0}Element type: {5}{0}", Environment.NewLine,
-                            SetInStream, XlinkToStream, Location, Kind, Type);
+                        text = $"SetInStream: {SetInStream}{Environment.NewLine}" +
+                                $"Cross-link (basis): {XlinkToStream}{Environment.NewLine}" +
+                                $"Location: {Location}{Environment.NewLine}" +
+                                $"Rule kind: {Kind}{Environment.NewLine}" +
+                                $"Element type: {Type}{Environment.NewLine}";
                     else
-                        text = String.Format("SetInStream: {1}{0}Location: {2}{0}Rule kind: {3}{0}Element type: {4}{0}", Environment.NewLine,
-                            SetInStream, Location, Kind, Type);
+                        text = $"SetInStream: {SetInStream}{Environment.NewLine}" +
+                                $"Location: {Location}{Environment.NewLine}" +
+                                $"Rule kind: {Kind}{Environment.NewLine}" +
+                                $"Element type: {Type}{Environment.NewLine}";
                     return text;
                 }
                 case "K": // kind of rule in use
@@ -356,8 +361,7 @@ namespace AcUtils
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from element in xml.Descendants("element") select element;
-                    foreach (XElement e in query)
+                    foreach (XElement e in xml.Elements("element"))
                     {
                         AcRule rule = new AcRule();
                         string kind = (string)e.Attribute("kind");
@@ -447,8 +451,8 @@ namespace AcUtils
                 int num = 0; // get number of streams for tasks list
                 foreach (AcDepot depot in depots)
                 {
-                    IEnumerable<AcStream> filter = depot.Streams.Where(n =>
-                        streamsCol.OfType<StreamElement>().Any(s => n.Name.Equals(s.Stream)));
+                    IEnumerable<AcStream> filter = depot.Streams.Where(s =>
+                        streamsCol.OfType<StreamElement>().Any(se => s.Name == se.Stream));
                     num += filter.Count();
                 }
 
@@ -462,8 +466,8 @@ namespace AcUtils
 
                 foreach (AcDepot depot in depots)
                 {
-                    IEnumerable<AcStream> filter = depot.Streams.Where(n =>
-                        streamsCol.OfType<StreamElement>().Any(s => n.Name.Equals(s.Stream)));
+                    IEnumerable<AcStream> filter = depot.Streams.Where(s =>
+                        streamsCol.OfType<StreamElement>().Any(se => s.Name == se.Stream));
                     foreach (AcStream stream in filter)
                     {
                         Task<bool> t = initAsync(stream).ContinueWith(cf);

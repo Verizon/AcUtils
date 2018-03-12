@@ -167,14 +167,15 @@ namespace WSpaceTransLevel
             return ret;
         }
 
-        // Initialize workspaces list class variable. Returns true if initialization was successful, false otherwise.
+        // Initialize our workspaces list class variable. 
+        // Returns true if initialization was successful, false otherwise.
         private static async Task<bool> initWSListAsync()
         {
             // fully initialized depots list is required for workspaces list construction below
             AcDepots depots = new AcDepots();
             if (!(await depots.initAsync(_selDepots))) return false;
 
-            // include all workspaces in the repository (not just the script user), include only workspaces that are active
+            // include all workspaces (not just the script user), include only workspaces that are active
             _wspaces = new AcWorkspaces(depots, allWSpaces: true, includeHidden: false);
             if (!(await _wspaces.initAsync())) return false;
 

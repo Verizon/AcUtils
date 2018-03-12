@@ -122,12 +122,12 @@ namespace AcUtils
                     XElement xml = XElement.Parse(r.CmdResult);
                     IEnumerable<XElement> filter = null;
                     if (_id > 0)
-                        filter = from element in xml.Descendants("Element")
+                        filter = from element in xml.Elements("Element")
                                  where (int)element.Attribute("Number") == _id
                                  select element;
                     else
-                        filter = from element in xml.Descendants("Element")
-                                 where String.Equals((string)element.Attribute("Name"), _name)
+                        filter = from element in xml.Elements("Element")
+                                 where (string)element.Attribute("Name") == _name
                                  select element;
 
                     XElement e = filter.SingleOrDefault();
@@ -295,16 +295,7 @@ namespace AcUtils
         /// <returns>AcStream object for stream \e name or \e null if not found.</returns>
         public AcStream getStream(string name)
         {
-            AcStream stream = null;
-            foreach (AcStream s in _streams)
-            {
-                if (String.Equals(s.Name, name))
-                {
-                    stream = s;
-                    break;
-                }
-            }
-
+            AcStream stream = _streams.SingleOrDefault(s => s.Name == name);
             return stream;
         }
 
@@ -315,19 +306,7 @@ namespace AcUtils
         /// <returns>AcStream object for stream \e ID number or \e null if not found.</returns>
         public AcStream getStream(int ID)
         {
-            AcStream stream = null;
-            if (ID >= 1)
-            {
-                foreach (AcStream s in _streams)
-                {
-                    if (s.ID == ID)
-                    {
-                        stream = s;
-                        break;
-                    }
-                }
-            }
-
+            AcStream stream = _streams.SingleOrDefault(s => s.ID == ID);
             return stream;
         }
 
@@ -339,14 +318,10 @@ namespace AcUtils
         public AcStream getBasis(string name)
         {
             AcStream basis = null;
-            foreach (AcStream s in _streams)
-            {
-                if (String.Equals(s.Name, name))
-                {
-                    basis = getStream(s.BasisID);
-                    break;
-                }
-            }
+            // ignore root stream (1) since it has no parent
+            AcStream stream = _streams.Where(s => s.ID > 1).SingleOrDefault(s => s.Name == name);
+            if (stream != null)
+                basis = getStream(stream.BasisID);
 
             return basis;
         }
@@ -359,17 +334,10 @@ namespace AcUtils
         public AcStream getBasis(int ID)
         {
             AcStream basis = null;
-            if (ID > 1) // ignore root since it has no parent
-            {
-                foreach (AcStream s in _streams)
-                {
-                    if (s.ID == ID)
-                    {
-                        basis = getStream(s.BasisID);
-                        break;
-                    }
-                }
-            }
+            // ignore root stream (1) since it has no parent
+            AcStream stream = _streams.Where(s => s.ID > 1).SingleOrDefault(s => s.ID == ID);
+            if (stream != null)
+                basis = getStream(stream.BasisID);
 
             return basis;
         }
@@ -494,11 +462,11 @@ namespace AcUtils
                     XElement xml = XElement.Parse(r.CmdResult);
                     IEnumerable<XElement> filter;
                     if (includeWSpaces)
-                        filter = from s in xml.Descendants("stream")
+                        filter = from s in xml.Elements("stream")
                                  select s;
                     else
-                        filter = from s in xml.Descendants("stream")
-                                 where !String.Equals((string)s.Attribute("type"), "workspace") // all except workspaces
+                        filter = from s in xml.Elements("stream")
+                                 where (string)s.Attribute("type") != "workspace" // all except workspaces
                                  select s;
 
                     int capacity = filter.Count();
@@ -619,11 +587,7 @@ namespace AcUtils
                 case "G": // Depot name (default when not using a format specifier).
                     return Name; // general format should be short since it can be called by anything
                 case "LV": // long version (verbose)
-                {
-                    string text = String.Format("{0} ({1}), slice {2}, {3}{4}",
-                        Name, ID, Slice, Case, ExclusiveLocking ? ", exclusive locking" : String.Empty);
-                    return text;
-                }
+                    return $"{Name} ({ID}), slice {Slice}, {Case}{(ExclusiveLocking ? ", exclusive locking" : String.Empty)}";
                 case "I": // depot ID number
                     return ID.ToString();
                 case "S": // depot's slice number
@@ -758,10 +722,10 @@ namespace AcUtils
                     XElement xml = XElement.Parse(r.CmdResult);
                     IEnumerable<XElement> query = null;
                     if (depotsCol == null)
-                        query = from e in xml.Descendants("Element") select e;
+                        query = from e in xml.Elements("Element") select e;
                     else
-                        query = from e in xml.Descendants("Element")
-                                where depotsCol.OfType<DepotElement>().Any(de => String.Equals(de.Depot, (string)e.Attribute("Name")))
+                        query = from e in xml.Elements("Element")
+                                where depotsCol.OfType<DepotElement>().Any(de => de.Depot == (string)e.Attribute("Name"))
                                 select e;
 
                     int num = query.Count();
@@ -837,71 +801,61 @@ namespace AcUtils
             // list that will contain the depots this user has permission to view
             List<string> canView = new List<string>();
 
-            foreach (AcDepot depot in AsReadOnly())
+            foreach (AcDepot depot in this)
             {
                 bool isInheritable = false;
                 // Any() returns true if the collection contains one or more items that satisfy the condition defined by the predicate
                 // first, is an 'all' or 'none' permission explicitly set for this user on this depot?
-                if (_permissions.Any(
-                    delegate(AcPermission p)
-                    {
-                        bool all = (p.Type == PermType.user && p.Rights == PermRights.all &&
-                            String.Equals(p.AppliesTo, user.Principal.Name) && String.Equals(p.Name, depot.Name));
-                        if (all)
-                            isInheritable = (p.Inheritable == true && p.Type == PermType.user && p.Rights == PermRights.all &&
-                                String.Equals(p.AppliesTo, user.Principal.Name) && String.Equals(p.Name, depot.Name));
-                        return all;
-                    }))
+                if (_permissions.Any(p =>
                 {
-                    string msg = String.Format("{0}{1}", depot.Name, isInheritable ? "+" : String.Empty);
-                    canView.Add(msg);
+                    bool all = (p.Type == PermType.user && p.Rights == PermRights.all &&
+                        p.AppliesTo == user.Principal.Name && p.Name == depot.Name);
+                    if (all)
+                        isInheritable = (p.Inheritable == true && p.Type == PermType.user && p.Rights == PermRights.all &&
+                            p.AppliesTo == user.Principal.Name && p.Name == depot.Name);
+                    return all;
+                }))
+                {
+                    canView.Add($"{depot.Name}{(isInheritable ? "+" : String.Empty)}");
                 }
-                else if (_permissions.Any(
-                    delegate(AcPermission p)
-                    {
-                        return (p.Type == PermType.user && p.Rights == PermRights.none &&
-                            String.Equals(p.AppliesTo, user.Principal.Name) && String.Equals(p.Name, depot.Name));
-                    }))
+                else if (_permissions.Any(p =>
+                {
+                    return (p.Type == PermType.user && p.Rights == PermRights.none &&
+                        p.AppliesTo == user.Principal.Name && p.Name == depot.Name);
+                }))
                 {
                     ; // user does not have permission to this depot
                 }
                 else // check permissions based on user's group memberships
                 {
                     bool all = false;
-                    bool none = _permissions.Any(
-                        delegate(AcPermission p)
-                        {
-                            return (String.Equals(p.Name, depot.Name) && p.Rights == PermRights.none &&
-                                p.Type == PermType.group && members.Any(
-                                    delegate(string m) { return String.Equals(p.AppliesTo, m); }));
-                        });
+                    bool none = _permissions.Any(p =>
+                    {
+                        return (p.Name == depot.Name && p.Rights == PermRights.none &&
+                            p.Type == PermType.group && members.Any(m => p.AppliesTo == m));
+                    });
 
                     // by default everyone has access unless there's a "none" with no "all" override
                     if (none)
                     {
-                        all = _permissions.Any(
-                            delegate(AcPermission p)
-                            {
-                                return (String.Equals(p.Name, depot.Name) && p.Rights == PermRights.all &&
-                                    p.Type == PermType.group && members.Any(
-                                        delegate(string m) { return String.Equals(p.AppliesTo, m); }));
-                            });
+                        all = _permissions.Any(p =>
+                        {
+                            return (p.Name == depot.Name && p.Rights == PermRights.all &&
+                                p.Type == PermType.group && members.Any(m => p.AppliesTo == m));
+                        });
                     }
 
                     if (none && !all)
                         ; // user does not have permission to this depot
                     else // no permission(s) set or an 'all' that overrides one or more 'none' permissions
                     {
-                        isInheritable = _permissions.Any(
-                            delegate(AcPermission p)
-                            {
-                                return (p.Inheritable == true && String.Equals(p.Name, depot.Name) && 
-                                    p.Type == PermType.group && members.Any(
-                                    delegate(string m) { return String.Equals(p.AppliesTo, m); }));
-                            });
+                        isInheritable = _permissions.Any(p =>
+                        {
+                            return (p.Inheritable == true && p.Name == depot.Name && 
+                                p.Type == PermType.group && members.Any(m => p.AppliesTo == m));
+                        });
 
-                        string msg = String.Format("{0}{1}", depot.Name, isInheritable ? "+" : String.Empty);
-                        canView.Add(msg);
+                        canView.Add($"{depot.Name}{(isInheritable ? "+" : String.Empty)}");
                     }
                 }
             }
@@ -918,7 +872,7 @@ namespace AcUtils
         /// <returns>AcDepot object for depot \e name, otherwise \e null if not found.</returns>
         public AcDepot getDepot(string name)
         {
-            return this.SingleOrDefault(n => String.Equals(n.Name, name));
+            return this.SingleOrDefault(n => n.Name == name);
         }
 
         /// <summary>
@@ -938,18 +892,9 @@ namespace AcUtils
         /// <returns>AcDepot object for stream \e name, otherwise \e null if not found.</returns>
         public AcDepot getDepotForStream(string name)
         {
-            AcDepot depot = null;
-            foreach (AcDepot d in AsReadOnly())
-            {
-                IEnumerable<AcStream> e = d.Streams.Where(n => String.Equals(n.Name, name));
-                AcStream s = e.SingleOrDefault();
-                if (s != null) // if found
-                {
-                    depot = d;
-                    break;
-                }
-            }
-
+            AcDepot depot = (from d in this
+                             from s in d.Streams.Where(n => n.Name == name)
+                             select d).SingleOrDefault();
             return depot;
         }
 
@@ -960,18 +905,9 @@ namespace AcUtils
         /// <returns>AcStream object for stream \e name, otherwise \e null if not found.</returns>
         public AcStream getStream(string name)
         {
-            AcStream stream = null;
-            foreach (AcDepot d in AsReadOnly())
-            {
-                IEnumerable<AcStream> e = d.Streams.Where(n => String.Equals(n.Name, name));
-                AcStream s = e.SingleOrDefault();
-                if (s != null)
-                {
-                    stream = s;
-                    break;
-                }
-            }
-
+            AcStream stream = (from d in this
+                               from s in d.Streams.Where(n => n.Name == name)
+                               select s).SingleOrDefault();
             return stream;
         }
     }

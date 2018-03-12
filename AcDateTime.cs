@@ -53,7 +53,7 @@ namespace AcUtils
         /// Convert an AccuRev date given in Unix time (\e seconds param) to a .NET DateTime in local time.
         /// </summary>
         /// <param name="seconds">Unix time expressed as the number of seconds since January 1, 1970 UTC.</param>
-        /// <returns>DateTime object with the converted value or \e null on error.</returns>
+        /// <returns>DateTime object with the converted value or \e null on error or \e seconds equal <em>zero (0)</em>.</returns>
         /// <exception cref="ArgumentOutOfRangeException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to convert \e seconds 
         /// to a date and time value that represents the same moment in time as the Unix time.</exception>
@@ -63,8 +63,11 @@ namespace AcUtils
             DateTime? dt = null;
             try
             {
-                DateTimeOffset dto = DateTimeOffset.FromUnixTimeSeconds(seconds);
-                dt = dto.DateTime.ToLocalTime();
+                if (seconds > 0)
+                {
+                    DateTimeOffset dto = DateTimeOffset.FromUnixTimeSeconds(seconds);
+                    dt = dto.DateTime.ToLocalTime();
+                }
             }
 
             catch (ArgumentOutOfRangeException ecx)

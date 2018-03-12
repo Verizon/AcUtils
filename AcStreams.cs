@@ -83,7 +83,7 @@ namespace AcUtils
         private StreamType _type; // unknown, normal, dynamic, regular, workspace, snapshot, passthru, passthrough, gated, staging
         private DateTime? _time;  // basis time; XML attribute "time" only exists for snapshot streams (creation date) or when a dynamic stream has a time basis
         // note, the result of specifying 'As transaction #' in the GUI results in a time basis set on the stream
-        private DateTime _startTime; // time the stream was created
+        private DateTime _startTime; // stream's creation time or last time its name, time basis or state (remove, reactivate, reparent) changed
         private bool _hidden; // hidden (removed) stream
         private bool _hasDefaultGroup; // true if the stream has a default group
         #endregion
@@ -251,7 +251,7 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// Time the stream was created.
+        /// Stream's creation time or last time its name, time basis or state (remove, reactivate, reparent) changed.
         /// </summary>
         public DateTime StartTime
         {
@@ -325,19 +325,16 @@ namespace AcUtils
                 case "G": // stream name; default when not using a format specifier
                     return Name; // general format should be short since it can be called by anything
                 case "LV": // long version (verbose)
-                {
-                    string text = String.Format("{1} ({2}) {{{3}}} {4}{0}Basis: {5} ({6}){0}Depot: {7}, Hidden: {8}{9}",
-                        Environment.NewLine, Name, ID, Type, Time, BasisName, BasisID, Depot, Hidden,
-                        (Hidden) ? "" : ", HasDefaultGroup: " + HasDefaultGroup);
-                    return text;
-                }
+                    return $"{Name} ({ID}) {{{Type}}} {Time}{Environment.NewLine}" +
+                            $"Basis: {BasisName} ({BasisID}){Environment.NewLine}" +
+                            $"Depot: {Depot}, Hidden: {Hidden}{(Hidden ? String.Empty : ", HasDefaultGroup: " + HasDefaultGroup)}";
                 case "I": // stream's ID number
                     return ID.ToString();
                 case "T": // type of stream: unknown, normal, dynamic, regular, workspace, snapshot, passthru, passthrough, gated, staging
                     return Type.ToString();
                 case "BT": // stream's time basis
                     return Time.ToString();
-                case "C": // time the stream was created
+                case "C": // stream's creation time or last time its name, time basis or state (remove, reactivate, reparent) changed
                     return StartTime.ToString();
                 case "BN": // basis stream name
                     return BasisName;
@@ -440,18 +437,18 @@ namespace AcUtils
             bool ret = false; // assume failure
             try
             {
-                AcResult result = await AcCommand
-                    .runAsync($@"show {(_includeHidden ? "-fxig" : "-fxg")} -p ""{depot}"" {((listfile == null) ? String.Empty : "-l " + "" + listfile + "")} streams")
+                AcResult result = await AcCommand.runAsync($@"show {(_includeHidden ? "-fxig" : "-fxg")} -p ""{depot}""" +
+                    $@"{((listfile == null) ? String.Empty : "-l " + "" + listfile + "")} streams")
                     .ConfigureAwait(false);
                 if (result != null && result.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(result.CmdResult);
                     IEnumerable<XElement> filter = null;
                     if (_dynamicOnly)
-                        filter = from s in xml.Descendants("stream")
+                        filter = from s in xml.Elements("stream")
                                  where (bool)s.Attribute("isDynamic") == true select s;
                     else
-                        filter = from s in xml.Descendants("stream") select s;
+                        filter = from s in xml.Elements("stream") select s;
 
                     foreach (XElement e in filter)
                     {
@@ -464,12 +461,9 @@ namespace AcUtils
                         stream.IsDynamic = (bool)e.Attribute("isDynamic");
                         string type = (string)e.Attribute("type");
                         stream.Type = (StreamType)Enum.Parse(typeof(StreamType), type);
-                        // basis time; XML attribute "time" only exists for snapshot streams (creation date) or when a dynamic stream has a time basis
-                        long time = (long?)e.Attribute("time") ?? 0;
-                        if (time != 0)
-                            stream.Time = AcDateTime.AcDate2DateTime(time);
-                        long startTime = (long)e.Attribute("startTime");
-                        stream.StartTime = (DateTime)AcDateTime.AcDate2DateTime(startTime);
+                        // attribute "time" only exists for snapshot streams (creation date) or when a dynamic stream has a time basis
+                        stream.Time = e.acxTime("time"); // time basis
+                        stream.StartTime = (DateTime)e.acxTime("startTime");
                         // hidden attribute exists only if the stream is hidden
                         stream.Hidden = (e.Attribute("hidden") != null);
                         stream.HasDefaultGroup = (bool)e.Attribute("hasDefaultGroup");
@@ -502,7 +496,7 @@ namespace AcUtils
         /// <returns>AcStream object for stream \e name, otherwise \e null if not found.</returns>
         public AcStream getStream(string name)
         {
-            return this.SingleOrDefault(n => String.Equals(n.Name, name));
+            return this.SingleOrDefault(n => n.Name == name);
         }
     }
 }

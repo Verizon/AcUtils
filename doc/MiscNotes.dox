@@ -100,7 +100,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -222,7 +222,7 @@ Show the groups that have promotion rights on \e streams.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Streams>
     <streams>
@@ -246,7 +246,7 @@ For \e depots show workspaces that have a default group and "DEV3" in their name
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -313,7 +313,7 @@ the file without the need to recompile the program, however it must be relaunche
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <Depots>
     <depots>
@@ -416,7 +416,7 @@ some other name, otherwise the program will malfunction.)
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -465,9 +465,9 @@ Creates an HTML file with the promote transactions that occurred in specific str
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <!-- contact your company LDAP administrator for these values -->
@@ -542,7 +542,7 @@ Lock promotions to select streams across multiple depots for all except those in
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -577,7 +577,7 @@ Built-in types \b anyuser and \b authuser are unsupported.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <activeDir>
     <domains>
@@ -648,7 +648,7 @@ the latest transaction 74931 in depot NEPTUNE occurred on 12/18/2017 8:57:44 AM
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <Depots>
     <depots>
@@ -683,8 +683,8 @@ Creates an HTML file with promotions to streams in select depots within the past
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.1.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <!-- contact your company LDAP administrator for these values -->

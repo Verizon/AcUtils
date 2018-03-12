@@ -303,13 +303,7 @@ namespace AcUtils
                 case "G": // user's display name from Active Directory if available, otherwise their AccuRev principal name
                     return _displayName ?? Principal.Name;
                 case "LV": // long version (verbose)
-                {
-                    string text = String.Format("{0} ({1}), Business: {2}, {3}",
-                        DisplayName, Principal.Name,
-                        String.IsNullOrEmpty(Business) ? "N/A" : Business, 
-                        EmailAddress);
-                    return text;
-                }
+                    return $"{DisplayName} ({Principal.Name}), Business: {(String.IsNullOrEmpty(Business) ? "N/A" : Business)}, {EmailAddress}";
                 case "I": // user's AccuRev principal ID
                     return Principal.ID.ToString();
                 case "N": // user's AccuRev principal name
@@ -443,13 +437,13 @@ namespace AcUtils
             try
             {
                 // works for inactive users too
-                AcResult r = await AcCommand.runAsync($@"show -fx -u ""{Principal.Name}"" groups").ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync($@"show -fx -u ""{Principal.Name}"" groups")
+                    .ConfigureAwait(false);
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
                     SortedSet<string> members = new SortedSet<string>();
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from element in xml.Descendants("Element") select element;
-                    foreach (XElement e in query)
+                    foreach (XElement e in xml.Elements("Element"))
                     {
                         string name = (string)e.Attribute("Name");
                         members.Add(name);
@@ -578,9 +572,8 @@ namespace AcUtils
                 if (r != null && r.RetVal == 0) // if command succeeded
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from element in xml.Descendants("Element") select element;
-                    int num = query.Count();
-                    List<Task<bool>> tasks = new List<Task<bool>>(num);
+                    IEnumerable<XElement> query = from element in xml.Elements("Element") select element;
+                    List<Task<bool>> tasks = new List<Task<bool>>(query.Count());
                     Func<Task<bool>, bool> cf = t =>
                     {
                         bool res = t.Result;
@@ -666,7 +659,7 @@ namespace AcUtils
         /// <returns>AcUser object for principal \e name or \e null if not found.</returns>
         public AcUser getUser(string name)
         {
-            return this.SingleOrDefault(n => String.Equals(n.Principal.Name, name));
+            return this.SingleOrDefault(n => n.Principal.Name == name);
         }
 
         /// <summary>
@@ -686,8 +679,8 @@ namespace AcUtils
         /// <returns>AcUser object for owner of workspace \e name or \e null if not found.</returns>
         public AcUser getWorkspaceOwner(string name)
         {
-            int index = name.LastIndexOf('_');
-            string prncpl = name.Substring(++index);
+            int ii = name.LastIndexOf('_');
+            string prncpl = name.Substring(++ii);
             return getUser(prncpl);
         }
     }

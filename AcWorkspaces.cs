@@ -382,11 +382,10 @@ namespace AcUtils
                 case "G": // name of the workspace, e.g. MARS_DEV3_barnyrd
                     return Name; // general format should be short since it can be called by anything
                 case "LV": // long version (verbose)
-                {
-                    string text = String.Format(@"{1} ({2}) {{{3}}}{0}Location: ""{4}"", Storage: ""{5}""{0}Host: {6}, ULevel-Target [{7}:{8}]{9}{0}Depot: {10}, EOL: {11}, Hidden: {12}{0}",
-                        Environment.NewLine, Name, ID, Type, Location, Storage, Host, UpdateLevel, TargetLevel, (TargetLevel != UpdateLevel) ? " (incomplete)" : "", Depot, EOL, Hidden);
-                    return text;
-                }
+                    return $"{Name} ({ID}) {{{Type}}}{Environment.NewLine}" +
+                        $@"Location: ""{Location}"", Storage: ""{Storage}""{Environment.NewLine}" +
+                        $"Host: {Host}, ULevel-Target [{UpdateLevel}:{TargetLevel}]{((TargetLevel != UpdateLevel) ? " (incomplete)" : String.Empty)}{Environment.NewLine}" +
+                        $"Depot: {Depot}, EOL: {EOL}, Hidden: {Hidden}{Environment.NewLine}";
                 case "I": // workspace ID number
                     return ID.ToString();
                 case "L": // workspace location
@@ -506,8 +505,7 @@ namespace AcUtils
                 Task<AcResult> rt = getReferenceTreesXMLAsync();
                 AcResult[] arr = await Task.WhenAll(ws, rt).ConfigureAwait(false);
                 bool ret = (arr != null && arr.All(n => n != null && n.RetVal == 0)); // true if both were successful
-                if (!ret)
-                    return false;
+                if (!ret) return false;
                 foreach (AcResult r in arr)
                 {
                     if (!storeWSpaces(r, depot))
@@ -546,7 +544,7 @@ namespace AcUtils
             AcResult result = null;
             try
             {
-                string cmd = String.Empty;
+                string cmd = null;
                 // for all below, -v option adds the Loc (location) to output
                 if (_allWSpaces && _includeHidden)
                     // All workspaces, not just those that belong to the principal. Include deactivated workspaces.
@@ -627,15 +625,15 @@ namespace AcUtils
                 XElement xml = XElement.Parse(result.CmdResult);
                 IEnumerable<XElement> filter;
                 if (depot != null)
-                    filter = from w in xml.Descendants("Element")
+                    filter = from w in xml.Elements("Element")
                              join AcDepot d in _depots on
-                             (string)w.Attribute("depot") equals d.ToString()
-                             where String.Equals((string)w.Attribute("depot"), depot.Name)
+                             (string)w.Attribute("depot") equals d.Name
+                             where (string)w.Attribute("depot") == depot.Name
                              select w;
                 else
-                    filter = from w in xml.Descendants("Element")
+                    filter = from w in xml.Elements("Element")
                              join AcDepot d in _depots on
-                             (string)w.Attribute("depot") equals d.ToString()
+                             (string)w.Attribute("depot") equals d.Name
                              select w;
 
                 foreach (XElement e in filter)
@@ -651,8 +649,7 @@ namespace AcUtils
                     ws.Depot = _depots.getDepot(temp);
                     ws.TargetLevel = (int)e.Attribute("Target_trans");
                     ws.UpdateLevel = (int)e.Attribute("Trans");
-                    string filemod = (string)e.Attribute("fileModTime");
-                    ws.FileModTime = AcDateTime.AcDate2DateTime(filemod);
+                    ws.FileModTime = e.acxTime("fileModTime");
                     int type = (int)e.Attribute("Type");
                     ws.Type = (WsType)type;
                     int eol = (int)e.Attribute("EOL");
@@ -680,17 +677,8 @@ namespace AcUtils
         /// <returns>AcDepot object this workspace is located in, otherwise \e null if not found.</returns>
         public AcDepot getDepot(string name)
         {
-            AcDepot depot = null;
-            foreach (AcWorkspace w in AsReadOnly())
-            {
-                if (String.Equals(w.Name, name))
-                {
-                    depot = w.Depot;
-                    break;
-                }
-            }
-
-            return depot;
+            AcWorkspace wspace = this.SingleOrDefault(n => n.Name == name);
+            return (wspace != null) ? wspace.Depot : null;
         }
 
         /// <summary>
@@ -711,7 +699,7 @@ namespace AcUtils
         /// <returns>AcWorkspace object otherwise \e null if not found.</returns>
         public AcWorkspace getWorkspace(string name)
         {
-            return this.SingleOrDefault(n => String.Equals(n.Name, name));
+            return this.SingleOrDefault(n => n.Name == name);
         }
     }
 }

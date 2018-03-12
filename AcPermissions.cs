@@ -15,7 +15,6 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -281,10 +280,8 @@ namespace AcUtils
             {
                 case "G":
                 {
-                    string who = String.Format("{0}", (Type == PermType.builtin) ? AppliesTo : Type.ToString() + " " + AppliesTo);
-                    string text = String.Format(@"Permission on {0} {1} applies to {2} {{{3}, {4}}}",
-                        Name, Kind, who, Rights, Inheritable ? "inherit" : "no inherit");
-                    return text;
+                    string who = $"{((Type == PermType.builtin) ? AppliesTo : Type.ToString() + " " + AppliesTo)}";
+                    return $@"Permission on {Name} {Kind} applies to {who} {{{Rights}, {(Inheritable ? "inherit" : "no inherit")}}}";
                 }
                 case "K": // whether the permission pertains to a depot or stream
                     return Kind.ToString();
@@ -400,8 +397,7 @@ namespace AcUtils
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from element in xml.Descendants("Element") select element;
-                    foreach (XElement e in query)
+                    foreach (XElement e in xml.Elements("Element"))
                     {
                         AcPermission perm = new AcPermission(_kind);
                         perm.Name = (string)e.Attribute("Name");

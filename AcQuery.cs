@@ -22,7 +22,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Xml.XPath;
 
 namespace AcUtils
 {
@@ -108,16 +107,22 @@ namespace AcUtils
         /// AccuRev <tt>cat -v \<ver_spec\> -p \<depot\> -e \<eid\></tt> command on success, otherwise \e null on error.
         /// </returns>
         /*! \cat_ <tt>cat -v \<ver_spec\> -p \<depot\> -e \<eid\></tt> */
-        /*! \accunote_ The CLI \c cat command fails on Windows for ptext files larger than 62,733 bytes. Fixed in 6.0. AccuRev defect 28177. */
         /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c cat command failure.</exception>
         /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
+        /*! \accunote_ The CLI \c cat command fails on Windows for ptext files larger than 62,733 bytes. Fixed in 6.0. AccuRev defect 28177. */
+        /*! \accunote_ For the \c name, \c anc and \c cat commands, the validity of the results is guaranteed only if the commands are issued outside a workspace, or in a workspace whose 
+             backing stream is in the same depot for both workspace and the <tt>-v \<ver_spec\></tt> option used. If issued from a workspace that has a different backing stream than 
+             the <tt>-v \<ver_spec\></tt>, provided both workspace and ver_spec share the same depot, the command results can be deemed valid. However, if issued from a workspace whose 
+             backing stream is in a different depot than the <tt>-v \<ver_spec\></tt>, the command results are invalid. Applications should set the default directory to a non-workspace 
+             location prior to issuing these commands. AccuRev defects 18080, 21469, 1097778. */
         public static async Task<string> getCatFileAsync(int eid, AcDepot depot, string ver_spec)
         {
             string tmpFile = null;
             try
             {
-                AcResult r = await AcCommand.runAsync($@"cat -v ""{ver_spec}"" -p ""{depot}"" -e {eid}").ConfigureAwait(false);
+                AcResult r = await AcCommand.runAsync($@"cat -v ""{ver_spec}"" -p ""{depot}"" -e {eid}")
+                    .ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     tmpFile = Path.GetTempFileName();
@@ -143,48 +148,39 @@ namespace AcUtils
 
         /// <summary>
         /// For the real version specified in the argument list, get the real stream/version 
-        /// for the version in the workspace's backing stream.
+        /// for the version in the specified version's workspace backing stream.
         /// </summary>
         /// <remarks>\c diff used here with the \c -i option, not to run a diff but to get the EID's only.</remarks>
         /// <param name="realverspec">Real version specification in text format, 
         /// for example <tt>PG_MAINT1_barnyrd\4</tt> (numeric format won't work).</param>
         /// <param name="depot">The depot.</param>
         /// <param name="depotrelpath">Depot relative path, for example <tt>\\\\\.\\Bin\\foo.java</tt></param>
-        /// <returns>An array initialized as <em>int[]={realStreamNumber, realVersionNumber}</em> on success, otherwise \e null.</returns>
+        /// <returns>An array initialized as <em>int[]={realStreamNumber, realVersionNumber}</em> if available, otherwise \e null.</returns>
         /*! \diff_ The \c diff command returns <em>zero (0)</em> for no differences found, 
-            <em>one (1)</em> for differences found, or <em>two (2)</em> on diff program error.<br>
-            <tt>diff -i -b -fx -v \<realverspec\> -p \<depot\> \<depotrelpath\></tt> */
+            <em>one (1)</em> for differences found, or <em>two (2)</em> on \c diff program error.<br>
+            <tt>diff -fx -v \<realverspec\> -b -i -p \<depot\> \<depotrelpath\></tt> */
+        /*! > -v -b Compare the specified version (X) with the version in X's stream's backing stream. (Use -v -V instead if comparing elements of type text that are active in a time-based stream.) */
+        /*! > -i Information only: Report the IDs of the two versions, but don't actually compare them. This option is valid only in a command that uses a -v/-V combination or a -v/-b combination. If an element appears only in the workspace stream, not in the workspace's backing stream, this option does not list it. */
         /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c diff command failure.</exception>
         /// <exception cref="Exception">caught and logged in same on failure to handle a range of exceptions.</exception>
         public static async Task<int[]> getBackedVersionAsync(string realverspec, AcDepot depot, string depotrelpath)
         {
-            int[] arr = null; // realStreamNumber, realVersionNumber
-            AcResult result = null;
+            int[] arr = null; // {realStreamNumber, realVersionNumber}
             try
             {
-                // -i switch reports the EID's of the two versions and does not do the comparison.
-                result = await AcCommand.runAsync($@"diff -i -b -fx -v ""{realverspec}"" -p ""{depot}"" ""{depotrelpath}""")
+                AcResult r = await AcCommand.runAsync($@"diff -fx -v ""{realverspec}"" -b -i -p ""{depot}"" ""{depotrelpath}""")
                     .ConfigureAwait(false);
-            }
-
-            catch (AcUtilsException ecx)
-            {
-                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getBackedVersionAsync{Environment.NewLine}{ecx.Message}");
-            }
-
-            try
-            {
-                if (result != null && result.RetVal < 2)
+                if (r != null && r.RetVal < 2)
                 {
-                    using (StringReader reader = new StringReader(result.CmdResult))
+                    XElement xml = XElement.Parse(r.CmdResult);
+                    XElement stream2 = xml.Descendants().Where(n => n.Name == "Stream2").SingleOrDefault();
+                    if (stream2 != null)
                     {
-                        XPathDocument doc = new XPathDocument(reader);
-                        XPathNavigator nav = doc.CreateNavigator();
-                        XPathNodeIterator iter1 = nav.Select(@"AcResponse/Element/Change/Stream2");
-                        foreach (XPathNavigator iter2 in iter1)
+                        XAttribute version = stream2.Attributes("Version").SingleOrDefault();
+                        if (version != null)
                         {
-                            string temp = iter2.GetAttribute("Version", String.Empty);
+                            string temp = (string)version;
                             string[] a = temp.Split('/');
                             int realStreamNumber = Int32.Parse(a[0], NumberStyles.Integer);
                             int realVersionNumber = Int32.Parse(a[1], NumberStyles.Integer);
@@ -192,6 +188,11 @@ namespace AcUtils
                         }
                     }
                 }
+            }
+
+            catch (AcUtilsException ecx)
+            {
+                AcDebug.Log($"AcUtilsException caught and logged in AcQuery.getBackedVersionAsync{Environment.NewLine}{ecx.Message}");
             }
 
             catch (Exception ecx)
@@ -208,7 +209,7 @@ namespace AcUtils
         /// </summary>
         /// <param name="stream">Name of the stream where the element resides.</param>
         /// <param name="EID">The element ID of the element on which to query.</param>
-        /// <returns>An array initialized as <em>string[]={depot-relative path, parent EID}</em> on success, otherwise \e null.</returns>
+        /// <returns>An tuple initialized as <em>{depot-relative path, parent EID}</em> on success, otherwise \e null.</returns>
         /*! \name_ <tt>name -v \<stream\> -fx -e \<EID\></tt> */
         /// <exception cref="AcUtilsException">caught and [logged](@ref AcUtils#AcDebug#initAcLogging) 
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on \c name command failure.</exception>
@@ -229,26 +230,18 @@ namespace AcUtils
              the <tt>-v \<ver_spec\></tt>, provided both workspace and ver_spec share the same depot, the command results can be deemed valid. However, if issued from a workspace whose 
              backing stream is in a different depot than the <tt>-v \<ver_spec\></tt>, the command results are invalid. Applications should set the default directory to a non-workspace 
              location prior to issuing these commands. AccuRev defects 18080, 21469, 1097778. */
-        public static async Task<string[]> getElementNameAsync(string stream, int EID)
+        public static async Task<Tuple<string, int>> getElementNameAsync(string stream, int EID)
         {
-            string[] arr = null; // depot-relative path, parent folder EID
+            Tuple<string, int> ret = null; // depot-relative path, parent folder EID
             try
             {
                 AcResult r = await AcCommand.runAsync($@"name -v ""{stream}"" -fx -e {EID}").ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
-                    using (StringReader reader = new StringReader(r.CmdResult))
-                    {
-                        XPathDocument doc = new XPathDocument(reader);
-                        XPathNavigator nav = doc.CreateNavigator();
-                        XPathNodeIterator iter1 = nav.Select(@"AcResponse/element");
-                        foreach (XPathNavigator iter2 in iter1)
-                        {
-                            string location = iter2.GetAttribute("location", String.Empty);
-                            string parent_id = iter2.GetAttribute("parent_id", String.Empty);
-                            arr = new string[] { location, parent_id };
-                        }
-                    }
+                    XElement xml = XElement.Parse(r.CmdResult);
+                    string location = (string)xml.Element("element").Attribute("location");
+                    int parent_id = (int)xml.Element("element").Attribute("parent_id");
+                    ret = Tuple.Create(location, parent_id);
                 }
             }
 
@@ -262,7 +255,7 @@ namespace AcUtils
                 AcDebug.Log($"Exception caught and logged in AcQuery.getElementNameAsync{Environment.NewLine}{ecx.Message}");
             }
 
-            return arr;
+            return ret;
         }
 
         /// <summary>
@@ -670,7 +663,7 @@ namespace AcUtils
             if (result != null && result.RetVal == 0) // if command succeeded
             {
                 XElement xml = XElement.Parse(result.CmdResult);
-                IEnumerable<XElement> query = from e in xml.Descendants("Element")
+                IEnumerable<XElement> query = from e in xml.Elements("Element")
                                               select e;
                 int num = query.Count();
                 depots = new List<string>(num);

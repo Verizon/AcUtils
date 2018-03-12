@@ -31,6 +31,7 @@ namespace AcUtils
         can be the string \"<b>* unknown *</b>\". */
     /*! \accunote_ (\e external)(\e elink) elements are grayed out in the Mac GUI and cannot be 
         added to the depot. Defect 1101826. */
+    /*! \sa [acxType extension method](@ref AcUtils#Extensions#acxType) */
     public enum ElementType {
         /*! \var unknown
         Should not occur normally except for noted defect. */
@@ -71,7 +72,7 @@ namespace AcUtils
         private bool _executable;
         private int _eid;
         private ElementType _elementType;
-        private long _size;
+        private long? _size;
         private DateTime? _modTime;
         private string _hierType;
         private int _virStreamNumber;
@@ -216,7 +217,7 @@ namespace AcUtils
         /// File size in bytes.
         /// </summary>
         /*! \sa [Convert file size bytes to megabyte/gigabyte string using C#](http://www.joe-stevens.com/2009/10/21/convert-file-size-bytes-to-megabytegigabyte-string-using-c/) */
-        public long Size
+        public long? Size
         {
             get { return _size; }
             internal set { _size = value; }
@@ -364,21 +365,14 @@ namespace AcUtils
             {
                 case "LV": // long version (verbose)
                 {
-                    string text;
                     if (_modTime != null)
-                    {
-                        text = String.Format("{1}, {2}{0}\tEID: {3} {{{4}}}, Size: {5}, ModTime: {6},{0}\t{7}, Virtual: {8}\\{9}, Real: {10}\\{11}",
-                            Environment.NewLine, Location, Status, EID, ElementType, Size, ModTime, NamedVersion, 
-                            VirStreamNumber, VirVersionNumber, RealStreamNumber, RealVersionNumber);
-                    }
+                        return $"{Location}, {Status}{Environment.NewLine}" +
+                                $"\tEID: {EID} {{{ElementType}}}, Size: {Size}, ModTime: {ModTime},{Environment.NewLine}" +
+                                $"\t{NamedVersion}, Virtual: {VirStreamNumber}\\{VirVersionNumber}, Real: {RealStreamNumber}\\{RealVersionNumber}";
                     else
-                    {
-                        text = String.Format("{1}, {2}{0}\tEID: {3} {{{4}}}{0}\t{5}, Virtual: {6}\\{7}, Real: {8}\\{9}",
-                            Environment.NewLine, Location, Status, EID, ElementType, NamedVersion, 
-                            VirStreamNumber, VirVersionNumber, RealStreamNumber, RealVersionNumber);
-                    }
-
-                    return text;
+                        return $"{Location}, {Status}{Environment.NewLine}" +
+                                $"\tEID: {EID} {{{ElementType}}}{Environment.NewLine}" +
+                                $"\t{NamedVersion}, Virtual: {VirStreamNumber}\\{VirVersionNumber}, Real: {RealStreamNumber}\\{RealVersionNumber}";
                 }
                 case "G":  // location, the depot-relative path of the element (default when not using a format specifier)
                     return Location;
@@ -391,7 +385,7 @@ namespace AcUtils
                 case "T":  // element's type: dir, text, binary, ptext, elink, or slink
                     return ElementType.ToString();
                 case "FS": // file size in bytes
-                    return Size.ToString();
+                    return (Size == null) ? String.Empty : Size.ToString();
                 case "MT": // element's modification time
                     return ModTime.ToString();
                 case "H": // hierarchy type: parallel or serial
@@ -488,7 +482,7 @@ namespace AcUtils
             try
             {
                 XElement elements = XElement.Parse(xml);
-                IEnumerable<XElement> query = from e in elements.Descendants("element")
+                IEnumerable<XElement> query = from e in elements.Elements("element")
                                               where !e.Attribute("status").Value.Contains("no such elem")
                                               select e;
                 foreach (XElement e in query)
@@ -501,13 +495,9 @@ namespace AcUtils
                     string exe = (string)e.Attribute("executable") ?? String.Empty;
                     element.Executable = String.Equals(exe, "yes");
                     element.EID = (int?)e.Attribute("id") ?? 0;
-                    string etype = (string)e.Attribute("elemType") ?? String.Empty;
-                    element.ElementType = String.IsNullOrEmpty(etype) ?
-                        ElementType.unknown : (ElementType)Enum.Parse(typeof(ElementType), etype);
-                    element.Size = (long?)e.Attribute("size") ?? 0;
-                    long modtime = (long?)e.Attribute("modTime") ?? 0;
-                    if (modtime != 0)
-                        element.ModTime = AcDateTime.AcDate2DateTime(modtime);
+                    element.ElementType = e.acxType("elemType");
+                    element.Size = (long?)e.Attribute("size");
+                    element.ModTime = e.acxTime("modTime");
                     element.HierType = (string)e.Attribute("hierType") ?? String.Empty;
                     int ival;
                     string vir = (string)e.Attribute("Virtual") ?? String.Empty;
@@ -576,13 +566,13 @@ namespace AcUtils
             string realStream = version.acxStreamName(RealVirtual.Real);
             if (realStream == null) return null;
 
-            IEnumerable<Element> query = (from e in _elements
-                                          where e.EID == virEID &&
-                                          e.VirStreamNumber == virStreamVersion[0] && e.VirVersionNumber == virStreamVersion[1] &&
-                                          e.RealStreamNumber == realStreamVersion[0] && e.RealVersionNumber == realStreamVersion[1] &&
-                                          (e.NamedVersion.StartsWith(virStream) || e.NamedVersion.StartsWith(realStream))
-                                          select e).Distinct();
-            return query.SingleOrDefault();
+            IEnumerable<Element> query = from e in _elements
+                                         where e.EID == virEID &&
+                                         e.VirStreamNumber == virStreamVersion[0] && e.VirVersionNumber == virStreamVersion[1] &&
+                                         e.RealStreamNumber == realStreamVersion[0] && e.RealVersionNumber == realStreamVersion[1] &&
+                                         (e.NamedVersion.StartsWith(virStream) || e.NamedVersion.StartsWith(realStream))
+                                         select e;
+            return query.FirstOrDefault();
         }
     }
 }

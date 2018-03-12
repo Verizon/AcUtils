@@ -114,7 +114,7 @@ namespace AcUtils
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from element in xml.Descendants("Element") select element;
+                    IEnumerable<XElement> query = from element in xml.Elements("Element") select element;
                     List<Task<bool>> tasks = null;
                     if (_includeMembersList)
                     {
@@ -194,8 +194,7 @@ namespace AcUtils
                 {
                     SortedSet<string> members = new SortedSet<string>();
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from element in xml.Descendants("Element") select element;
-                    foreach (XElement e in query)
+                    foreach (XElement e in xml.Elements("Element"))
                     {
                         string name = (string)e.Attribute("User");
                         members.Add(name);
@@ -299,7 +298,7 @@ namespace AcUtils
         /// <returns>AcPrincipal object for group \e name if found, otherwise \e null.</returns>
         public AcPrincipal getPrincipal(string name)
         {
-            return this.SingleOrDefault(n => String.Equals(n.Name, name));
+            return this.SingleOrDefault(n => n.Name == name);
         }
 
         /// <summary>

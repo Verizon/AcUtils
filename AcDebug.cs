@@ -383,11 +383,8 @@ namespace AcUtils
                 if (_log != null)
                 {
                     if (formatting)
-                    {
                         // include date/time in our log file and separate each log entry with an empty line
-                        string logmsg = String.Format("{1}{0}{2}{0}", Environment.NewLine, DateTime.Now.ToString(), message);
-                        _log.WriteLine(logmsg);
-                    }
+                        _log.WriteLine($"{DateTime.Now.ToString()}{Environment.NewLine}{message}{Environment.NewLine}");
                     else
                         _log.WriteLine(message);
                 }
@@ -428,9 +425,7 @@ namespace AcUtils
 
             catch (Exception e) // IOException, DirectoryNotFoundException, PathTooLongException, SecurityException... others
             {
-                String err = String.Format("Unable to overwrite XML param file {1}{0}{2}",
-                    Environment.NewLine, xmlParamFile, e.Message);
-                Log(err);
+                Log($"Unable to overwrite XML param file {xmlParamFile}{Environment.NewLine}{e.Message}");
             }
         }
 
@@ -475,7 +470,7 @@ namespace AcUtils
             \endcode */
         public static bool initAcLogging()
         {
-            bool ret = true; // assume success
+            bool ret = false; // assume failure
             try
             {
                 // Get root name of our executable for initializing our TraceSource object below.
@@ -509,25 +504,31 @@ namespace AcUtils
                 _log.LogFileCreationSchedule = LogFileCreationScheduleOption.Weekly;
                 // true to make sure we capture data in the event of an exception
                 _log.AutoFlush = true;
+                ret = true;
             }
 
             catch (Exception exc)
             {
                 Console.WriteLine($"Exception caught in AcDebug.initAcLogging{Environment.NewLine}{exc.Message}");
-                ret = false;
             }
 
             return ret;
         }
 
         /// <summary>
-        /// Get the [log file](@ref AcUtils#AcDebug#initAcLogging) full path name.
+        /// Get the log file's full path name.
         /// </summary>
-        /// <returns>Full path to the log file if it exists, otherwise \e null.</returns>
+        /// <remarks>Log files are created on initial write. If [logging support](@ref AcUtils#AcDebug#initAcLogging) 
+        /// was previously initialized and the log file does not yet exist (nothing written), calling this method will 
+        /// create a zero-byte log file.</remarks>
+        /// <returns>Full path to the log file if logging support was previously initialized, otherwise \e null.</returns>
         public static string getLogFile()
         {
-            // referencing FullLogFileName property will create a zero-byte log file if it doesn't exist
-            return (_log != null) ? _log.FullLogFileName : null;
+            string logfile = null;
+            if (_log != null) // if logging support was initialized
+                // referencing FullLogFileName property will create a zero-byte log file if it doesn't exist
+                logfile = _log.FullLogFileName;
+            return logfile;
         }
 
         /// <summary>

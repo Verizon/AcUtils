@@ -268,12 +268,12 @@ namespace AcUtils
             {
                 case "G": // long version and default when not using a format specifier
                 {
-                    string kind = String.Format("{0}", (Kind == LockKind.all) ? "promotions to and from" : "promotions " + Kind);
-                    string howfor = String.Format("{0}", ((Kind == LockKind.all) || (String.IsNullOrEmpty(ExceptFor) && String.IsNullOrEmpty(OnlyFor))) ? 
-                        "for all" : !String.IsNullOrEmpty(ExceptFor) ? 
-                        ("except for " + Type + " " + ExceptFor) : ("for " + Type + " " + OnlyFor + " only"));
-                    string text = String.Format("Lock {0} {1} {2}. {3}", kind, Name, howfor, Comment);
-                    return text;
+                    string kind = $"{((Kind == LockKind.all) ? "promotions to and from" : "promotions " + Kind)}";
+                    string howfor = String.Format("{0}", 
+                    (Kind == LockKind.all) || (String.IsNullOrEmpty(ExceptFor) && String.IsNullOrEmpty(OnlyFor)) ?
+                        "for all" : !String.IsNullOrEmpty(ExceptFor) ?
+                            ("except for " + Type + " " + ExceptFor) : ("for " + Type + " " + OnlyFor + " only"));
+                    return $"Lock {kind} {Name} {howfor}. {Comment}";
                 }
                 case "K": // kind of AccuRev lock: from, to, or all
                     return Kind.ToString();
@@ -379,13 +379,13 @@ namespace AcUtils
                     XElement xml = XElement.Parse(r.CmdResult);
                     IEnumerable<XElement> query = null;
                     if (depot == null)
-                        query = from e in xml.Descendants("Element")
+                        query = from e in xml.Elements("Element")
                                 select e;
                     else
-                        query = from e in xml.Descendants("Element")
+                        query = from e in xml.Elements("Element")
                                 join AcStream s in depot.Streams on (string)e.Attribute("Name") equals s.Name
                                 select e;
-                    ret = runCommand(query);
+                    ret = initList(query);
                 }
             }
 
@@ -429,10 +429,10 @@ namespace AcUtils
                     for (int ii = 0; ii < dlist.Count && result; ii++)
                     {
                         AcDepot depot = dlist[ii];
-                        IEnumerable<XElement> query = from e in xml.Descendants("Element")
+                        IEnumerable<XElement> query = from e in xml.Elements("Element")
                                                       join AcStream s in depot.Streams on (string)e.Attribute("Name") equals s.Name
                                                       select e;
-                        result = runCommand(query);
+                        result = initList(query);
                     }
 
                     ret = result;
@@ -472,10 +472,10 @@ namespace AcUtils
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from e in xml.Descendants("Element")
-                                                  where streams.OfType<StreamElement>().Any(se => String.Equals(se.Stream, (string)e.Attribute("Name")))
+                    IEnumerable<XElement> query = from e in xml.Elements("Element")
+                                                  where streams.OfType<StreamElement>().Any(se => se.Stream == (string)e.Attribute("Name"))
                                                   select e;
-                    ret = runCommand(query);
+                    ret = initList(query);
                 }
             }
 
@@ -503,7 +503,7 @@ namespace AcUtils
         /// in <tt>\%LOCALAPPDATA\%\\AcTools\\Logs\\<prog_name\>-YYYY-MM-DD.log</tt> on failure to handle a range of exceptions.</exception>
         /*! \note <tt>show -fx locks</tt> XML attributes for stream name and [LockKind](@ref AcUtils#LockKind) 
              always exist. Other attributes exist only if they have values. */
-        private bool runCommand(IEnumerable<XElement> query)
+        private bool initList(IEnumerable<XElement> query)
         {
             bool ret = false; // assume failure
             try
@@ -530,7 +530,7 @@ namespace AcUtils
 
             catch (Exception ecx)
             {
-                AcDebug.Log($"Exception caught and logged in AcLocks.runCommand{Environment.NewLine}{ecx.Message}");
+                AcDebug.Log($"Exception caught and logged in AcLocks.initList{Environment.NewLine}{ecx.Message}");
             }
 
             return ret;
@@ -543,15 +543,8 @@ namespace AcUtils
         /// <returns>\e true if \e stream has a lock on it, \e false otherwise.</returns>
         public bool hasLock(string stream)
         {
-            bool found = false;
-            for (int ii=0; ii < Count && !found; ii++)
-            {
-                AcLock lk = this[ii];
-                if (String.Equals(lk.Name, stream))
-                    found = true;
-            }
-
-            return found;
+            AcLock lk = this.FirstOrDefault(n => n.Name == stream);
+            return (lk != null);
         }
 
         /// <summary>
@@ -575,20 +568,19 @@ namespace AcUtils
                 string cmd = null;
                 if (kind == LockKind.from)
                     if (prncpl != null)
-                        cmd = String.Format(@"lock -c ""{0}"" -kf {1} ""{2}"" ""{3}""", comment, (onlyexcept == OnlyExcept.Except) ? "-e" : "-o", prncpl, stream);
+                        cmd = $@"lock -c ""{comment}"" -kf {((onlyexcept == OnlyExcept.Except) ? "-e" : "-o")} ""{prncpl}"" ""{stream}""";
                     else
-                        cmd = String.Format(@"lock -c ""{0}"" -kf ""{1}""", comment, stream);  // lock 'from' for all
+                        cmd = $@"lock -c ""{comment}"" -kf ""{stream}""";  // lock 'from' for all
                 else if (kind == LockKind.to)
                     if (prncpl != null)
-                        cmd = String.Format(@"lock -c ""{0}"" -kt {1} ""{2}"" ""{3}""", comment, (onlyexcept == OnlyExcept.Except) ? "-e" : "-o", prncpl, stream);
+                        cmd = $@"lock -c ""{comment}"" -kt {((onlyexcept == OnlyExcept.Except) ? "-e" : "-o")} ""{prncpl}"" ""{stream}""";
                     else
-                        cmd = String.Format(@"lock -c ""{0}"" -kt ""{1}""", comment, stream); // lock 'to' for all
+                        cmd = $@"lock -c ""{comment}"" -kt ""{stream}"""; // lock 'to' for all
                 else if (kind == LockKind.all)
-                    cmd = String.Format(@"lock -c ""{0}"" ""{1}""", comment, stream); // lock 'to and from' for all
+                    cmd = $@"lock -c ""{comment}"" ""{stream}"""; // lock 'to and from' for all
 
                 AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
-                if (r != null && r.RetVal == 0)
-                    ret = true; // operation succeeded
+                ret = (r != null && r.RetVal == 0);
             }
 
             catch (AcUtilsException ecx)
@@ -615,15 +607,14 @@ namespace AcUtils
             {
                 string cmd = null;
                 if (kind == LockKind.from)
-                    cmd = String.Format(@"unlock -kf ""{0}""", stream);
+                    cmd = $@"unlock -kf ""{stream}""";
                 else if (kind == LockKind.to)
-                    cmd = String.Format(@"unlock -kt ""{0}""", stream);
+                    cmd = $@"unlock -kt ""{stream}""";
                 else if (kind == LockKind.all)
-                    cmd = String.Format(@"unlock ""{0}""", stream);
+                    cmd = $@"unlock ""{stream}""";
 
                 AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
-                if (r != null && r.RetVal == 0)
-                    ret = true; // operation succeeded
+                ret = (r != null && r.RetVal == 0);
             }
 
             catch (AcUtilsException ecx)

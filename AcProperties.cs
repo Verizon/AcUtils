@@ -15,7 +15,6 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -235,9 +234,9 @@ namespace AcUtils
                 {
                     string text;
                     if (_depot == null)
-                        text = String.Format("{0} ({1}), {2}={3}", Name, ID, PropName, PropValue);
+                        text = $"{Name} ({ID}), {PropName}={PropValue}";
                     else
-                        text = String.Format("{0}, {1} ({2}), {3}={4}", Depot, Name, ID, PropName, PropValue);
+                        text = $"{Depot}, {Name} ({ID}), {PropName}={PropValue}";
                     return text;
                 }
                 case "K": // type of the property, either "principal" or "stream"
@@ -335,20 +334,19 @@ namespace AcUtils
             {
                 string cmd = null;
                 if (stream != null && includeHidden)
-                    cmd = String.Format(@"getproperty -fix -s ""{0}""", stream);
+                    cmd = $@"getproperty -fix -s ""{stream}""";
                 else if (stream != null && !includeHidden)
-                    cmd = String.Format(@"getproperty -fx -s ""{0}""", stream);
+                    cmd = $@"getproperty -fx -s ""{stream}""";
                 else if (includeHidden) // request is for all streams in depot including those that are hidden
-                    cmd = String.Format(@"getproperty -fix -ks -p ""{0}""", depot);
+                    cmd = $@"getproperty -fix -ks -p ""{depot}""";
                 else  // request is for all streams except those that are hidden
-                    cmd = String.Format(@"getproperty -fx -ks -p ""{0}""", depot);
+                    cmd = $@"getproperty -fx -ks -p ""{depot}""";
 
                 AcResult r = await AcCommand.runAsync(cmd).ConfigureAwait(false);
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from element in xml.Descendants("property") select element;
-                    foreach (XElement e in query)
+                    foreach (XElement e in xml.Elements("property"))
                     {
                         AcProperty property = new AcProperty();
                         string kind = (string)e.Attribute("kind");
@@ -397,9 +395,9 @@ namespace AcUtils
             {
                 string cmd = null;
                 if (!String.IsNullOrEmpty(prncpl) && includeHidden)
-                    cmd = String.Format(@"getproperty -fix -u ""{0}""", prncpl);
+                    cmd = $@"getproperty -fix -u ""{prncpl}""";
                 else if (!String.IsNullOrEmpty(prncpl) && !includeHidden)
-                    cmd = String.Format(@"getproperty -fx -u ""{0}""", prncpl);
+                    cmd = $@"getproperty -fx -u ""{prncpl}""";
                 else if (includeHidden) // request is for all principals including those that are hidden
                     cmd = "getproperty -fix -ku";
                 else // request is for all principals except those that are hidden
@@ -409,8 +407,7 @@ namespace AcUtils
                 if (r != null && r.RetVal == 0)
                 {
                     XElement xml = XElement.Parse(r.CmdResult);
-                    IEnumerable<XElement> query = from element in xml.Descendants("property") select element;
-                    foreach (XElement e in query)
+                    foreach (XElement e in xml.Elements("property"))
                     {
                         AcProperty property = new AcProperty();
                         string kind = (string)e.Attribute("kind");
