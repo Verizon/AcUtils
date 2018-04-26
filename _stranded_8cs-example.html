@@ -179,9 +179,8 @@ SATURN_DEV1
 <div class="line">                                              where !_excludeList.OfType&lt;DepotElement&gt;().Any(de =&gt; de.Depot == d.Name)</div>
 <div class="line">                                              select d;</div>
 <div class="line"></div>
-<div class="line">                <span class="keywordflow">foreach</span> (AcDepot <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> filter)</div>
-<div class="line">                    <span class="keywordflow">foreach</span> (AcStream <a name="a1"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> depot.Streams)</div>
-<div class="line">                        tasks.Add(runStatCommandAsync(stream));</div>
+<div class="line">                <span class="keywordflow">foreach</span> (AcStream <a name="a1"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> filter.SelectMany(d =&gt; d.Streams))</div>
+<div class="line">                    tasks.Add(runStatCommandAsync(stream));</div>
 <div class="line"></div>
 <div class="line">                <span class="keywordtype">bool</span>[] arr = await Task.WhenAll(tasks); <span class="comment">// finish running stat commands in parallel</span></div>
 <div class="line">                ret = (arr != null &amp;&amp; arr.All(n =&gt; n == <span class="keyword">true</span>)); <span class="comment">// true if all succeeded or if no tasks were run</span></div>
@@ -367,7 +366,7 @@ SATURN_DEV1
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 15 2018 09:41:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 26 2018 09:43:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

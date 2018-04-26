@@ -45,7 +45,7 @@
 <div class="title">LatestPromotions.cs</div>  </div>
 </div><!--header-->
 <div class="contents">
-<p>Creates an HTML file with the promote transactions that occurred in specific streams in select depots within the past specified number of hours.</p>
+<p>Creates an HTML file with the promote transactions that occurred in select streams during the past specified number of hours.</p>
 <dl class="section user"><dt>LatestPromotions.exe.config</dt><dd><div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;utf-8&quot;</span>?&gt;</div>
 <div class="line">&lt;configuration&gt;</div>
 <div class="line">  &lt;configSections&gt;</div>
@@ -65,6 +65,7 @@
 <div class="line">  &lt;/activeDir&gt;</div>
 <div class="line">  &lt;Depots&gt;</div>
 <div class="line">    &lt;depots&gt;</div>
+<div class="line">      &lt;!-- depots where the streams below are located --&gt;</div>
 <div class="line">      &lt;add <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a>=<span class="stringliteral">&quot;MARS&quot;</span>/&gt;</div>
 <div class="line">      &lt;add <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a>=<span class="stringliteral">&quot;JUPITER&quot;</span>/&gt;</div>
 <div class="line">      &lt;add <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a>=<span class="stringliteral">&quot;NEPTUNE&quot;</span>/&gt;</div>
@@ -72,7 +73,8 @@
 <div class="line">  &lt;/Depots&gt;</div>
 <div class="line">  &lt;Streams&gt;</div>
 <div class="line">    &lt;streams&gt;</div>
-<div class="line">      &lt;add <a name="a0"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a>=<span class="stringliteral">&quot;MARS_DEV3&quot;</span>/&gt;</div>
+<div class="line">      &lt;!-- add/<span class="keyword">remove</span> the streams <a name="a0"></a><a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17a01b6e20344b68835c5ed1ddedf20d531">to</a> query <a name="a1"></a><a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> depots listed above --&gt;</div>
+<div class="line">      &lt;add <a name="a2"></a><a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a>=<span class="stringliteral">&quot;MARS_DEV3&quot;</span>/&gt;</div>
 <div class="line">      &lt;add <a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a>=<span class="stringliteral">&quot;MARS_DEV4&quot;</span>/&gt;</div>
 <div class="line">      &lt;add <a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a>=<span class="stringliteral">&quot;JUPITER_DEV3&quot;</span>/&gt;</div>
 <div class="line">      &lt;add <a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a>=<span class="stringliteral">&quot;JUPITER_DEV4&quot;</span>/&gt;</div>
@@ -120,7 +122,9 @@
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Diagnostics;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.IO;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Linq;</div>
+<div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Text;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.<a class="code" href="namespace_system_1_1_threading.html">Threading</a>.<a class="code" href="namespace_system_1_1_threading_1_1_tasks.html">Tasks</a>;</div>
+<div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Xml;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Xml.Linq;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_ac_utils.html">AcUtils</a>;</div>
 <div class="line"></div>
@@ -147,10 +151,30 @@
 <div class="line"></div>
 <div class="line">            DateTime past = DateTime.Now.AddHours(_fromHoursAgo * -1); <span class="comment">// go back this many hours</span></div>
 <div class="line">            <span class="keywordflow">if</span> (!initListsAsync(past).Result) <span class="keywordflow">return</span> 1; <span class="comment">// operation failed, check log file</span></div>
+<div class="line"></div>
 <div class="line">            <span class="keywordflow">if</span> (_hist != null &amp;&amp; _hist.Count &gt; 0)</div>
 <div class="line">            {</div>
-<div class="line">                XElement report = buildReport(past);</div>
-<div class="line">                report.Save(_outputFile);</div>
+<div class="line">                XmlWriter writer = null;</div>
+<div class="line">                <span class="keywordflow">try</span></div>
+<div class="line">                {</div>
+<div class="line">                    XmlWriterSettings settings = <span class="keyword">new</span> XmlWriterSettings {</div>
+<div class="line">                        OmitXmlDeclaration = <span class="keyword">true</span>, Indent = <span class="keyword">true</span>, IndentChars = <span class="stringliteral">&quot;\t&quot;</span>,</div>
+<div class="line">                        Encoding = <span class="keyword">new</span> UTF8Encoding(<span class="keyword">false</span>)}; <span class="comment">// false to exclude Unicode byte order mark (BOM)</span></div>
+<div class="line">                    <span class="keyword">using</span> (writer = XmlWriter.Create(_outputFile, settings))</div>
+<div class="line">                    {</div>
+<div class="line">                        XDocument report = buildReport(past);</div>
+<div class="line">                        report.WriteTo(writer);</div>
+<div class="line">                    }</div>
+<div class="line">                }</div>
+<div class="line"></div>
+<div class="line">                <span class="keywordflow">catch</span> (Exception exc)</div>
+<div class="line">                {</div>
+<div class="line">                    AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.Main{Environment.NewLine}&quot;</span> +</div>
+<div class="line">                        $<span class="stringliteral">&quot;Failed writing to {_outputFile}{Environment.NewLine}{exc.Message}&quot;</span>);</div>
+<div class="line">                    <span class="keywordflow">return</span> 1;</div>
+<div class="line">                }</div>
+<div class="line"></div>
+<div class="line">                <span class="keywordflow">finally</span> { <span class="keywordflow">if</span> (writer != null) writer.Close(); }</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> 0;</div>
@@ -169,20 +193,15 @@
 <div class="line">                tasks[0] = <span class="keyword">new</span> List&lt;Task&lt;AcResult&gt;&gt;(); <span class="comment">// for hist results</span></div>
 <div class="line">                tasks[1] = <span class="keyword">new</span> List&lt;Task&lt;AcResult&gt;&gt;(); <span class="comment">// for stat results</span></div>
 <div class="line"></div>
-<div class="line">                <span class="keywordflow">foreach</span> (AcDepot <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> _depots)</div>
+<div class="line">                <span class="comment">// Alternatively change Equals() to Contains() and modify LatestPromotions.exe.config stream values </span></div>
+<div class="line">                <span class="comment">// accordingly to filter on stream name subsets, e.g. &lt;add stream=&quot;DEV&quot;/&gt; for all streams with DEV in their name.</span></div>
+<div class="line">                <span class="keywordflow">foreach</span> (AcStream <a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> _depots.SelectMany(d =&gt; d.Streams</div>
+<div class="line">                    .Where(s =&gt; _selStreams.OfType&lt;StreamElement&gt;().Any(se =&gt; s.Name.Equals(se.Stream)))))</div>
 <div class="line">                {</div>
-<div class="line">                    <span class="comment">// Alternatively change Equals() to Contains() and modify LatestPromotions.exe.config stream values </span></div>
-<div class="line">                    <span class="comment">// accordingly to filter on stream name subsets, e.g. &lt;add stream=&quot;DEV&quot;/&gt; for all streams with DEV in their name.</span></div>
-<div class="line">                    IEnumerable&lt;AcStream&gt; filter = depot.Streams.Where(n =&gt;</div>
-<div class="line">                        _selStreams.OfType&lt;StreamElement&gt;().Any(s =&gt; n.Name.Equals(s.Stream)));</div>
-<div class="line"></div>
-<div class="line">                    <span class="keywordflow">foreach</span> (AcStream <a class="code" href="group__acenum.html#ggad7e684b07d7e19ab166efd38207cf884af7b44cfafd5c52223d5498196c8a2e7b">stream</a> <span class="keywordflow">in</span> filter)</div>
-<div class="line">                    {</div>
-<div class="line">                        Task&lt;AcResult&gt; hr = AcCommand.runAsync($<span class="stringliteral">@&quot;hist -k promote -s &quot;&quot;{stream}&quot;&quot; -t now-&quot;&quot;{timeHrsAgo}&quot;&quot; -fx&quot;</span>);</div>
-<div class="line">                        tasks[0].Add(hr);</div>
-<div class="line">                        Task&lt;AcResult&gt; sr = AcCommand.runAsync($<span class="stringliteral">@&quot;stat -s &quot;&quot;{stream}&quot;&quot; -d -fx&quot;</span>); <span class="comment">// stream&#39;s default group</span></div>
-<div class="line">                        tasks[1].Add(sr);</div>
-<div class="line">                    }</div>
+<div class="line">                    Task&lt;AcResult&gt; hr = AcCommand.runAsync($<span class="stringliteral">@&quot;hist -k promote -s &quot;&quot;{stream}&quot;&quot; -t now-&quot;&quot;{timeHrsAgo}&quot;&quot; -fx&quot;</span>);</div>
+<div class="line">                    tasks[0].Add(hr);</div>
+<div class="line">                    Task&lt;AcResult&gt; sr = AcCommand.runAsync($<span class="stringliteral">@&quot;stat -s &quot;&quot;{stream}&quot;&quot; -d -fx&quot;</span>); <span class="comment">// stream&#39;s default group</span></div>
+<div class="line">                    tasks[1].Add(sr);</div>
 <div class="line">                }</div>
 <div class="line"></div>
 <div class="line">                _hist = <span class="keyword">new</span> List&lt;XElement&gt;(tasks[0].Count);</div>
@@ -220,77 +239,76 @@
 <div class="line">        }</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Returns the content for our HTML file.</span></div>
-<div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> XElement buildReport(DateTime past)</div>
+<div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> XDocument buildReport(DateTime past)</div>
 <div class="line">        {</div>
-<div class="line">            <span class="keywordflow">return</span> <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;html&quot;</span>,</div>
-<div class="line">                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;head&quot;</span>),</div>
+<div class="line">            XDocument doc = <span class="keyword">new</span> XDocument(</div>
+<div class="line">                <span class="keyword">new</span> XDocumentType(<span class="stringliteral">&quot;HTML&quot;</span>, null, null, null),</div>
+<div class="line">                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;html&quot;</span>, <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;lang&quot;</span>, <span class="stringliteral">&quot;en&quot;</span>),</div>
+<div class="line">                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;head&quot;</span>,</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;meta&quot;</span>, <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;charset&quot;</span>, <span class="stringliteral">&quot;utf-8&quot;</span>)), <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;meta&quot;</span>, <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;name&quot;</span>, <span class="stringliteral">&quot;description&quot;</span>), </div>
+<div class="line">                        <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;content&quot;</span>, <span class="stringliteral">&quot;Promotions to select streams during the past specified number of hours.&quot;</span>)),</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;title&quot;</span>, <span class="stringliteral">&quot;Promotions since &quot;</span> + past.ToString(<span class="stringliteral">&quot;f&quot;</span>)),</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;style&quot;</span>,</div>
+<div class="line">                    $<span class="stringliteral">@&quot;body {{</span></div>
+<div class="line"><span class="stringliteral">                      background-color: Gainsboro;</span></div>
+<div class="line"><span class="stringliteral">                      color: #0000ff;</span></div>
+<div class="line"><span class="stringliteral">                      font-family: Arial, sans-serif;</span></div>
+<div class="line"><span class="stringliteral">                      font-size: 13px;</span></div>
+<div class="line"><span class="stringliteral">                      margin: 10px; }}</span></div>
+<div class="line"><span class="stringliteral">                    table {{</span></div>
+<div class="line"><span class="stringliteral">                      background-color: #F1F1F1;</span></div>
+<div class="line"><span class="stringliteral">                      color: #000000;</span></div>
+<div class="line"><span class="stringliteral">                      font-size: 12px;</span></div>
+<div class="line"><span class="stringliteral">                      border: 2px solid black;</span></div>
+<div class="line"><span class="stringliteral">                      padding: 10px; }}&quot;</span></div>
+<div class="line">                    )</div>
+<div class="line">                ),</div>
 <div class="line">                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;body&quot;</span>,</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;topmargin&quot;</span>, 10),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;leftmargin&quot;</span>, 10),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;rightmargin&quot;</span>, 10),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bottommargin&quot;</span>, 10),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;marginwidth&quot;</span>, 5),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;marginheight&quot;</span>, 5),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;style&quot;</span>, <span class="stringliteral">&quot;font family: Arial; font-size: 12pt&quot;</span>),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;text&quot;</span>, <span class="stringliteral">&quot;#0000ff&quot;</span>),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bgcolor&quot;</span>, <span class="stringliteral">&quot;#cccccc&quot;</span>),</div>
-<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;p&quot;</span>, <span class="stringliteral">&quot;Promotions since &quot;</span> + past.ToString(<span class="stringliteral">&quot;f&quot;</span>) + <span class="stringliteral">&quot; to:&quot;</span>, <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;ul&quot;</span>,</div>
-<div class="line">                        <a name="a1"></a><a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> s in _selStreams.OfType&lt;StreamElement&gt;()</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;p&quot;</span>, <span class="stringliteral">&quot;Promotions since &quot;</span> + past.ToString(<span class="stringliteral">&quot;f&quot;</span>) + <span class="stringliteral">&quot; to streams:&quot;</span>),</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;ul&quot;</span>,</div>
+<div class="line">                        <a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> s in _selStreams.OfType&lt;StreamElement&gt;()</div>
 <div class="line">                        orderby s.Stream</div>
 <div class="line">                        select <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;li&quot;</span>, s.Stream)),</div>
-<div class="line">                        <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;table&quot;</span>,</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;border&quot;</span>, 1),</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;cellpadding&quot;</span>, 3),</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;cellspacing&quot;</span>, 2),</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bordercolor&quot;</span>, <span class="stringliteral">&quot;#cccccc&quot;</span>),</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;style&quot;</span>, <span class="stringliteral">&quot;font family: Arial; font-size: 10pt&quot;</span>),</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bgcolor&quot;</span>, <span class="stringliteral">&quot;#ffffff&quot;</span>),</div>
-<div class="line">                            <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;thead&quot;</span>,</div>
-<div class="line">                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tr&quot;</span>,</div>
-<div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;TransID&quot;</span>),</div>
-<div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;TransTime&quot;</span>),</div>
-<div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Promoter&quot;</span>),</div>
-<div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Elements&quot;</span>)</div>
-<div class="line">                                )</div>
-<div class="line">                            ),</div>
-<div class="line">                            <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tbody&quot;</span>,</div>
-<div class="line">                                <a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> t in _hist.Elements(<span class="stringliteral">&quot;transaction&quot;</span>)</div>
-<div class="line">                                orderby _users.getUser((<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;user&quot;</span>)), t.acxTime(<span class="stringliteral">&quot;time&quot;</span>) descending <span class="comment">// by user with their latest transactions on top</span></div>
-<div class="line">                                select <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tr&quot;</span>,</div>
-<div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, (<span class="keywordtype">int</span>)t.Attribute(<span class="stringliteral">&quot;id&quot;</span>)),</div>
-<div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, ((DateTime)t.acxTime(<span class="stringliteral">&quot;time&quot;</span>)).ToString(<span class="stringliteral">&quot;g&quot;</span>)),</div>
-<div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, _users.getUser((<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;user&quot;</span>)) + <span class="stringliteral">&quot; (&quot;</span> + (<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;user&quot;</span>) + <span class="stringliteral">&quot;)&quot;</span>, <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;br&quot;</span>),</div>
-<div class="line">                                        business((<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;user&quot;</span>)), <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;br&quot;</span>), mobile((<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;user&quot;</span>))),</div>
-<div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>,</div>
-<div class="line">                                        <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;table&quot;</span>,</div>
-<div class="line">                                            <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;caption&quot;</span>, t.acxComment()),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;border&quot;</span>, 1),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;cellpadding&quot;</span>, 3),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;cellspacing&quot;</span>, 2),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bordercolor&quot;</span>, <span class="stringliteral">&quot;#cccccc&quot;</span>),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;style&quot;</span>, <span class="stringliteral">&quot;font family: Arial; font-size: 10pt&quot;</span>),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bgcolor&quot;</span>, <span class="stringliteral">&quot;#ffffff&quot;</span>),</div>
-<div class="line">                                            <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;thead&quot;</span>,</div>
-<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tr&quot;</span>,</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;EID&quot;</span>),</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Element&quot;</span>),</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Location&quot;</span>),</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Real&quot;</span>),</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Virtual&quot;</span>),</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Status&quot;</span>)</div>
-<div class="line">                                                )</div>
-<div class="line">                                            ),</div>
-<div class="line">                                            <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tbody&quot;</span>,</div>
-<div class="line">                                                <a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> v in t.Elements(<span class="stringliteral">&quot;version&quot;</span>)</div>
-<div class="line">                                                orderby Path.GetFileName((<span class="keywordtype">string</span>)v.Attribute(<span class="stringliteral">&quot;path&quot;</span>))</div>
-<div class="line">                                                select <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tr&quot;</span>,</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, (<span class="keywordtype">int</span>)v.Attribute(<span class="stringliteral">&quot;eid&quot;</span>)),</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, Path.GetFileName((<span class="keywordtype">string</span>)v.Attribute(<span class="stringliteral">&quot;path&quot;</span>))),</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, Path.GetDirectoryName((<span class="keywordtype">string</span>)v.Attribute(<span class="stringliteral">&quot;path&quot;</span>))),</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, $<span class="stringliteral">&quot;{(string)v.Attribute(&quot;</span>realNamedVersion<span class="stringliteral">&quot;)} ({(string)v.Attribute(&quot;</span>real<span class="stringliteral">&quot;)})&quot;</span>),</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, $<span class="stringliteral">&quot;{(string)v.Attribute(&quot;</span>virtualNamedVersion<span class="stringliteral">&quot;)} ({(string)v.Attribute(&quot;</span><span class="keyword">virtual</span><span class="stringliteral">&quot;)})&quot;</span>),</div>
-<div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, (Stat.getElement(v) != null ? Stat.getElement(v).Status : <span class="stringliteral">&quot;(earlier)&quot;</span>))</div>
-<div class="line">                                                )</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;table&quot;</span>,</div>
+<div class="line">                        <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;thead&quot;</span>,</div>
+<div class="line">                            <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tr&quot;</span>,</div>
+<div class="line">                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;TransID&quot;</span>),</div>
+<div class="line">                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;TransTime&quot;</span>),</div>
+<div class="line">                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Promoter&quot;</span>),</div>
+<div class="line">                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Elements&quot;</span>)</div>
+<div class="line">                            )</div>
+<div class="line">                        ),</div>
+<div class="line">                        <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tbody&quot;</span>,</div>
+<div class="line">                            <a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> t in _hist.Elements(<span class="stringliteral">&quot;transaction&quot;</span>)</div>
+<div class="line">                            orderby _users.getUser((<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;user&quot;</span>)), t.acxTime(<span class="stringliteral">&quot;time&quot;</span>) descending <span class="comment">// by user with their latest transactions on top</span></div>
+<div class="line">                            select <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tr&quot;</span>,</div>
+<div class="line">                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, (<span class="keywordtype">int</span>)t.Attribute(<span class="stringliteral">&quot;id&quot;</span>)),</div>
+<div class="line">                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, ((DateTime)t.acxTime(<span class="stringliteral">&quot;time&quot;</span>)).ToString(<span class="stringliteral">&quot;g&quot;</span>)),</div>
+<div class="line">                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, _users.getUser((<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;user&quot;</span>)) + <span class="stringliteral">&quot; (&quot;</span> + (<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;user&quot;</span>) + <span class="stringliteral">&quot;)&quot;</span>, <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;br&quot;</span>),</div>
+<div class="line">                                    business((<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;user&quot;</span>)), <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;br&quot;</span>), mobile((<span class="keywordtype">string</span>)t.Attribute(<span class="stringliteral">&quot;user&quot;</span>))),</div>
+<div class="line">                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>,</div>
+<div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;table&quot;</span>,</div>
+<div class="line">                                        <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;caption&quot;</span>, t.acxComment()),</div>
+<div class="line">                                        <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;thead&quot;</span>,</div>
+<div class="line">                                            <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tr&quot;</span>,</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;EID&quot;</span>),</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Element&quot;</span>),</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Location&quot;</span>),</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Real&quot;</span>),</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Virtual&quot;</span>),</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;Status&quot;</span>)</div>
+<div class="line">                                            )</div>
+<div class="line">                                        ),</div>
+<div class="line">                                        <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tbody&quot;</span>,</div>
+<div class="line">                                            <a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> v in t.Elements(<span class="stringliteral">&quot;version&quot;</span>)</div>
+<div class="line">                                            orderby Path.GetFileName((<span class="keywordtype">string</span>)v.Attribute(<span class="stringliteral">&quot;path&quot;</span>))</div>
+<div class="line">                                            select <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tr&quot;</span>,</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, (<span class="keywordtype">int</span>)v.Attribute(<span class="stringliteral">&quot;eid&quot;</span>)),</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, Path.GetFileName((<span class="keywordtype">string</span>)v.Attribute(<span class="stringliteral">&quot;path&quot;</span>))),</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, Path.GetDirectoryName((<span class="keywordtype">string</span>)v.Attribute(<span class="stringliteral">&quot;path&quot;</span>))),</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, $<span class="stringliteral">&quot;{(string)v.Attribute(&quot;</span>realNamedVersion<span class="stringliteral">&quot;)} ({(string)v.Attribute(&quot;</span>real<span class="stringliteral">&quot;)})&quot;</span>),</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, $<span class="stringliteral">&quot;{(string)v.Attribute(&quot;</span>virtualNamedVersion<span class="stringliteral">&quot;)} ({(string)v.Attribute(&quot;</span><span class="keyword">virtual</span><span class="stringliteral">&quot;)})&quot;</span>),</div>
+<div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, (Stat.getElement(v) != null ? Stat.getElement(v).Status : <span class="stringliteral">&quot;(earlier)&quot;</span>))</div>
 <div class="line">                                            )</div>
 <div class="line">                                        )</div>
 <div class="line">                                    )</div>
@@ -299,14 +317,16 @@
 <div class="line">                        )</div>
 <div class="line">                    )</div>
 <div class="line">                )</div>
-<div class="line">            );</div>
+<div class="line">            ));</div>
+<div class="line"></div>
+<div class="line">            <span class="keywordflow">return</span> doc;</div>
 <div class="line">        }</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Get user&#39;s business phone number if available, otherwise an empty string.</span></div>
 <div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keywordtype">string</span> business(<span class="keywordtype">string</span> prncpl)</div>
 <div class="line">        {</div>
 <div class="line">            <span class="keywordtype">string</span> phone = null;</div>
-<div class="line">            AcUser <a name="a2"></a><a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a> = _users.getUser(prncpl);</div>
+<div class="line">            AcUser <a name="a3"></a><a class="code" href="group__acenum.html#ggaa9826c7afff7ad23871825b95a0a631baee11cbb19052e40b07aac0ca060c23ee">user</a> = _users.getUser(prncpl);</div>
 <div class="line">            <span class="keywordflow">if</span> (user != null)</div>
 <div class="line">                phone = user.Business;</div>
 <div class="line"></div>
@@ -357,7 +377,7 @@
 <div class="line">            _users = <span class="keyword">new</span> AcUsers(_domains, _properties, includeGroupsList: <span class="keyword">false</span>, includeDeactivated: <span class="keyword">true</span>);</div>
 <div class="line">            Task&lt;bool&gt; uini = _users.initAsync();</div>
 <div class="line"></div>
-<div class="line">            Task&lt;bool[]&gt; <a name="a3"></a><a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17aa181a603769c1f98ad927e7367c7aa51">all</a> = Task.WhenAll(dini, uini); <span class="comment">// finish initializing both lists in parallel</span></div>
+<div class="line">            Task&lt;bool[]&gt; <a name="a4"></a><a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17aa181a603769c1f98ad927e7367c7aa51">all</a> = Task.WhenAll(dini, uini); <span class="comment">// finish initializing both lists in parallel</span></div>
 <div class="line">            <span class="keywordflow">if</span> (all == null || all.Result.Any(n =&gt; n == <span class="keyword">false</span>)) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
@@ -420,7 +440,7 @@
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 15 2018 09:41:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 26 2018 09:43:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

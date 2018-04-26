@@ -112,14 +112,13 @@
 <div class="line">            AcDepots depots = <span class="keyword">new</span> AcDepots();</div>
 <div class="line">            <span class="keywordflow">if</span> (!(await depots.initAsync(_selDepots))) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"></div>
-<div class="line">            <span class="keywordflow">foreach</span> (AcDepot <a class="code" href="namespace_ac_utils.html#ga40cba942bbed1ac998223575478e4d6fa6f13b876f224fb5d11c729c36a871540">depot</a> <span class="keywordflow">in</span> depots.OrderBy(n =&gt; n))</div>
-<div class="line">            {</div>
-<div class="line">                <span class="comment">// show only workspaces with a default group and &quot;DEV3&quot; in their name</span></div>
-<div class="line">                IEnumerable&lt;AcStream&gt; filter = depot.Streams.Where(n =&gt; n.Name.Contains(<span class="stringliteral">&quot;DEV3&quot;</span>) &amp;&amp;</div>
-<div class="line">                    n.HasDefaultGroup == <span class="keyword">true</span> &amp;&amp; n.Type == <a name="a0"></a><a class="code" href="group__acenum.html#ga0a9d168d367dad9bab253eafa49aae77">StreamType</a>.workspace);</div>
-<div class="line">                <span class="keywordflow">foreach</span> (AcStream s <span class="keywordflow">in</span> filter.OrderBy(n =&gt; n))</div>
-<div class="line">                    Console.WriteLine(s.ToString(<span class="stringliteral">&quot;lv&quot;</span>));</div>
-<div class="line">            }</div>
+<div class="line">            var filter = <a name="a0"></a><a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> s in depots.SelectMany(d =&gt; d.Streams)</div>
+<div class="line">                         where s.Name.Contains(<span class="stringliteral">&quot;DEV3&quot;</span>) &amp;&amp; s.HasDefaultGroup &amp;&amp;</div>
+<div class="line">                         s.Type == <a name="a1"></a><a class="code" href="group__acenum.html#ga0a9d168d367dad9bab253eafa49aae77">StreamType</a>.workspace</div>
+<div class="line">                         select s;</div>
+<div class="line"></div>
+<div class="line">            <span class="keywordflow">foreach</span> (AcStream s <span class="keywordflow">in</span> filter.OrderBy(n =&gt; n.Depot).ThenBy(n =&gt; n))</div>
+<div class="line">                Console.WriteLine(s.ToString(<span class="stringliteral">&quot;lv&quot;</span>));</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">        }</div>
@@ -128,7 +127,7 @@
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 15 2018 09:41:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 26 2018 09:43:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

@@ -45,7 +45,7 @@
 <div class="title">LatestOverlaps.cs</div>  </div>
 </div><!--header-->
 <div class="contents">
-<p>Creates an HTML file with promotions to streams in select depots within the past specified number of hours that have one or more versions with overlap status.</p>
+<p>Creates an HTML file with promotions to streams in select depots within the past specified number of hours that have one or more versions with overlap status. Only promotions that occurred <em>FromHoursAgo</em> listed in <code>LatestOverlaps.exe.config</code> are shown.</p>
 <dl class="section user"><dt>LatestOverlaps.exe.config</dt><dd><div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;utf-8&quot;</span>?&gt;</div>
 <div class="line">&lt;configuration&gt;</div>
 <div class="line">  &lt;configSections&gt;</div>
@@ -53,8 +53,8 @@
 <div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span>/&gt;</div>
 <div class="line">  &lt;/configSections&gt;</div>
 <div class="line">  &lt;activeDir&gt;</div>
-<div class="line">    &lt;!-- contact your company LDAP administrator <span class="keywordflow">for</span> these values --&gt;</div>
 <div class="line">    &lt;domains&gt;</div>
+<div class="line">      &lt;!-- contact your company LDAP administrator <span class="keywordflow">for</span> these values --&gt;</div>
 <div class="line">      &lt;add host=<span class="stringliteral">&quot;xyzdc.yourcorp.com&quot;</span> path=<span class="stringliteral">&quot;DC=OMIT1,DC=ad,DC=yourcorp,DC=com&quot;</span>/&gt;</div>
 <div class="line">      &lt;add host=<span class="stringliteral">&quot;abcdc.yourcorp.com&quot;</span> path=<span class="stringliteral">&quot;DC=OMIT2,DC=yourcorp,DC=com&quot;</span>/&gt;</div>
 <div class="line">    &lt;/domains&gt;</div>
@@ -111,7 +111,9 @@
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Diagnostics;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.IO;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Linq;</div>
+<div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Text;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.<a class="code" href="namespace_system_1_1_threading.html">Threading</a>.<a class="code" href="namespace_system_1_1_threading_1_1_tasks.html">Tasks</a>;</div>
+<div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Xml;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_system.html">System</a>.Xml.Linq;</div>
 <div class="line"><span class="keyword">using</span> <a class="code" href="namespace_ac_utils.html">AcUtils</a>;</div>
 <div class="line"></div>
@@ -137,8 +139,6 @@
 <div class="line">            <span class="keywordflow">return</span> (reportAsync().Result) ? 0 : 1;</div>
 <div class="line">        }</div>
 <div class="line"></div>
-<div class="line">        <span class="comment">// Initialize our history and stat lists for streams in depots listed in </span></div>
-<div class="line">        <span class="comment">// the Depots section of LatestOverlaps.exe.config and generate the report.</span></div>
 <div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> async Task&lt;bool&gt; reportAsync()</div>
 <div class="line">        {</div>
 <div class="line">            DateTime past = DateTime.Now.AddHours(_fromHoursAgo * -1); <span class="comment">// go back this many hours</span></div>
@@ -146,8 +146,28 @@
 <div class="line">            <span class="keywordflow">if</span> (_hist != null &amp;&amp; _hist.Count &gt; 0)</div>
 <div class="line">            {</div>
 <div class="line">                <span class="keywordflow">if</span> (!(await initStatAsync())) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line">                XElement report = buildReport(past);</div>
-<div class="line">                report.Save(_outputFile);</div>
+<div class="line">                XmlWriter writer = null;</div>
+<div class="line">                <span class="keywordflow">try</span></div>
+<div class="line">                {</div>
+<div class="line">                    XmlWriterSettings settings = <span class="keyword">new</span> XmlWriterSettings {</div>
+<div class="line">                        OmitXmlDeclaration = <span class="keyword">true</span>, Indent = <span class="keyword">true</span>, IndentChars = <span class="stringliteral">&quot;\t&quot;</span>,</div>
+<div class="line">                        Encoding = <span class="keyword">new</span> UTF8Encoding(<span class="keyword">false</span>) <span class="comment">// false to exclude Unicode byte order mark (BOM)</span></div>
+<div class="line">                    };</div>
+<div class="line">                    <span class="keyword">using</span> (writer = XmlWriter.Create(_outputFile, settings))</div>
+<div class="line">                    {</div>
+<div class="line">                        XDocument report = buildReport(past);</div>
+<div class="line">                        report.WriteTo(writer);</div>
+<div class="line">                    }</div>
+<div class="line">                }</div>
+<div class="line"></div>
+<div class="line">                <span class="keywordflow">catch</span> (Exception exc)</div>
+<div class="line">                {</div>
+<div class="line">                    AcDebug.Log($<span class="stringliteral">&quot;Exception caught and logged in Program.reportAsync{Environment.NewLine}&quot;</span> +</div>
+<div class="line">                        $<span class="stringliteral">&quot;Failed writing to {_outputFile}{Environment.NewLine}{exc.Message}&quot;</span>);</div>
+<div class="line">                    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line">                }</div>
+<div class="line"></div>
+<div class="line">                <span class="keywordflow">finally</span> { <span class="keywordflow">if</span> (writer != null) writer.Close(); }</div>
 <div class="line">            }</div>
 <div class="line"></div>
 <div class="line">            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
@@ -204,7 +224,6 @@
 <div class="line">            {</div>
 <div class="line">                IEnumerable&lt;XElement&gt; trans = <a name="a1"></a><a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> e in _hist.Elements(<span class="stringliteral">&quot;transaction&quot;</span>)</div>
 <div class="line">                                              select e;</div>
-<div class="line">                <span class="comment">// get unique list of stream names from transactions</span></div>
 <div class="line">                ILookup&lt;string, XElement&gt; map = trans.ToLookup(n =&gt; (<span class="keywordtype">string</span>)n.Attribute(<span class="stringliteral">&quot;streamName&quot;</span>), n =&gt; n);</div>
 <div class="line"></div>
 <div class="line">                List&lt;Task&lt;AcResult&gt;&gt; tasks = <span class="keyword">new</span> List&lt;Task&lt;AcResult&gt;&gt;();</div>
@@ -240,38 +259,43 @@
 <div class="line">        }</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Returns the content for our HTML file.</span></div>
-<div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> XElement buildReport(DateTime past)</div>
+<div class="line">        <span class="keyword">private</span> <span class="keyword">static</span> XDocument buildReport(DateTime past)</div>
 <div class="line">        {</div>
 <div class="line">            <span class="comment">// transactions where one or more versions have overlap status</span></div>
 <div class="line">            IEnumerable&lt;XElement&gt; trans = <a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> t in _hist.Elements(<span class="stringliteral">&quot;transaction&quot;</span>)</div>
 <div class="line">                                          where Stat.getElement(t.Element(<span class="stringliteral">&quot;version&quot;</span>)) != null</div>
 <div class="line">                                          select t;</div>
-<div class="line">            <span class="comment">// get unique list of stream names from transactions</span></div>
 <div class="line">            ILookup&lt;string, XElement&gt; map = trans.ToLookup(n =&gt; (<span class="keywordtype">string</span>)n.Attribute(<span class="stringliteral">&quot;streamName&quot;</span>), n =&gt; n);</div>
 <div class="line"></div>
-<div class="line">            <span class="keywordflow">return</span> <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;html&quot;</span>,</div>
-<div class="line">                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;head&quot;</span>),</div>
+<div class="line">            XDocument doc = <span class="keyword">new</span> XDocument(</div>
+<div class="line">                <span class="keyword">new</span> XDocumentType(<span class="stringliteral">&quot;HTML&quot;</span>, null, null, null),</div>
+<div class="line">                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;html&quot;</span>, <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;lang&quot;</span>, <span class="stringliteral">&quot;en&quot;</span>),</div>
+<div class="line">                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;head&quot;</span>,</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;meta&quot;</span>, <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;charset&quot;</span>, <span class="stringliteral">&quot;utf-8&quot;</span>)), <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;meta&quot;</span>, <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;name&quot;</span>, <span class="stringliteral">&quot;description&quot;</span>),</div>
+<div class="line">                        <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;content&quot;</span>, <span class="stringliteral">&quot;Promotions to select depots within the past specified number of hours that have versions with overlap status.&quot;</span>)),</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;title&quot;</span>, <span class="stringliteral">&quot;Promotions with overlaps since &quot;</span> + past.ToString(<span class="stringliteral">&quot;f&quot;</span>)),</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;style&quot;</span>,</div>
+<div class="line">                    $<span class="stringliteral">@&quot;body {{</span></div>
+<div class="line"><span class="stringliteral">                      background-color: Gainsboro;</span></div>
+<div class="line"><span class="stringliteral">                      color: #0000ff;</span></div>
+<div class="line"><span class="stringliteral">                      font-family: Arial, sans-serif;</span></div>
+<div class="line"><span class="stringliteral">                      font-size: 13px;</span></div>
+<div class="line"><span class="stringliteral">                      margin: 10px; }}</span></div>
+<div class="line"><span class="stringliteral">                    table {{</span></div>
+<div class="line"><span class="stringliteral">                      background-color: #F1F1F1;</span></div>
+<div class="line"><span class="stringliteral">                      color: #000000;</span></div>
+<div class="line"><span class="stringliteral">                      font-size: 12px;</span></div>
+<div class="line"><span class="stringliteral">                      border: 2px solid black;</span></div>
+<div class="line"><span class="stringliteral">                      padding: 10px; }}&quot;</span></div>
+<div class="line">                    )</div>
+<div class="line">                ),</div>
 <div class="line">                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;body&quot;</span>,</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;topmargin&quot;</span>, 10),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;leftmargin&quot;</span>, 10),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;rightmargin&quot;</span>, 10),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bottommargin&quot;</span>, 10),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;marginwidth&quot;</span>, 5),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;marginheight&quot;</span>, 5),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;style&quot;</span>, <span class="stringliteral">&quot;font family: Arial; font-size: 12pt&quot;</span>),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;text&quot;</span>, <span class="stringliteral">&quot;#0000ff&quot;</span>),</div>
-<div class="line">                    <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bgcolor&quot;</span>, <span class="stringliteral">&quot;#cccccc&quot;</span>),</div>
-<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;p&quot;</span>, <span class="stringliteral">&quot;Promotions with overlaps since &quot;</span> + past.ToString(<span class="stringliteral">&quot;f&quot;</span>) + <span class="stringliteral">&quot; exist in:&quot;</span>, <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;ul&quot;</span>,</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;p&quot;</span>, <span class="stringliteral">&quot;Promotions with overlaps since &quot;</span> + past.ToString(<span class="stringliteral">&quot;f&quot;</span>) + <span class="stringliteral">&quot; exist in:&quot;</span>),</div>
+<div class="line">                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;ul&quot;</span>,</div>
 <div class="line">                        <a class="code" href="group__acenum.html#gga2149004df4de6f7f8763b1c46d4ade17ad98a07f84921b24ee30f86fd8cd85c3c">from</a> s in map</div>
 <div class="line">                        orderby s.Key <span class="comment">// stream name</span></div>
 <div class="line">                        select <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;li&quot;</span>, s.Key)),</div>
 <div class="line">                        <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;table&quot;</span>,</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;border&quot;</span>, 1),</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;cellpadding&quot;</span>, 3),</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;cellspacing&quot;</span>, 2),</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bordercolor&quot;</span>, <span class="stringliteral">&quot;#cccccc&quot;</span>),</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;style&quot;</span>, <span class="stringliteral">&quot;font family: Arial; font-size: 10pt&quot;</span>),</div>
-<div class="line">                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bgcolor&quot;</span>, <span class="stringliteral">&quot;#ffffff&quot;</span>),</div>
 <div class="line">                            <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;thead&quot;</span>,</div>
 <div class="line">                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tr&quot;</span>,</div>
 <div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;TransID&quot;</span>),</div>
@@ -291,12 +315,6 @@
 <div class="line">                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>,</div>
 <div class="line">                                        <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;table&quot;</span>,</div>
 <div class="line">                                            <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;caption&quot;</span>, t.acxComment()),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;border&quot;</span>, 1),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;cellpadding&quot;</span>, 3),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;cellspacing&quot;</span>, 2),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bordercolor&quot;</span>, <span class="stringliteral">&quot;#cccccc&quot;</span>),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;style&quot;</span>, <span class="stringliteral">&quot;font family: Arial; font-size: 10pt&quot;</span>),</div>
-<div class="line">                                            <span class="keyword">new</span> XAttribute(<span class="stringliteral">&quot;bgcolor&quot;</span>, <span class="stringliteral">&quot;#ffffff&quot;</span>),</div>
 <div class="line">                                            <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;thead&quot;</span>,</div>
 <div class="line">                                                <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;tr&quot;</span>,</div>
 <div class="line">                                                    <span class="keyword">new</span> XElement(<span class="stringliteral">&quot;td&quot;</span>, <span class="stringliteral">&quot;EID&quot;</span>),</div>
@@ -328,6 +346,8 @@
 <div class="line">                    )</div>
 <div class="line">                )</div>
 <div class="line">            );</div>
+<div class="line"></div>
+<div class="line">            <span class="keywordflow">return</span> doc;</div>
 <div class="line">        }</div>
 <div class="line"></div>
 <div class="line">        <span class="comment">// Get user&#39;s business phone number if available, otherwise an empty string.</span></div>
@@ -438,7 +458,7 @@
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 15 2018 09:41:40 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 26 2018 09:43:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>
