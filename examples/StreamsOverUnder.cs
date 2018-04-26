@@ -64,9 +64,8 @@ namespace StreamsOverUnder
             if (!(await depots.initAsync())) return false;
 
             List<Task<bool>> tasks = new List<Task<bool>>();
-            foreach (AcDepot depot in depots)
-                foreach (AcStream stream in depot.Streams.Where(n => n.HasDefaultGroup))
-                    tasks.Add(runStatCommandAsync($@"stat -s ""{stream}"" -o -B -fx"));
+            foreach (AcStream stream in depots.SelectMany(d => d.Streams).Where(s => s.HasDefaultGroup))
+                tasks.Add(runStatCommandAsync($@"stat -s ""{stream}"" -o -B -fx"));
 
             bool[] arr = await Task.WhenAll(tasks); // continue running stat commands in parallel
             return (arr != null && arr.All(n => n == true)); // true if all succeeded

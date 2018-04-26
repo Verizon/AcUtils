@@ -22,6 +22,8 @@ namespace ShowRules
 {
     class Program
     {
+        private static readonly object _locker = new object(); // token for lock keyword scope
+
         static int Main()
         {
             // show the rules barnyrd set on his workspaces throughout the repository
@@ -31,42 +33,27 @@ namespace ShowRules
 
         public static async Task<bool> showRulesAsync(string user)
         {
+            List<AcRules> rules = new List<AcRules>();
+            Func<AcStream, Task<bool>> init = (s) =>
+            {
+                AcRules r = new AcRules(explicitOnly: true); // explicitly-set rules only
+                lock (_locker) { rules.Add(r); }
+                return r.initAsync(s);
+            };
+
             AcDepots depots = new AcDepots();
             if (!(await depots.initAsync())) return false;
 
-            List<Task<bool>> tasks = new List<Task<bool>>();
-            Dictionary<AcDepot, List<AcRules>> map = new Dictionary<AcDepot, List<AcRules>>(depots.Count);
+            var tasks = from s in depots.SelectMany(d => d.Streams)
+                        where s.Type == StreamType.workspace &&
+                        !s.Hidden && s.Name.EndsWith(user) // workspace names have principal name appended
+                        select init(s);
 
-            foreach (AcDepot depot in depots)
-            {
-                IEnumerable<AcStream> filter = depot.Streams.Where(n => n.Type == StreamType.workspace &&
-                    !n.Hidden && n.Name.EndsWith(user)); // workspace names have principal name appended
-                int num = filter.Count();
-                List<Task<bool>> tlist = new List<Task<bool>>(num);
-                List<AcRules> rlist = new List<AcRules>(num);
+            bool[] arr = await Task.WhenAll(tasks);
+            if (arr == null || arr.Any(n => n == false)) return false;
 
-                foreach (AcStream stream in filter)
-                {
-                    AcRules rules = new AcRules(explicitOnly: true); // explicitly-set rules only
-                    tlist.Add(rules.initAsync(stream));
-                    rlist.Add(rules);
-                }
-
-                tasks.AddRange(tlist);
-                map.Add(depot, rlist);
-            }
-
-            bool[] arr = await Task.WhenAll(tasks); // finish running in parallel
-            if (arr == null || arr.Any(n => n == false)) // if one or more failed to initialize
-                return false;
-
-            foreach (KeyValuePair<AcDepot, List<AcRules>> pair in map.OrderBy(n => n.Key)) // order by depot
-            {
-                List<AcRules> list = pair.Value;
-                foreach (AcRules rules in list)
-                    foreach (AcRule rule in rules.OrderBy(n => n))
-                        Console.WriteLine(rule);
-            }
+            foreach (AcRule rule in rules.SelectMany(n => n).OrderBy(n => n))
+                Console.WriteLine(rule);
 
             return true;
         }

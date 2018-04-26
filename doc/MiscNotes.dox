@@ -208,6 +208,51 @@ System.Net.Sockets Verbose: 0 : [5144] Socket#32854180::Dispose()
 </small>
 */
 
+/*! \example XLinked.cs
+Report all cross-linked elements found in the repository with the [element types](@ref AcUtils#ElementType) listed in \e ElementTypes from \c XLinked.exe.config. 
+Results are sent to the console.
+
+\par XLinked.exe.config
+\code
+<?xml version="1.0" encoding="utf-8" ?>
+  <configuration>
+  <appSettings>
+    <!-- include one or more types from ElementType enum -->
+    <add key="ElementTypes" value="dir,text,binary"/>
+  </appSettings>
+  <system.diagnostics>
+    <assert assertuienabled="false"/>
+    <sources>
+      <source name="XLinked">
+        <listeners>
+          <remove name="Default"/>
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+        </listeners>
+      </source>
+    </sources>
+  </system.diagnostics>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+  </startup>
+</configuration>
+\endcode
+<small>
+\verbatim
+MARS
+	EID: 290 {text} \.\Foo\bar.java
+		Last modified: 6/17/2014 4:16:13 PM MARS_DEV1\2 (backed)(xlinked)
+	EID: 352 {text} \.\Foo\readme.txt
+		Last modified: 6/20/2014 4:01:49 PM MARS_DEV1\1 (backed)(xlinked)
+	EID: 288 {dir} \.\Foo
+		MARS\1 (backed)(xlinked)
+	...
+\endverbatim
+</small>
+\sa [ElementType enum](@ref AcUtils#ElementType), [acxType extension method](@ref AcUtils#Extensions#acxType), 
+<a href="https://community.microfocus.com/borland/managetrack/accurev/w/accurev_knowledge_base/26076/frequently-asked-questions-about-cross-links">Frequently asked questions about cross links</a>, 
+<a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_incl.html">incl command</a>
+*/
+
 /*! \example ListDynStreams.cs
 List all dynamic streams in the repository.
 \sa [AcDepots constructor](@ref AcUtils#AcDepots#AcDepots)
@@ -458,7 +503,7 @@ some other name, otherwise the program will malfunction.)
 */
 
 /*! \example LatestPromotions.cs
-Creates an HTML file with the promote transactions that occurred in specific streams in select depots within the past specified number of hours.
+Creates an HTML file with the promote transactions that occurred in select streams during the past specified number of hours.
 
 \par LatestPromotions.exe.config
 \code
@@ -481,6 +526,7 @@ Creates an HTML file with the promote transactions that occurred in specific str
   </activeDir>
   <Depots>
     <depots>
+      <!-- depots where the streams below are located -->
       <add depot="MARS"/>
       <add depot="JUPITER"/>
       <add depot="NEPTUNE"/>
@@ -488,6 +534,7 @@ Creates an HTML file with the promote transactions that occurred in specific str
   </Depots>
   <Streams>
     <streams>
+      <!-- add/remove the streams to query from depots listed above -->
       <add stream="MARS_DEV3"/>
       <add stream="MARS_DEV4"/>
       <add stream="JUPITER_DEV3"/>
@@ -521,7 +568,7 @@ Creates an HTML file with the promote transactions that occurred in specific str
 
 /*! \example UserChanges.cs
 Show the changes made by a user in all depots during a time period. Demonstrates how results from one AccuRev command (\c hist) can be used 
-as parameters for the next (\c annotate) for powerful in-depth analysis.
+as parameters for the next (\c annotate) for powerful in-depth analysis. Results are sent to the console.
 */
 
 /*! \example StreamWkspaceMismatch.cs
@@ -564,7 +611,8 @@ Show the rules a user set on his workspaces in all depots.
 \sa [AcRules constructor](@ref AcUtils#AcRules#AcRules) */
 
 /*! \example StreamsOverUnder.cs
-List all dynamic streams in the repository that have elements with (\e underlap)(\e member) or (\e overlap)(\e member) status.
+List all dynamic streams in the repository that have elements with (\e underlap)(\e member) or (\e overlap)(\e member) status. 
+Results are sent to the console.
 \sa [Stat](@ref AcUtils#Stat), [Example XML from stat command](@ref findOvrUnder) */
 
 /*! \example ShowPermissions.cs
@@ -596,7 +644,7 @@ Built-in types \b anyuser and \b authuser are unsupported.
 */
 
 /*! \example Triggers.cs
-List triggers created with the \c mktrig command for all depots in the repository.
+List triggers created with the \c mktrig command for all depots in the repository. Results are sent to the console.
 
 \par Triggers.exe.config
 \code
@@ -623,7 +671,8 @@ List triggers created with the \c mktrig command for all depots in the repositor
 /*! \example WSpaceTransLevel.cs
 For workspaces in select depots, show the depot's latest transaction the last time the workspace was successfully updated. 
 Flags workspaces that are in an inconsistent state (update cancellation/failure) by displaying their 
-{[update](@ref AcUtils#AcWorkspace#UpdateLevel) - [target](@ref AcUtils#AcWorkspace#TargetLevel)} levels.
+{[update](@ref AcUtils#AcWorkspace#UpdateLevel) - [target](@ref AcUtils#AcWorkspace#TargetLevel)} levels. 
+Results are sent to the console.
 
 <small>
 \verbatim
@@ -676,7 +725,8 @@ the latest transaction 74931 in depot NEPTUNE occurred on 12/18/2017 8:57:44 AM
 */
 
 /*! \example LatestOverlaps.cs
-Creates an HTML file with promotions to streams in select depots within the past specified number of hours that have one or more versions with overlap status.
+Creates an HTML file with promotions to streams in select depots within the past specified number of hours that have one or more versions with overlap status. 
+Only promotions that occurred \e FromHoursAgo listed in \c LatestOverlaps.exe.config are shown.
 
 \par LatestOverlaps.exe.config
 \code
@@ -687,8 +737,8 @@ Creates an HTML file with promotions to streams in select depots within the past
     <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
-    <!-- contact your company LDAP administrator for these values -->
     <domains>
+      <!-- contact your company LDAP administrator for these values -->
       <add host="xyzdc.yourcorp.com" path="DC=OMIT1,DC=ad,DC=yourcorp,DC=com"/>
       <add host="abcdc.yourcorp.com" path="DC=OMIT2,DC=yourcorp,DC=com"/>
     </domains>
@@ -750,6 +800,94 @@ so Excel must be installed. [Tested with Excel 2010.]
         <listeners>
           <remove name="Default"/>
           <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+        </listeners>
+      </source>
+    </sources>
+  </system.diagnostics>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+  </startup>
+</configuration>
+\endcode
+*/
+
+/*! \example PromoCount.cs
+Generates a report with the number of promote transactions and versions promoted per user and stream that occurred in select streams 
+during a specified time period. In the \e appSettings section of \c PromoCount.exe.config change the \e StartTime and \e EndTime to 
+their respective values and include the streams to query in the \e Streams section. Include the depots where the streams are located 
+in the \e Depots section. Results are written to the daily log file \c PromoCountResults-YYYY-MM-DD.log created (or updated) in the 
+same folder where \c PromoCount.exe resides.
+
+<small>
+\verbatim
+Promotions to select streams from 2018/04/16 00:00:00 to 2018/04/20 23:59:59.
+
+JUPITER_DEV3 {promotions\versions}:
+	Burrowes, Amalda............{1\2}
+	Clayhanger, Gerontius.......{4\4}
+	Hogpen, Peregrin...........{4\12}
+	Hornblower, Bowman..........{5\8}
+	Proudfoot, Cora.............{1\1}
+	Total 15 promotions and 27 versions.
+
+JUPITER_DEV4 {promotions\versions}:
+	Clayhanger, Gerontius......{3\17}
+	Proudfoot, Cora.............{2\6}
+	...
+
+Grand total of 68 promotions and 182 versions.
+\endverbatim
+</small>
+
+\par PromoCount.exe.config
+\code
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+  </configSections>
+  <activeDir>
+    <domains>
+      <!-- contact your company LDAP administrator for these values -->
+      <add host="xyzdc.yourcorp.com" path="DC=OMIT1,DC=ad,DC=yourcorp,DC=com"/>
+      <add host="abcdc.yourcorp.com" path="DC=OMIT2,DC=yourcorp,DC=com"/>
+    </domains>
+    <properties>
+    </properties>
+  </activeDir>
+  <Depots>
+    <depots>
+      <!-- depots where the streams below are located -->
+      <add depot="MARS"/>
+      <add depot="JUPITER"/>
+      <add depot="NEPTUNE"/>
+    </depots>
+  </Depots>
+  <Streams>
+    <streams>
+      <!-- add/remove the streams to query from depots listed above -->
+      <add stream="MARS_DEV3"/>
+      <add stream="MARS_DEV4"/>
+      <add stream="JUPITER_DEV3"/>
+      <add stream="JUPITER_DEV4"/>
+      <add stream="NEPTUNE_MAINT1"/>
+    </streams>
+  </Streams>
+  <appSettings>
+    <!-- YYYY/MM/DD hh:mm:ss (24 hour time format) -->
+    <add key="StartTime" value="2018/04/16 00:00:00"/>
+    <add key="EndTime" value="2018/04/20 23:59:59"/>
+  </appSettings>
+  <system.diagnostics>
+    <assert assertuienabled="false"/>
+    <sources>
+      <source name="PromoCount">
+        <listeners>
+          <remove name="Default"/>
+          <add name="AcLog" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
+          <add name="PromoCountResults" type="Microsoft.VisualBasic.Logging.FileLogTraceListener, Microsoft.VisualBasic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"/>
         </listeners>
       </source>
     </sources>

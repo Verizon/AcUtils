@@ -77,9 +77,8 @@ namespace Stranded
                                               where !_excludeList.OfType<DepotElement>().Any(de => de.Depot == d.Name)
                                               select d;
 
-                foreach (AcDepot depot in filter)
-                    foreach (AcStream stream in depot.Streams)
-                        tasks.Add(runStatCommandAsync(stream));
+                foreach (AcStream stream in filter.SelectMany(d => d.Streams))
+                    tasks.Add(runStatCommandAsync(stream));
 
                 bool[] arr = await Task.WhenAll(tasks); // finish running stat commands in parallel
                 ret = (arr != null && arr.All(n => n == true)); // true if all succeeded or if no tasks were run

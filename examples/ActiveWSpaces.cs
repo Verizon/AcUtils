@@ -46,14 +46,13 @@ namespace ActiveWSpaces
             AcDepots depots = new AcDepots();
             if (!(await depots.initAsync(_selDepots))) return false;
 
-            foreach (AcDepot depot in depots.OrderBy(n => n))
-            {
-                // show only workspaces with a default group and "DEV3" in their name
-                IEnumerable<AcStream> filter = depot.Streams.Where(n => n.Name.Contains("DEV3") &&
-                    n.HasDefaultGroup == true && n.Type == StreamType.workspace);
-                foreach (AcStream s in filter.OrderBy(n => n))
-                    Console.WriteLine(s.ToString("lv"));
-            }
+            var filter = from s in depots.SelectMany(d => d.Streams)
+                         where s.Name.Contains("DEV3") && s.HasDefaultGroup &&
+                         s.Type == StreamType.workspace
+                         select s;
+
+            foreach (AcStream s in filter.OrderBy(n => n.Depot).ThenBy(n => n))
+                Console.WriteLine(s.ToString("lv"));
 
             return true;
         }

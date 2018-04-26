@@ -18,7 +18,9 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using AcUtils;
 
@@ -45,10 +47,30 @@ namespace LatestPromotions
 
             DateTime past = DateTime.Now.AddHours(_fromHoursAgo * -1); // go back this many hours
             if (!initListsAsync(past).Result) return 1; // operation failed, check log file
+
             if (_hist != null && _hist.Count > 0)
             {
-                XElement report = buildReport(past);
-                report.Save(_outputFile);
+                XmlWriter writer = null;
+                try
+                {
+                    XmlWriterSettings settings = new XmlWriterSettings {
+                        OmitXmlDeclaration = true, Indent = true, IndentChars = "\t",
+                        Encoding = new UTF8Encoding(false)}; // false to exclude Unicode byte order mark (BOM)
+                    using (writer = XmlWriter.Create(_outputFile, settings))
+                    {
+                        XDocument report = buildReport(past);
+                        report.WriteTo(writer);
+                    }
+                }
+
+                catch (Exception exc)
+                {
+                    AcDebug.Log($"Exception caught and logged in Program.Main{Environment.NewLine}" +
+                        $"Failed writing to {_outputFile}{Environment.NewLine}{exc.Message}");
+                    return 1;
+                }
+
+                finally { if (writer != null) writer.Close(); }
             }
 
             return 0;
@@ -67,20 +89,15 @@ namespace LatestPromotions
                 tasks[0] = new List<Task<AcResult>>(); // for hist results
                 tasks[1] = new List<Task<AcResult>>(); // for stat results
 
-                foreach (AcDepot depot in _depots)
+                // Alternatively change Equals() to Contains() and modify LatestPromotions.exe.config stream values 
+                // accordingly to filter on stream name subsets, e.g. <add stream="DEV"/> for all streams with DEV in their name.
+                foreach (AcStream stream in _depots.SelectMany(d => d.Streams
+                    .Where(s => _selStreams.OfType<StreamElement>().Any(se => s.Name.Equals(se.Stream)))))
                 {
-                    // Alternatively change Equals() to Contains() and modify LatestPromotions.exe.config stream values 
-                    // accordingly to filter on stream name subsets, e.g. <add stream="DEV"/> for all streams with DEV in their name.
-                    IEnumerable<AcStream> filter = depot.Streams.Where(n =>
-                        _selStreams.OfType<StreamElement>().Any(s => n.Name.Equals(s.Stream)));
-
-                    foreach (AcStream stream in filter)
-                    {
-                        Task<AcResult> hr = AcCommand.runAsync($@"hist -k promote -s ""{stream}"" -t now-""{timeHrsAgo}"" -fx");
-                        tasks[0].Add(hr);
-                        Task<AcResult> sr = AcCommand.runAsync($@"stat -s ""{stream}"" -d -fx"); // stream's default group
-                        tasks[1].Add(sr);
-                    }
+                    Task<AcResult> hr = AcCommand.runAsync($@"hist -k promote -s ""{stream}"" -t now-""{timeHrsAgo}"" -fx");
+                    tasks[0].Add(hr);
+                    Task<AcResult> sr = AcCommand.runAsync($@"stat -s ""{stream}"" -d -fx"); // stream's default group
+                    tasks[1].Add(sr);
                 }
 
                 _hist = new List<XElement>(tasks[0].Count);
@@ -118,77 +135,76 @@ namespace LatestPromotions
         }
 
         // Returns the content for our HTML file.
-        private static XElement buildReport(DateTime past)
+        private static XDocument buildReport(DateTime past)
         {
-            return new XElement("html",
-                new XElement("head"),
+            XDocument doc = new XDocument(
+                new XDocumentType("HTML", null, null, null),
+                new XElement("html", new XAttribute("lang", "en"),
+                new XElement("head",
+                    new XElement("meta", new XAttribute("charset", "utf-8")), new XElement("meta", new XAttribute("name", "description"), 
+                        new XAttribute("content", "Promotions to select streams during the past specified number of hours.")),
+                    new XElement("title", "Promotions since " + past.ToString("f")),
+                    new XElement("style",
+                    $@"body {{
+                    	background-color: Gainsboro;
+                    	color: #0000ff;
+                    	font-family: Arial, sans-serif;
+                    	font-size: 13px;
+                    	margin: 10px; }}
+                    table {{
+                    	background-color: #F1F1F1;
+                    	color: #000000;
+                    	font-size: 12px;
+                    	border: 2px solid black;
+                    	padding: 10px; }}"
+                    )
+                ),
                 new XElement("body",
-                    new XAttribute("topmargin", 10),
-                    new XAttribute("leftmargin", 10),
-                    new XAttribute("rightmargin", 10),
-                    new XAttribute("bottommargin", 10),
-                    new XAttribute("marginwidth", 5),
-                    new XAttribute("marginheight", 5),
-                    new XAttribute("style", "font family: Arial; font-size: 12pt"),
-                    new XAttribute("text", "#0000ff"),
-                    new XAttribute("bgcolor", "#cccccc"),
-                    new XElement("p", "Promotions since " + past.ToString("f") + " to:", new XElement("ul",
+                    new XElement("p", "Promotions since " + past.ToString("f") + " to streams:"),
+                    new XElement("ul",
                         from s in _selStreams.OfType<StreamElement>()
                         orderby s.Stream
                         select new XElement("li", s.Stream)),
-                        new XElement("table",
-                            new XAttribute("border", 1),
-                            new XAttribute("cellpadding", 3),
-                            new XAttribute("cellspacing", 2),
-                            new XAttribute("bordercolor", "#cccccc"),
-                            new XAttribute("style", "font family: Arial; font-size: 10pt"),
-                            new XAttribute("bgcolor", "#ffffff"),
-                            new XElement("thead",
-                                new XElement("tr",
-                                    new XElement("td", "TransID"),
-                                    new XElement("td", "TransTime"),
-                                    new XElement("td", "Promoter"),
-                                    new XElement("td", "Elements")
-                                )
-                            ),
-                            new XElement("tbody",
-                                from t in _hist.Elements("transaction")
-                                orderby _users.getUser((string)t.Attribute("user")), t.acxTime("time") descending // by user with their latest transactions on top
-                                select new XElement("tr",
-                                    new XElement("td", (int)t.Attribute("id")),
-                                    new XElement("td", ((DateTime)t.acxTime("time")).ToString("g")),
-                                    new XElement("td", _users.getUser((string)t.Attribute("user")) + " (" + (string)t.Attribute("user") + ")", new XElement("br"),
-                                        business((string)t.Attribute("user")), new XElement("br"), mobile((string)t.Attribute("user"))),
-                                    new XElement("td",
-                                        new XElement("table",
-                                            new XElement("caption", t.acxComment()),
-                                            new XAttribute("border", 1),
-                                            new XAttribute("cellpadding", 3),
-                                            new XAttribute("cellspacing", 2),
-                                            new XAttribute("bordercolor", "#cccccc"),
-                                            new XAttribute("style", "font family: Arial; font-size: 10pt"),
-                                            new XAttribute("bgcolor", "#ffffff"),
-                                            new XElement("thead",
-                                                new XElement("tr",
-                                                    new XElement("td", "EID"),
-                                                    new XElement("td", "Element"),
-                                                    new XElement("td", "Location"),
-                                                    new XElement("td", "Real"),
-                                                    new XElement("td", "Virtual"),
-                                                    new XElement("td", "Status")
-                                                )
-                                            ),
-                                            new XElement("tbody",
-                                                from v in t.Elements("version")
-                                                orderby Path.GetFileName((string)v.Attribute("path"))
-                                                select new XElement("tr",
-                                                    new XElement("td", (int)v.Attribute("eid")),
-                                                    new XElement("td", Path.GetFileName((string)v.Attribute("path"))),
-                                                    new XElement("td", Path.GetDirectoryName((string)v.Attribute("path"))),
-                                                    new XElement("td", $"{(string)v.Attribute("realNamedVersion")} ({(string)v.Attribute("real")})"),
-                                                    new XElement("td", $"{(string)v.Attribute("virtualNamedVersion")} ({(string)v.Attribute("virtual")})"),
-                                                    new XElement("td", (Stat.getElement(v) != null ? Stat.getElement(v).Status : "(earlier)"))
-                                                )
+                    new XElement("table",
+                        new XElement("thead",
+                            new XElement("tr",
+                                new XElement("td", "TransID"),
+                                new XElement("td", "TransTime"),
+                                new XElement("td", "Promoter"),
+                                new XElement("td", "Elements")
+                            )
+                        ),
+                        new XElement("tbody",
+                            from t in _hist.Elements("transaction")
+                            orderby _users.getUser((string)t.Attribute("user")), t.acxTime("time") descending // by user with their latest transactions on top
+                            select new XElement("tr",
+                                new XElement("td", (int)t.Attribute("id")),
+                                new XElement("td", ((DateTime)t.acxTime("time")).ToString("g")),
+                                new XElement("td", _users.getUser((string)t.Attribute("user")) + " (" + (string)t.Attribute("user") + ")", new XElement("br"),
+                                    business((string)t.Attribute("user")), new XElement("br"), mobile((string)t.Attribute("user"))),
+                                new XElement("td",
+                                    new XElement("table",
+                                        new XElement("caption", t.acxComment()),
+                                        new XElement("thead",
+                                            new XElement("tr",
+                                                new XElement("td", "EID"),
+                                                new XElement("td", "Element"),
+                                                new XElement("td", "Location"),
+                                                new XElement("td", "Real"),
+                                                new XElement("td", "Virtual"),
+                                                new XElement("td", "Status")
+                                            )
+                                        ),
+                                        new XElement("tbody",
+                                            from v in t.Elements("version")
+                                            orderby Path.GetFileName((string)v.Attribute("path"))
+                                            select new XElement("tr",
+                                                new XElement("td", (int)v.Attribute("eid")),
+                                                new XElement("td", Path.GetFileName((string)v.Attribute("path"))),
+                                                new XElement("td", Path.GetDirectoryName((string)v.Attribute("path"))),
+                                                new XElement("td", $"{(string)v.Attribute("realNamedVersion")} ({(string)v.Attribute("real")})"),
+                                                new XElement("td", $"{(string)v.Attribute("virtualNamedVersion")} ({(string)v.Attribute("virtual")})"),
+                                                new XElement("td", (Stat.getElement(v) != null ? Stat.getElement(v).Status : "(earlier)"))
                                             )
                                         )
                                     )
@@ -197,7 +213,9 @@ namespace LatestPromotions
                         )
                     )
                 )
-            );
+            ));
+
+            return doc;
         }
 
         // Get user's business phone number if available, otherwise an empty string.

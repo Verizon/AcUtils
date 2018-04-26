@@ -34,9 +34,11 @@ namespace ListDynStreams
             if (!(await depots.initAsync())) // ..
                 return false; // initialization failure
 
-            foreach (AcDepot depot in depots.OrderBy(d => d)) // default comparer orders by depot name
-                foreach (AcStream stream in depot.Streams.OrderBy(s => s)) // .. orders by stream name
-                    Console.WriteLine(stream);
+            foreach (AcStream stream in depots.SelectMany(d => d.Streams)
+                    .OrderBy(s => s.Depot).ThenBy(s => s))
+            {
+                Console.WriteLine(stream);
+            }
 
             return true;
         }

@@ -18,7 +18,9 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using AcUtils;
 
@@ -44,8 +46,6 @@ namespace LatestOverlaps
             return (reportAsync().Result) ? 0 : 1;
         }
 
-        // Initialize our history and stat lists for streams in depots listed in 
-        // the Depots section of LatestOverlaps.exe.config and generate the report.
         private static async Task<bool> reportAsync()
         {
             DateTime past = DateTime.Now.AddHours(_fromHoursAgo * -1); // go back this many hours
@@ -53,8 +53,28 @@ namespace LatestOverlaps
             if (_hist != null && _hist.Count > 0)
             {
                 if (!(await initStatAsync())) return false;
-                XElement report = buildReport(past);
-                report.Save(_outputFile);
+                XmlWriter writer = null;
+                try
+                {
+                    XmlWriterSettings settings = new XmlWriterSettings {
+                        OmitXmlDeclaration = true, Indent = true, IndentChars = "\t",
+                        Encoding = new UTF8Encoding(false) // false to exclude Unicode byte order mark (BOM)
+                    };
+                    using (writer = XmlWriter.Create(_outputFile, settings))
+                    {
+                        XDocument report = buildReport(past);
+                        report.WriteTo(writer);
+                    }
+                }
+
+                catch (Exception exc)
+                {
+                    AcDebug.Log($"Exception caught and logged in Program.reportAsync{Environment.NewLine}" +
+                        $"Failed writing to {_outputFile}{Environment.NewLine}{exc.Message}");
+                    return false;
+                }
+
+                finally { if (writer != null) writer.Close(); }
             }
 
             return true;
@@ -111,7 +131,6 @@ namespace LatestOverlaps
             {
                 IEnumerable<XElement> trans = from e in _hist.Elements("transaction")
                                               select e;
-                // get unique list of stream names from transactions
                 ILookup<string, XElement> map = trans.ToLookup(n => (string)n.Attribute("streamName"), n => n);
 
                 List<Task<AcResult>> tasks = new List<Task<AcResult>>();
@@ -147,38 +166,43 @@ namespace LatestOverlaps
         }
 
         // Returns the content for our HTML file.
-        private static XElement buildReport(DateTime past)
+        private static XDocument buildReport(DateTime past)
         {
             // transactions where one or more versions have overlap status
             IEnumerable<XElement> trans = from t in _hist.Elements("transaction")
                                           where Stat.getElement(t.Element("version")) != null
                                           select t;
-            // get unique list of stream names from transactions
             ILookup<string, XElement> map = trans.ToLookup(n => (string)n.Attribute("streamName"), n => n);
 
-            return new XElement("html",
-                new XElement("head"),
+            XDocument doc = new XDocument(
+                new XDocumentType("HTML", null, null, null),
+                new XElement("html", new XAttribute("lang", "en"),
+                new XElement("head",
+                    new XElement("meta", new XAttribute("charset", "utf-8")), new XElement("meta", new XAttribute("name", "description"),
+                        new XAttribute("content", "Promotions to select depots within the past specified number of hours that have versions with overlap status.")),
+                    new XElement("title", "Promotions with overlaps since " + past.ToString("f")),
+                    new XElement("style",
+                    $@"body {{
+                    	background-color: Gainsboro;
+                    	color: #0000ff;
+                    	font-family: Arial, sans-serif;
+                    	font-size: 13px;
+                    	margin: 10px; }}
+                    table {{
+                    	background-color: #F1F1F1;
+                    	color: #000000;
+                    	font-size: 12px;
+                    	border: 2px solid black;
+                    	padding: 10px; }}"
+                    )
+                ),
                 new XElement("body",
-                    new XAttribute("topmargin", 10),
-                    new XAttribute("leftmargin", 10),
-                    new XAttribute("rightmargin", 10),
-                    new XAttribute("bottommargin", 10),
-                    new XAttribute("marginwidth", 5),
-                    new XAttribute("marginheight", 5),
-                    new XAttribute("style", "font family: Arial; font-size: 12pt"),
-                    new XAttribute("text", "#0000ff"),
-                    new XAttribute("bgcolor", "#cccccc"),
-                    new XElement("p", "Promotions with overlaps since " + past.ToString("f") + " exist in:", new XElement("ul",
+                    new XElement("p", "Promotions with overlaps since " + past.ToString("f") + " exist in:"),
+                    new XElement("ul",
                         from s in map
                         orderby s.Key // stream name
                         select new XElement("li", s.Key)),
                         new XElement("table",
-                            new XAttribute("border", 1),
-                            new XAttribute("cellpadding", 3),
-                            new XAttribute("cellspacing", 2),
-                            new XAttribute("bordercolor", "#cccccc"),
-                            new XAttribute("style", "font family: Arial; font-size: 10pt"),
-                            new XAttribute("bgcolor", "#ffffff"),
                             new XElement("thead",
                                 new XElement("tr",
                                     new XElement("td", "TransID"),
@@ -198,12 +222,6 @@ namespace LatestOverlaps
                                     new XElement("td",
                                         new XElement("table",
                                             new XElement("caption", t.acxComment()),
-                                            new XAttribute("border", 1),
-                                            new XAttribute("cellpadding", 3),
-                                            new XAttribute("cellspacing", 2),
-                                            new XAttribute("bordercolor", "#cccccc"),
-                                            new XAttribute("style", "font family: Arial; font-size: 10pt"),
-                                            new XAttribute("bgcolor", "#ffffff"),
                                             new XElement("thead",
                                                 new XElement("tr",
                                                     new XElement("td", "EID"),
@@ -235,6 +253,8 @@ namespace LatestOverlaps
                     )
                 )
             );
+
+            return doc;
         }
 
         // Get user's business phone number if available, otherwise an empty string.

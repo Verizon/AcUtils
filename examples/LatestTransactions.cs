@@ -214,11 +214,12 @@ namespace LatestTransactions
         // %LOCALAPPDATA%\AcTools\Logs\LatestTransactions-YYYY-MM-DD.log on initialization failure.
         private static bool initAppConfigData()
         {
-            bool ret = true; // assume success
+            bool ret = false; // assume failure
             try
             {
                 _fileName = AcQuery.getAppConfigSetting<string>("FileName").Trim();
                 _fileLocation = AcQuery.getAppConfigSetting<string>("FileLocation").Trim();
+                ret = true;
             }
 
             catch (ConfigurationErrorsException exc)
@@ -226,7 +227,6 @@ namespace LatestTransactions
                 Process currentProcess = Process.GetCurrentProcess();
                 ProcessModule pm = currentProcess.MainModule;
                 AcDebug.Log($"Invalid data in {pm.ModuleName}.config{Environment.NewLine}{exc.Message}");
-                ret = false;
             }
 
             return ret;
