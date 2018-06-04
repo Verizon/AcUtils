@@ -68,14 +68,15 @@ SATURN_DEV1
 ...
 </pre><p> </small></p>
 <p>Stranded elements are members of the default group yet they are not returned with the <code>stat -d</code> option used to select only active elements of the workspace or stream; you must use the <code>-i</code> option instead. They are purposely left out of the list retrieved with the <code>-d</code> option to ensure they are not accidentally promoted. Salesforce 00042864, 00035837, RFE 13692.</p>
-<dl class="section see"><dt>See also</dt><dd><a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/handling_stranded.html">Handling Stranded Elements in AccuRev Technical Notes</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a href="https://www.microfocus.com/documentation/accurev/72/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/handling_stranded.html">Handling Stranded Elements in AccuRev Technical Notes</a></dd></dl>
 <p>Optionally include a list of depot names in <code>Stranded.exe.config</code> that should be ignored, i.e. PlayGround depots, obsolete depots, etc.</p>
 <dl class="section warning"><dt>Warning</dt><dd>Make changes in <code>&lt;progname&gt;.exe.config</code> files only where indicated. Changing other text will cause the program to malfunction.</dd></dl>
-<dl class="section user"><dt>Stranded.exe.config</dt><dd>The .Net framework automatically loads an executable's associated <em>config file</em> when the program is launched. This replaces the need to put configuration data in the Windows registry, a database, in <code>.ini</code> files, or hardcoded in the source code. Each program has its own <code>&lt;program&gt;.exe.config</code> file located in the same folder as the executable. Changes take effect immediately upon saving the file without the need to recompile the program, however it must be relaunched.</dd></dl>
+<dl class="section user"><dt>Stranded.exe.config</dt><dd></dd></dl>
+<p>The .Net framework automatically loads an executable's associated <em>config file</em> when the program is launched. This replaces the need to put configuration data in the Windows registry, a database, in <code>.ini</code> files, or hardcoded in the source code. Each program has its own <code>&lt;program&gt;.exe.config</code> file located in the same folder as the executable. Changes take effect immediately upon saving the file without the need to recompile the program, however it must be relaunched.</p>
 <div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;utf-8&quot;</span>?&gt;</div>
 <div class="line">&lt;configuration&gt;</div>
 <div class="line">  &lt;configSections&gt;</div>
-<div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span>/&gt;</div>
+<div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span>/&gt;</div>
 <div class="line">  &lt;/configSections&gt;</div>
 <div class="line">  &lt;Depots&gt;</div>
 <div class="line">    &lt;depots&gt;</div>
@@ -366,7 +367,7 @@ SATURN_DEV1
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 26 2018 09:43:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jun 4 2018 10:30:01 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

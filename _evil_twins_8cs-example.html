@@ -48,7 +48,7 @@
 <p>When promoting elements to a stream, the error message <b><em>"...name already exists in backing stream..."</em></b> appears. What does this mean?</p>
 <p>An element ID (EID) is an immutable unique identifier (number) assigned to the element when it is added to AccuRev. It allows AccuRev to keep track of the entire history of the element from the time it was first added to the depot should it undergo a name or location change, or made defunct. When two elements with the same name and location are added to the depot in disparate streams, when promoted up the stream hierarchy they will eventually collide. This situation is referred to as <em>"evil twins"</em>. The error message indicates there are two elements with the same name and location but with different EID's. To fix evil twins:</p>
 <ol type="1">
-<li>Since you must clear the namespace in one of the streams so the <em>"good twin"</em> prevails, you must decide which twin you want to keep. Use AccuRev's <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/online_help_F08_1.html">Version Browser</a> to view the history of each twin as this could impact your decision. For example, if one of the elements has gone to production and the other has not, you would want to make the production version the good twin and the other the evil twin.</li>
+<li>Since you must clear the namespace in one of the streams so the <em>"good twin"</em> prevails, you must decide which twin you want to keep. Use AccuRev's <a href="https://www.microfocus.com/documentation/accurev/72/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/online_help_F08_1.html">Version Browser</a> to view the history of each twin as this could impact your decision. For example, if one of the elements has gone to production and the other has not, you would want to make the production version the good twin and the other the evil twin.</li>
 <li>If the element is a file, do a <code>diff</code> on the twins to make sure the good twin (the one that will prevail) has the correct content. Edit as needed.</li>
 <li>Rename (<code>move</code>) the evil element and then <code>defunct</code> it. Note that as a best practice, renaming should always be done before making an element defunct, even in cases that are not evil twins (see Note below). In the case of evil twins, rename the evil twin with the ".EVIL" extension. Otherwise add a descriptive extension to the element, for example ".OBSOLETE".</li>
 <li><code>Promote</code> the renamed-defunct evil twin. Then do one of the following steps, based on <em>a</em> or <em>b:</em> <ol type="a">
@@ -57,7 +57,7 @@
 </ol>
 </li>
 <li>If the good twin does not exist higher up in the stream hierarchy:<ol type="i">
-<li>Use the <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/Change_Palette.html">Change Palette</a> to cross promote the good twin to your workspace.</li>
+<li>Use the <a href="https://www.microfocus.com/documentation/accurev/72/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_OnLine_Help/Change_Palette.html">Change Palette</a> to cross promote the good twin to your workspace.</li>
 </ol>
 </li>
 </ol>
@@ -67,7 +67,8 @@
 <p><em>Diff Against... File on Disk</em> is the only way to diff files that are evil twins. For example <code>diff -v Stream1\1 -V Stream2\1 \.\Dir\foo.java</code> fails since internally it's implemented using the <code>name -e</code> option and does not rely on depot-relative pathnames. This allows <code>diff</code> to operate on files that have undergone namespace changes but (sadly) fails in the case of evil twins. AccuRev defect 26192, RFE 26215, Salesforce 00044449.</p>
 <dl class="section user"><dt>To locate:</dt><dd><code>EvilTwins.exe</code> scans for the presence of evil twins in <em>depots</em> listed in <code>EvilTwins.exe.config</code>. Add <em>depot</em> entries (case-sensitive) as needed. Program output is sent to <code>EvilTwinsFound-YYYY-MM-DD.log</code>, a daily log file created/updated in the same folder where <code>EvilTwins.exe</code> resides. The program's return value is <em>zero (0)</em> if it ran successfully or <em>one (1)</em> in the event of an exception or initialization failure. Program errors are sent to STDOUT and <a class="el" href="class_ac_utils_1_1_ac_debug.html#ab0f6db993371a8857b18b8545bcef24d">logged</a> in <code>%LOCALAPPDATA%\AcTools\Logs\EvilTwins-YYYY-MM-DD.log</code>.<br />
 Optional: To handle erroneously reported evil twins (false positives) or to disregard those that will eventually resolve on their own, put them in the <em>TwinsExcludeFile</em> specified in <code>EvilTwins.exe.config</code> to keep them from being reported in the future. Empty lines are allowed in the exclude file and comments can be added by using the # sign as the first character of each comment line. The full path to the exclude file should be given as the value for key <em>TwinsExcludeFile</em> in <code>EvilTwins.exe.config</code>. (Do not change the key name <em>TwinsExcludeFile</em> to some other name, otherwise the program will malfunction.)</dd></dl>
-<dl class="section user"><dt>EvilTwinsFound log file</dt><dd><small> <pre class="fragment">\.\Mobile\LogManager.h
+<dl class="section user"><dt>EvilTwinsFound log file</dt><dd></dd></dl>
+<p><small> </p><pre class="fragment">\.\Mobile\LogManager.h
   EID: 4872 on Wed May 24 9:28 AM
     NEPTUNE_DEV2 (backed)
       Size: 411, ModTime: 8/3/2016 6:29:57 PM {text}
@@ -87,11 +88,12 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
       Size: 412, ModTime: 8/3/2016 5:41:36 PM {text}
       Real: NEPTUNE_UAT_robert\1, Virtual: NEPTUNE\3
 ...
-</pre> </small></dd></dl>
-<dl class="section user"><dt>EvilTwins.exe.config</dt><dd><div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;utf-8&quot;</span>?&gt;</div>
+</pre><p> </small></p>
+<dl class="section user"><dt>EvilTwins.exe.config</dt><dd></dd></dl>
+<div class="fragment"><div class="line">&lt;?xml version=<span class="stringliteral">&quot;1.0&quot;</span> encoding=<span class="stringliteral">&quot;utf-8&quot;</span>?&gt;</div>
 <div class="line">&lt;configuration&gt;</div>
 <div class="line">  &lt;configSections&gt;</div>
-<div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span> /&gt;</div>
+<div class="line">    &lt;section name=<span class="stringliteral">&quot;Depots&quot;</span> type=<span class="stringliteral">&quot;AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL&quot;</span> /&gt;</div>
 <div class="line">  &lt;/configSections&gt;</div>
 <div class="line">  &lt;Depots&gt;</div>
 <div class="line">    &lt;depots&gt;</div>
@@ -119,8 +121,7 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 <div class="line">    &lt;supportedRuntime version=<span class="stringliteral">&quot;v4.0&quot;</span> sku=<span class="stringliteral">&quot;.NETFramework,Version=v4.6&quot;</span>/&gt;</div>
 <div class="line">  &lt;/startup&gt;</div>
 <div class="line">&lt;/configuration&gt;</div>
-</div><!-- fragment --></dd></dl>
-<p><small> </p><pre class="fragment"># TwinsExcludeFile TwinsToIgnore.txt
+</div><!-- fragment --><p><small> </p><pre class="fragment"># TwinsExcludeFile TwinsToIgnore.txt
 # These evil twins will resolve when promoted to the root stream.
 \.\src\com\foo.java
 \.\src\bar.c
@@ -517,7 +518,7 @@ Optional: To handle erroneously reported evil twins (false positives) or to disr
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 26 2018 09:43:39 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jun 4 2018 10:30:01 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>
