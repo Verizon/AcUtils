@@ -352,9 +352,10 @@ namespace AcUtils
             Lock promotions to and from NEPTUNE_DEV3 for all.
             \endcode */
         /*! \sa initAsync(AcDepot), initAsync(DepotsCollection), initAsync(StreamsCollection), 
+             [default comparer](@ref AcLock#CompareTo),
              <a href="_lock_streams_8cs-example.html">LockStreams.cs</a>, 
-             <a href="_promotion_rights_8cs-example.html">PromotionRights.cs</a>,
-             [default comparer](@ref AcLock#CompareTo) */
+             <a href="_locks_8cs-example.html">Locks.cs</a>, 
+             <a href="_promo_rights_8cs-example.html">PromoRights.cs</a> */
         public AcLocks() { }
 
         /// <summary>

@@ -17,7 +17,7 @@ limitations under the License. -->
   <navindex>
     <tab type="mainpage" visible="yes" title="Main Page"/>
     <tab type="usergroup" title="Docs">
-			<tab type="user" url="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_F4_001.html" title="AccuRev command-line reference"/>
+			<tab type="user" url="https://www.microfocus.com/documentation/accurev/72/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_F4_001.html" title="AccuRev command-line reference"/>
 			<tab type="user" url="@ref commandsinuse_AcUtils" title="AccuRev commands used"/>
       <tab type="user" url="@ref accunotes_" title="AccuNotes"/>
       <tab type="user" url="@ref requirements" title="Requirements"/>

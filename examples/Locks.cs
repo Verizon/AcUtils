@@ -18,7 +18,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AcUtils;
 
-namespace PromotionRights
+namespace Locks
 {
     class Program
     {

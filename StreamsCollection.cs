@@ -25,7 +25,7 @@ namespace AcUtils
         <?xml version="1.0" encoding="utf-8"?>
         <configuration>
           <configSections>
-            <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.2.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+            <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
             ...
           </configSections>
           <Streams>
@@ -43,7 +43,7 @@ namespace AcUtils
         StreamsSection streamsSection = ConfigurationManager.GetSection("Streams") as StreamsSection;
         StreamsCollection streamsCol = streamsSection.Streams;
         \endcode */
-    /*! \sa <a href="_promotion_rights_8cs-example.html">PromotionRights.cs</a>, DepotsCollection */
+    /*! \sa <a href="_locks_8cs-example.html">Locks.cs</a>, DepotsCollection */
     [ConfigurationCollection(typeof(StreamElement),
         CollectionType=ConfigurationElementCollectionType.AddRemoveClearMap)]
     [Serializable]

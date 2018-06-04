@@ -416,7 +416,7 @@ namespace AcUtils
         /// </summary>
         /// <param name="depot">The depot for which streams will be created.</param>
         /// <param name="listfile">List file <tt>\%APPDATA\%\\AcTools\\<prog_name\>\\<depot_name\>.streams</tt> for the 
-        /// <a href="https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a> 
+        /// <a href="https://www.microfocus.com/documentation/accurev/72/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_show.html">show -l <list-file> streams</a> 
         /// command if found, otherwise \e null.<br>
         /// Example: <tt>"C:\Users\barnyrd\AppData\Roaming\AcTools\FooApp\NEPTUNE.streams"</tt>.</param>
         /// <returns>\e true if initialization succeeded, \e false otherwise.</returns>

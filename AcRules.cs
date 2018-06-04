@@ -514,13 +514,10 @@ namespace AcUtils
                     return res;
                 };
 
-                foreach (AcDepot depot in depots)
+                foreach (AcStream stream in depots.SelectMany(d => d.Streams))
                 {
-                    foreach (AcStream stream in depot.Streams)
-                    {
-                        Task<bool> t = initAsync(stream).ContinueWith(cf);
-                        tasks.Add(t);
-                    }
+                    Task<bool> t = initAsync(stream).ContinueWith(cf);
+                    tasks.Add(t);
                 }
 
                 bool[] arr = await Task.WhenAll(tasks).ConfigureAwait(false);

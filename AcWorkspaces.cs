@@ -293,7 +293,7 @@ namespace AcUtils
         }
 
         /// <summary>
-        /// This property value is used in AccuRev's [update algorithm](https://www.microfocus.com/documentation/accurev/71/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/the_update_algorithm.html) 
+        /// This property value is used in AccuRev's [update algorithm](https://www.microfocus.com/documentation/accurev/72/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_TechNotes/the_update_algorithm.html) 
         /// while processing the \c update command. The value is stored and updated internally by AccuRev when the \c update operation succeeds. 
         /// It is the date and time of the oldest \e non-member file in the workspace with (\e modified) status. If no such file exists, 
         /// it is the date and time the \c update command was issued.
