@@ -46,7 +46,7 @@
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><ul>
-<li><a class="el" href="namespace_ac_utils.html">AcUtils</a> requires <a href="https://www.microsoft.com/en-us/download/details.aspx?id=48130">.NET Framework 4.6</a> or higher.</li>
+<li><a class="el" href="namespace_ac_utils.html">AcUtils</a> requires <a href="https://www.microsoft.com/en-us/download/details.aspx?id=48130">.NET Framework 4.6.1</a> or higher.</li>
 <li>The user or service\build account must be logged into <a href="https://www.microfocus.com/products/change-management/accurev/">AccuRev</a> and have <code>\AccuRev\bin</code> in their <em>Path</em> environment variable.</li>
 <li>AccuRev 5.6 was used during the development of <a class="el" href="namespace_ac_utils.html">AcUtils</a> but the library should function well with other versions too, albeit without the support for some newer features in later versions. When using AccuRev command processing functions <a class="el" href="class_ac_utils_1_1_ac_command.html#aec181b83848526414ef5b5cbcc336421">AcCommand.runAsync</a> and <a class="el" href="class_ac_utils_1_1_ac_command.html#aa3875a1973cf61b3a44f4733c864a219">AcCommand.run</a>, ensure the correct logic is used to determine if an <a class="el" href="class_ac_utils_1_1_ac_utils_exception.html">AcUtilsException</a> should be thrown based on AccuRev's program return value for the command and the version of AccuRev in use. To do so, implement <a class="el" href="interface_ac_utils_1_1_i_cmd_validate.html">ICmdValidate</a> or override <a class="el" href="class_ac_utils_1_1_cmd_validate.html#a813b24bbdbecca64746bfa5bc4c779e3">CmdValidate.isValid</a> and pass a reference to the object as the <a class="el" href="class_ac_utils_1_1_ac_command.html">validator</a> second function argument.</li>
 <li><a href="https://www.nuget.org/packages/Microsoft.Experimental.Collections">Microsoft.Experimental.Collections.dll</a> is required in order to:<ul>
@@ -58,7 +58,7 @@
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 4 2018 10:30:01 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Sep 20 2018 16:04:49 for AcUtils by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>
