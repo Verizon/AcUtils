@@ -100,7 +100,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -152,7 +152,7 @@ e.g. IIS/SMTP pointing to relays with a queue that would try to resend. The work
     <trace autoflush="true"/>
   </system.diagnostics>
   <startup> 
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1" />
   </startup>
 </configuration>
 \endcode
@@ -233,7 +233,7 @@ Results are sent to the console.
     </sources>
   </system.diagnostics>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1"/>
   </startup>
 </configuration>
 \endcode
@@ -269,7 +269,7 @@ Show the locks on \e streams listed in \c Locks.exe.config.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Streams>
     <streams>
@@ -279,7 +279,7 @@ Show the locks on \e streams listed in \c Locks.exe.config.
     </streams>
   </Streams>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1" />
   </startup>
 </configuration>
 \endcode
@@ -318,7 +318,7 @@ Razanur	ExceptFor
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -340,7 +340,7 @@ Razanur	ExceptFor
     </sources>
   </system.diagnostics>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1" />
   </startup>
 </configuration>
 \endcode */
@@ -354,7 +354,7 @@ For \e depots show workspaces that have a default group and "DEV3" in their name
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -365,7 +365,7 @@ For \e depots show workspaces that have a default group and "DEV3" in their name
     </depots>
   </Depots>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1" />
   </startup>
 </configuration>
 \endcode
@@ -422,7 +422,7 @@ the file without the need to recompile the program, however it must be relaunche
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <Depots>
     <depots>
@@ -444,7 +444,7 @@ the file without the need to recompile the program, however it must be relaunche
     </sources>
   </system.diagnostics>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1"/>
   </startup>
 </configuration>
 \endcode
@@ -527,7 +527,7 @@ some other name, otherwise the program will malfunction.)
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -552,7 +552,7 @@ some other name, otherwise the program will malfunction.)
     </sources>
   </system.diagnostics>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1"/>
   </startup>
 </configuration>
 \endcode
@@ -577,9 +577,9 @@ Creates an HTML file with the promote transactions that occurred in select strea
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <!-- contact your company LDAP administrator for these values -->
@@ -625,7 +625,7 @@ Creates an HTML file with the promote transactions that occurred in select strea
     </sources>
   </system.diagnostics>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1"/>
   </startup>
 </configuration>
 \endcode
@@ -657,7 +657,7 @@ Lock promotions to select streams across multiple depots for all except those in
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <Depots>
     <depots>
@@ -668,7 +668,7 @@ Lock promotions to select streams across multiple depots for all except those in
     </depots>
   </Depots>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1" />
   </startup>
 </configuration>
 \endcode
@@ -694,7 +694,7 @@ Built-in types \b anyuser and \b authuser are unsupported.
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL" />
   </configSections>
   <activeDir>
     <domains>
@@ -706,7 +706,7 @@ Built-in types \b anyuser and \b authuser are unsupported.
     </properties >
   </activeDir>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1" />
   </startup>
 </configuration>
 \endcode
@@ -732,7 +732,7 @@ List triggers created with the \c mktrig command for all depots in the repositor
     </sources>
   </system.diagnostics>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1"/>
   </startup>
 </configuration>
 \endcode
@@ -768,7 +768,7 @@ the latest transaction 74931 in depot NEPTUNE occurred on 12/18/2017 8:57:44 AM
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <Depots>
     <depots>
@@ -790,7 +790,7 @@ the latest transaction 74931 in depot NEPTUNE occurred on 12/18/2017 8:57:44 AM
     </sources>
   </system.diagnostics>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1"/>
   </startup>
 </configuration>\endcode
 */
@@ -805,8 +805,8 @@ Only promotions that occurred \e FromHoursAgo listed in \c LatestOverlaps.exe.co
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -842,7 +842,7 @@ Only promotions that occurred \e FromHoursAgo listed in \c LatestOverlaps.exe.co
     </sources>
   </system.diagnostics>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1"/>
   </startup>
 </configuration>
 \endcode
@@ -878,7 +878,7 @@ so Excel must be installed. [Tested with Excel 2010.]
     </sources>
   </system.diagnostics>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1"/>
   </startup>
 </configuration>
 \endcode
@@ -918,9 +918,9 @@ Grand total of 68 promotions and 182 versions.
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
-    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
-    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.3.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="activeDir" type="AcUtils.ADSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Depots" type="AcUtils.DepotsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
+    <section name="Streams" type="AcUtils.StreamsSection, AcUtils, Version=1.6.4.0, Culture=neutral, PublicKeyToken=26470c2daf5c2e2f, processorArchitecture=MSIL"/>
   </configSections>
   <activeDir>
     <domains>
@@ -967,10 +967,50 @@ Grand total of 68 promotions and 182 versions.
     </sources>
   </system.diagnostics>
   <startup>
-    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1"/>
   </startup>
 </configuration>
 \endcode
+*/
+
+/*! \example MoveTo.cs
+MoveTo is a console program that moves elements in the folder at the command line (workspace tree source location), 
+to the folder given as the command line argument (workspace tree destination location). Features include:
+
+- Prior to the [move](https://www.microfocus.com/documentation/accurev/72/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_move.html) 
+operation, the destination folder will be
+  + Created if it doesn't exist and added to AccuRev.
+  + Added to AccuRev if it already exists and has \e external status.
+- User-defined list of element statuses whose elements cannot or should not be moved. Modify the \e SkipOver list in \c MoveTo.exe.config (see below) as needed and run the program.
+- Verifies that the user's default directory at the command line (the source folder) is in a workspace tree location.
+- Ensures the user is logged into AccuRev before running any commands.
+
+Example: You want to [move](https://www.microfocus.com/documentation/accurev/72/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_move.html) 
+elements in the \c C:\\Workspaces\\MARS_DEV2\\Foo folder to the \c Bar sibling folder. If not already there, the \c Bar folder will be created and added to AccuRev. 
+If it's already there and has \e external status, it will be added to AccuRev. In any case, immediately afterwards the 
+[move](https://www.microfocus.com/documentation/accurev/72/WebHelp/wwhelp/wwhimpl/js/html/wwhelp.htm#href=AccuRev_User_CLI/cli_ref_move.html) operation will occur.<br>
+Open a command window, \c CHDIR to the \c Foo source folder and give the path (absolute or relative) to the \c Bar destination folder as the program command line argument:
+
+    C:\Workspaces\MARS_DEV2\Foo>MoveTo ..\Bar
+
+\par MoveTo.exe.config
+
+\code
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <appSettings>
+    <!-- space delimited list of statuses to ignore. modify as needed -->
+    <add key="SkipOver" value="external xlinked overlap underlap modified" />
+  </appSettings>
+  <startup> 
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1" />
+  </startup>
+</configuration>
+\endcode
+
+Copy \c MoveTo.exe, \c MoveTo.exe.config and \c AcUtils.dll to a folder listed in your \e Path environment variable. 
+Returns \e one (1) on program failure or no elements found to move, \e zero (0) on success. Program errors are sent to the console. 
+As with all programs that use AcUtils, you must be logged into AccuRev and have \c AccuRev\\bin in the \e Path.
 */
 
 /*! \page perfdemo
@@ -1269,7 +1309,7 @@ AcUtils requires .NET Framework 4.6 or higher.
 */
 
 /*! \page requirements AcUtils Requirements
-- AcUtils requires <a href="https://www.microsoft.com/en-us/download/details.aspx?id=48130">.NET Framework 4.6</a> or higher.
+- AcUtils requires <a href="https://www.microsoft.com/en-us/download/details.aspx?id=48130">.NET Framework 4.6.1</a> or higher.
 - The user or service\\build account must be logged into [AccuRev](https://www.microfocus.com/products/change-management/accurev/) 
 and have <tt>\\AccuRev\\bin</tt> in their \e Path environment variable.
 - AccuRev 5.6 was used during the development of AcUtils but the library should function well with other versions too, 
