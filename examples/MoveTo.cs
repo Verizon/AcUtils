@@ -111,7 +111,7 @@ namespace MoveTo
 
         // Ensure that the destination folder exists and is in AccuRev.
         // Returns true if the operation succeeded, false on error.
-        public static bool ready(string dest)
+        private static bool ready(string dest)
         {
             bool ret = false; // assume failure
             try

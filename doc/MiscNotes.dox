@@ -1303,7 +1303,7 @@ private static bool fooSync()
    limitations under the License.
 \endverbatim
 
-AcUtils requires .NET Framework 4.6 or higher. 
+AcUtils requires .NET Framework 4.6.1 or higher. 
 [Microsoft.Experimental.Collections.dll](https://www.nuget.org/packages/Microsoft.Experimental.Collections) is available under the license <a href="http://www.microsoft.com/net/dotnet_library_license.htm">here</a>. 
 [LimitedConcurrencyLevelTaskScheduler](@ref System#Threading#Tasks#Schedulers#LimitedConcurrencyLevelTaskScheduler) is available under the license <a href="https://gallery.technet.microsoft.com/scriptcenter/site/DSC-Resource-Kit-All-c449312d/eulapartial?licenseType=MSLPL">here</a>.
 */
